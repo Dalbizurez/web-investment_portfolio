@@ -1,3 +1,7 @@
 asgiref==3.9.1
 Django==5.2.6
 sqlparse==0.5.3
+python3 -m venv venv
+source venv/bin/activate
+pip install django
+pip install django mysqlclient
