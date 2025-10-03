@@ -40,7 +40,9 @@ INSTALLED_APPS = [
     "rest_framework",
     "NormalUser",
     'user_try',
-    'Transaction'
+    'Transaction',
+    'adminUser',
+    'userActiveAndDesactive',
 ]
 
 MIDDLEWARE = [
