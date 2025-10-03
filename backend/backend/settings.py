@@ -80,12 +80,29 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'mydb',
         'USER': 'root',
-        'PASSWORD': '120365',
-        'HOST': 'localhost',   # o la IP/host del servidor SQL
-        'PORT': '3306',
+        'PASSWORD': '', # CHANGE THIS TO THE PASSWORD OF YOUR MYSQL USER
+        'HOST': 'localhost',   
+        'PORT': '3306', # THIS IS THE DEFAULT MYSQL PORT, CHANGE IF NEEDED
     }
 }
 
+# JWT Configuration
+JWT_SECRET = 'your-very-secure-secret-key-change-in-production-2024'
+JWT_ALGORITHM = 'HS256'
+
+# REST Framework Configuration
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'user_try.authentication.JWTAuthentication',
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',  # authenticated by default
+    ],
+}
+
+# Configure these for email (not implemented yet)
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'  # this line is for development
+DEFAULT_FROM_EMAIL = 'noreply@stocktrading.com'
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
