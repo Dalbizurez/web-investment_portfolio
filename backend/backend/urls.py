@@ -24,6 +24,7 @@ urlpatterns = [
     path("api/Transaction/", include("Transaction.urls")),
     path("api/adminUser/", include("adminUser.urls")),
     path("api/userActiveAndDesactive/", include("userActiveAndDesactive.urls")),
+    path("api/gift/", include("gift.urls")),
 ]
 
 

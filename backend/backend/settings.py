@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'Transaction',
     'adminUser',
     'userActiveAndDesactive',
+    'gift'
 ]
 
 MIDDLEWARE = [

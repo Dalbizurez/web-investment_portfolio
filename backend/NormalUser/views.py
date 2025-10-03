@@ -25,3 +25,6 @@ def login(request):
             return Response({"error": "Invalid credentials"}, status=status.HTTP_400_BAD_REQUEST)
     except NormalUser.DoesNotExist:
         return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+    
+    # falta el update de credenciales
+
