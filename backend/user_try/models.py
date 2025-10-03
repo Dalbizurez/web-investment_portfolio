@@ -38,15 +38,14 @@ class User(models.Model):
         self.password = make_password(raw_password)
         self.save()
 
-    # AÑADE ESTOS MÉTODOS PARA SOLUCIONAR EL ERROR
     @property
     def is_authenticated(self):
-        """Siempre retorna True para usuarios autenticados"""
+        # always true for verified users
         return True
 
     @property
     def is_anonymous(self):
-        """Siempre retorna False para usuarios autenticados"""
+        # always false for authenticated users
         return False
 
 
