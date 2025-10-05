@@ -13,6 +13,8 @@ import string
 from .serializers import NormalUserSerializer, LoginSerializer, UserSessionSerializer, AuditLogSerializer
 from .models import NormalUser, UserSession, AuditLog
 
+from .utils.EmailComposer import pendingEmail, approvedEmail
+from .utils.EmailSender import send_email
 
 # JWT Configuration
 JWT_SECRET = getattr(settings, 'JWT_SECRET', 'your-secret-key-change-in-production')
@@ -72,6 +74,10 @@ def register(request):
         user.ip_address = ip_address
         user.save()
         
+        # Send pending approval email
+        subject, message = pendingEmail(user.username)
+        send_email(user.email, subject, message)
+
         # Create audit log
         AuditLog.objects.create(
             user=user,
