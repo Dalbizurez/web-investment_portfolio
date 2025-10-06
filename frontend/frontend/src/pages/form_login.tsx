@@ -1,41 +1,30 @@
 import { useState } from "react";
-import type { FormEvent } from "react";
+import { login } from "../api/auth";
 import "../styles/LoginPage.css";
 
 
 function LoginForm() {
-  const [email, setEmail] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Correo:", email);
-    console.log("Contraseña:", password);
+    try {
+      const tokens = await login(username, password);
+      localStorage.setItem("access", tokens.access);
+      localStorage.setItem("refresh", tokens.refresh);
+      console.log("Inicio de sesión exitoso");
+    } catch (err) {
+      console.error(err);
+      alert("Usuario o contraseña incorrectos");
+    }
   };
 
   return (
     <form onSubmit={handleSubmit}>
-      <label>
-        Correo:
-        <input
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
-      </label>
-      <br />
-      <label>
-        Contraseña:
-        <input
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
-      </label>
-      <br />
-      <button type="submit">Entrar</button>
+      <input value={username} onChange={(e) => setUsername(e.target.value)} placeholder="Usuario" />
+      <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Contraseña" />
+      <button type="submit">Iniciar sesión</button>
     </form>
   );
 }

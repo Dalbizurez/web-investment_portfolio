@@ -43,13 +43,22 @@ INSTALLED_APPS = [
     "adminUser",
     "Transaction",
     "userActiveAndDesactive",
-    "gift"
+    "gift",
+    'corsheaders',
+
 
     #agregar mas modudlos despues de aqui 
        
 ]
 
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+]
+
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',  # debe ir arriba
+    'django.middleware.common.CommonMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',

@@ -1,6 +1,7 @@
-// src/api/auth.ts
 export async function login(username: string, password: string) {
-    const response = await fetch("https://tu-dominio.com/api/login/", {
+    console.log("aqui toy")
+
+    const response = await fetch("http://127.0.0.1:8000/api/NormalUser/login/", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
