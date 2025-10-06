@@ -1,5 +1,6 @@
 import { useState } from "react";
 import type { FormEvent } from "react";
+import "../styles/LoginPage.css";
 
 
 function LoginForm() {
