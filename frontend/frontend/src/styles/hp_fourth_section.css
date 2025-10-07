@@ -1,7 +1,7 @@
 .fourth-section {
   width: 100%;
   padding: 2rem 5%;
-  background-color: #383E54; /* sección más pequeña y neutra */
+  background-color: #383E54;
   text-align: center;
   box-sizing: border-box;
   color: #FFF;
@@ -34,10 +34,10 @@
   font-family: "Raleway", sans-serif;
 }
 
-/* --- RESPONSIVE --- */
+/* ------------ Responsive --------------- */
 @media (max-width: 600px) {
   .investor-images img {
-    width: 130px; /* imágenes más pequeñas en móvil */
+    width: 130px;
   }
 
   .fourth-section h2 {
