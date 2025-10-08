@@ -18,7 +18,7 @@ def buy_stock(request):
         symbol = request.data.get('symbol', '').upper().strip()
         quantity = int(request.data.get('quantity', 0))
         
-        # Validaciones básicas
+        # Basic validations
         if not symbol:
             return Response({'error': 'Stock symbol is required'}, 
                            status=status.HTTP_400_BAD_REQUEST)
@@ -27,20 +27,20 @@ def buy_stock(request):
             return Response({'error': 'Quantity must be greater than 0'}, 
                            status=status.HTTP_400_BAD_REQUEST)
         
-        # Validar formato del símbolo
+        # Validate symbol format
         if len(symbol) < 1 or len(symbol) > 10:
             return Response({'error': 'Invalid stock symbol format'}, 
                            status=status.HTTP_400_BAD_REQUEST)
         
         service = FinnhubService()
         
-        # VALIDACIÓN CRÍTICA: Verificar que el símbolo existe y es válido
+        # CRITICAL: Validate that the symbol exists and is tradable
         is_valid, validation_message = service.validate_stock_symbol(symbol)
         if not is_valid:
             return Response({'error': f'Invalid stock symbol: {validation_message}'}, 
                            status=status.HTTP_400_BAD_REQUEST)
         
-        # Get current price (ya validado que existe)
+        # Get current price
         quote_data = service.get_stock_quote(symbol)
         if not quote_data:
             return Response({'error': 'Could not get valid stock price'}, 
@@ -48,8 +48,8 @@ def buy_stock(request):
         
         current_price = Decimal(str(quote_data['current_price']))
         total_cost = current_price * quantity
-        
-        # Validar que el precio sea razonable (no 0 o negativo)
+
+        # Validate that the price is reasonable (not 0 or negative)
         if current_price <= 0:
             return Response({'error': 'Invalid stock price'}, 
                            status=status.HTTP_400_BAD_REQUEST)
@@ -75,8 +75,8 @@ def buy_stock(request):
                     'exchange': 'NASDAQ'
                 }
             )
-            
-            # Si se creó nueva, obtener información real de la empresa
+
+            # If created, get real company information
             if created:
                 profile_data = service.get_stock_profile(symbol)
                 if profile_data:
@@ -85,8 +85,8 @@ def buy_stock(request):
                     stock.currency = profile_data.get('currency', 'USD')
                     stock.sector = profile_data.get('finnhubIndustry', '')
                     stock.save()
-            
-            # Actualizar precio actual
+
+            # Update current price
             stock.current_price = current_price
             stock.save()
             
@@ -140,7 +140,7 @@ def buy_stock(request):
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def sell_stock(request):
-    """Sell stock shares - WITH ENHANCED VALIDATION"""
+    """Sell stock shares - WITH BETTER VALIDATION"""
     try:
         symbol = request.data.get('symbol', '').upper().strip()
         quantity = int(request.data.get('quantity', 0))
@@ -151,7 +151,7 @@ def sell_stock(request):
         
         service = FinnhubService()
         
-        # Validar que el símbolo existe
+        # Validate that the symbol exists
         is_valid, validation_message = service.validate_stock_symbol(symbol)
         if not is_valid:
             return Response({'error': f'Invalid stock symbol: {validation_message}'}, 
@@ -211,8 +211,6 @@ def sell_stock(request):
         return Response({'error': 'Internal server error'}, 
                        status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-# Las funciones deposit_money, withdraw_money, get_transaction_history, 
-# get_user_balance y get_client_ip se mantienen IGUALES
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def deposit_money(request):

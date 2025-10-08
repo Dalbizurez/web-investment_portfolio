@@ -25,15 +25,15 @@ class FinnhubService:
             
             data = response.json()
             
-            # MEJOR VALIDACIÓN: Verificar si es un precio válido
+            # Validate the response data to ensure the symbol is valid
             current_price = data.get('c', 0)
             
-            # Si el precio es 0, None, o negativo, el símbolo probablemente no existe
+            # If the price is 0, None, or negative, the symbol probably doesn't exist
             if not current_price or current_price <= 0:
                 logger.warning(f"Invalid price for symbol {symbol}: {current_price}")
                 return None
-                
-            # Validar que otros campos no sean todos cero (indicaría símbolo inválido)
+
+            # Validate that other fields are not all zero (would indicate invalid symbol)
             if (data.get('h', 0) == 0 and data.get('l', 0) == 0 and 
                 data.get('o', 0) == 0 and data.get('pc', 0) == 0):
                 logger.warning(f"Suspicious data for symbol {symbol}: all zero values")
@@ -62,17 +62,17 @@ class FinnhubService:
     def validate_stock_symbol(self, symbol):
         """Validate if a stock symbol exists and is tradable"""
         try:
-            # Primero verificamos con quote
+            # Verify with quote endpoint first
             quote_data = self.get_stock_quote(symbol)
             if not quote_data:
                 return False, "Symbol not found or invalid"
-            
-            # Luego verificamos con profile para más información
+
+            # Then check with profile for more information
             profile_data = self.get_stock_profile(symbol)
             if not profile_data:
-                return True, "Symbol exists but no profile data"  # Aún es válido
-            
-            # Verificar que no sea OTC o no negociable
+                return True, "Symbol exists but no profile data"  # Still valid
+
+            # Check that it's not OTC or untradable
             if profile_data.get('marketCapitalization', 0) == 0:
                 return False, "Stock may not be actively traded"
                 
@@ -114,8 +114,8 @@ class FinnhubService:
             response.raise_for_status()
             
             data = response.json()
-            
-            # Si el perfil está vacío o tiene error, retornar None
+
+            # If the profile is empty or has an error, return None
             if not data or 'name' not in data:
                 return None
                 

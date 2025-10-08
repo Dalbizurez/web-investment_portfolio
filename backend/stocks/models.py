@@ -2,7 +2,7 @@ from django.db import models
 from django.conf import settings
 from django.utils import timezone
 
-# USAR user_try - FORMA CORRECTA
+# USE user_try User model, this is important
 from user_try.models import User as UserModel
 
 class Stock(models.Model):
