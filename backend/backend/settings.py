@@ -39,15 +39,16 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     "rest_framework",
     'user_try',
-    "NormalUser",
-    "adminUser",
-    "Transaction",
-    "userActiveAndDesactive",
-    "gift"
-
-    #agregar mas modudlos despues de aqui 
-       
+    'NormalUser',  
+    'Transaction',
+    'adminUser', 
+    'gift',
+    'userActiveAndDesactive',
+    'stocks',  # NUEVA APP -
 ]
+
+# FINNHUB Data API Configuration
+FINNHUB_API_KEY = 'd3ikvd9r01qmn7fki4o0d3ikvd9r01qmn7fki4og'  # FINNHUB API KEY - FREE TIER 
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -87,9 +88,9 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'mydb',
         'USER': 'root',
-        'PASSWORD': '120365', # CHANGE THIS TO THE PASSWORD OF YOUR MYSQL USER
+        'PASSWORD': '4521',  # USA TU PASSWORD LOCAL
         'HOST': 'localhost',   
-        'PORT': '3306', # THIS IS THE DEFAULT MYSQL PORT, CHANGE IF NEEDED
+        'PORT': '3306',
     }
 }
 
