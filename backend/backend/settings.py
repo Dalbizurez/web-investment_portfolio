@@ -109,7 +109,13 @@ REST_FRAMEWORK = {
 }
 
 # Configure these for email (not implemented yet)
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'  # this line is for development
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'  # this line is for development
+EMAIL_HOST = 'smtp.example.com'
+EMAIL_PORT = None
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = ''
+EMAIL_HOST_PASSWORD = ''
+
 DEFAULT_FROM_EMAIL = 'noreply@stocktrading.com'
 
 # Password validation
