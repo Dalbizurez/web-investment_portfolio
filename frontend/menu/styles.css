@@ -1,0 +1,197 @@
+/* Layout principal */
+.layout {
+  display: flex;
+  height: 100vh;
+  background-color: #d5d8e8;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* 🧭 Barra lateral izquierda */
+.sidebar {
+  width: 240px;
+  background-color: #fff;
+  border-right: 1px solid #e6e6e6;
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* 👈 cambia center por flex-end */
+  padding: 25px 10px;
+}
+
+.menu {
+  list-style: none;
+  padding: 0;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start; /* 👈 alinea toda la lista a la derecha */
+}
+
+
+.share-button {
+  display: block;
+  width: 100%;         /* ocupa el 90% del ancho del texto, pero no toda la pantalla */
+  max-width: 1500px;   /* evita que sea demasiado grande en pantallas amplias */
+  margin: 20px auto;  /* centra el botón horizontalmente */
+  padding: 15px;
+  font-size: 16px;
+  background-color: #4b7bec;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.share-button:hover {
+  background-color: #3867d6;
+}
+
+
+
+
+
+
+
+.sidebar-logo {
+  width: 100px;
+  margin-bottom: 25px;
+}
+
+.menu {
+  list-style: none;
+  padding: 0;
+  width: 100%;
+}
+
+.menu li {
+  text-align: center;
+  padding: 10px 0;
+  cursor: pointer;
+  color: #555;
+  border-radius: 8px;
+  transition: all 0.2s;
+}
+
+.menu li:hover,
+.menu li.active {
+  background-color: #f0f2ff;
+  color: #4c5eff;
+}
+
+/* 🧩 Sección principal */
+.section-title {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #4c5eff;
+  text-align: center;
+  padding-bottom: 10px;          /* espacio entre texto y línea */
+  border-bottom: 2px solid #4c5eff; /* línea */
+  margin-right: 220px;           /* espacio entre la línea y la imagen */
+}
+
+
+
+.main-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 🔝 Barra superior */
+.top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #fff;
+  border-bottom: 1px solid #e6e6e6;
+  padding: 10px 30px;
+  height: 65px;
+}
+
+/* 🔍 Barra de búsqueda */
+.search-bar {
+  width: 300px;
+}
+
+.search-bar input {
+  width: 100%;
+  padding: 8px 14px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  outline: none;
+  font-size: 0.9rem;
+}
+
+.search-bar input::placeholder {
+  color: #888;
+}
+
+/* 🔘 Botones */
+.top-buttons {
+  display: flex;
+  gap: 12px;
+}
+
+.top-buttons button {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: 0.2s;
+}
+
+/* Botón azul */
+.btn-crypto,
+.share-button {
+  background-color: #4c5eff;
+  color: white;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: 0.2s;
+}
+
+.btn-crypto:hover,
+.share-button:hover {
+  background-color: #3a48d8;
+}
+
+
+/* Botón usuario */
+.btn-user {
+  background-color: #f0f2ff;
+  color: #4c5eff;
+}
+
+.btn-user:hover {
+  background-color: #e4e7ff;
+}
+
+/* 📄 Contenido principal */
+.content {
+  flex: 1;
+  padding: 30px;
+  overflow-y: auto;
+}
+
+
+/* 🖼️ Imagen del lado derecho */
+.side-image {
+  width: 160px;
+  height: auto;
+  object-fit: cover;
+  float: right; /* 🔹 Esto la lleva al lado derecho del contenido */
+  margin: 10px 0 20px 30px; /* espacio arriba, derecha, abajo, izquierda */
+  border-radius: 12px;
+  padding: 1%;
+  color: #fff;
+}
+
+
+.main-section{
+  background-color: #f8f9ff;
+  padding: 2px;
+  border-radius: 2px;}
