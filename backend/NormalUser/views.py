@@ -75,8 +75,8 @@ def register(request):
         user.save()
         
         # Send pending approval email
-        subject, message = pendingEmail(user.username)
-        send_email(user.email, subject, message)
+        subject, html, text = pendingEmail(user.username)
+        send_email(user.email, subject, text, html)
 
         # Create audit log
         AuditLog.objects.create(

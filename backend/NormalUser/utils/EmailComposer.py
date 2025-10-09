@@ -1,11 +1,13 @@
-
+from django.template.loader import render_to_string
 
 def pendingEmail(username: str):
     subject = "Your account is pending approval"
-    message = f"Hello {username},\n\nYour account is currently pending approval by an administrator. You will be notified once your account has been approved.\n\nThank you for your patience."
-    return subject, message
+    html_message = render_to_string("templates/emails/pending.html", {"username": username})
+    text_content = render_to_string("templates/emails/pending.txt", {"username": username})
+    return subject, html_message, text_content
 
 def approvedEmail(username: str):
     subject = "Your account has been approved"
-    message = f"Hello {username},\n\nCongratulations! Your account has been approved by an administrator. You can now log in and start using our services.\n\nThank you for joining us!"
-    return subject, message
+    html_message = render_to_string("templates/emails/approved.html", {"username": username})
+    text_content = render_to_string("templates/emails/approved.txt", {"username": username})
+    return subject, html_message, text_content
