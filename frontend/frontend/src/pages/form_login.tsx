@@ -1,6 +1,9 @@
 import { useState } from "react";
 import type { FormEvent } from "react";
+import { Link } from "react-router-dom";
+import "../styles/form_login.css";
 
+import Logo from "../assets/FIcon.png";
 
 function LoginForm() {
   const [email, setEmail] = useState<string>("");
@@ -13,29 +16,36 @@ function LoginForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <label>
-        Correo:
-        <input
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
-      </label>
-      <br />
-      <label>
-        Contraseña:
-        <input
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
-      </label>
-      <br />
-      <button type="submit">Entrar</button>
-    </form>
+    <section className="login-section">
+      <title>Hapi | App</title>
+      <div className="login-container">
+        <img src={Logo} alt="Logo" className="login-logo" />
+
+        <div className="login-box">
+          <h2>¡Hola de nuevo!</h2>
+          <form onSubmit={handleSubmit} className="login-form">
+            <input placeholder="Email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+            <input placeholder="Contraseña"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+
+            <Link to="/invite">
+              <button type="button" className="login-button">Ingresar</button>
+            </Link>
+          </form>
+
+          <button className="register-btn">Registrarte</button>
+        </div>
+      </div>
+    </section>
   );
 }
 

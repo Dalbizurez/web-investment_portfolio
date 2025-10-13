@@ -59,7 +59,6 @@ const CarouselSection: React.FC = () => {
   return (
     <section className="carousel-section">
       <div className="carousel-content">
-        {/* LADO IZQUIERDO */}
         <div className="carousel-left">
           <h2>{currentItem.title}</h2>
           <p>{currentItem.description}</p>
@@ -68,13 +67,11 @@ const CarouselSection: React.FC = () => {
           </a>
         </div>
 
-        {/* LADO DERECHO */}
         <div className="carousel-right">
           <img src={currentItem.image} alt="Carousel visual" />
         </div>
       </div>
 
-      {/* INDICADORES */}
       <div className="carousel-indicators">
         {carouselItems.map((_, index) => (
           <span

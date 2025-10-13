@@ -5,6 +5,7 @@ import ThirdSection from "../components/hp_third_section";
 import FourthSection from "../components/hp_fourth_section";
 import FifthSection from "../components/hp_fifth_section";
 import CarouselSection from "../components/hp_sixth_section";
+import SeventhSection from "../components/hp_seventh_section";
 
 function HomePage() {
   return (
@@ -16,6 +17,7 @@ function HomePage() {
       <FourthSection />
       <FifthSection />
       <CarouselSection />
+      <SeventhSection />
     </>
   );
 }
