@@ -4,16 +4,28 @@ from django.utils import timezone
 
 
 class User(models.Model):
-
+    USER_TYPES = [
+        ("standard", "Standard"),
+        ("admin", "Admin"),
+        ("vip", "VIP"),
+    ]
+    
+    STATUS_TYPES = [
+        ("pending", "Pending Approval"),
+        ("active", "Active"),
+        ("suspended", "Suspended"),
+    ]
+    
     username = models.CharField(max_length=100, unique=True)
     email = models.EmailField(unique=True)
     password = models.CharField(max_length=128)
-    code = models.CharField(max_length=10, unique=True, blank=True, null=True)
+    type = models.CharField(max_length=50, choices=USER_TYPES, default="standard")
+    status = models.CharField(max_length=50, choices=STATUS_TYPES, default="pending")
+    referral_code = models.CharField(max_length=10, unique=True, blank=True, null=True)
+    referred_by = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True)
     created_at = models.DateTimeField(default=timezone.now)
     updated_at = models.DateTimeField(auto_now=True)
     last_login = models.DateTimeField(null=True, blank=True)
-    ip_address = models.GenericIPAddressField(null=True, blank=True)
-
     def __str__(self):
         return self.username
     
