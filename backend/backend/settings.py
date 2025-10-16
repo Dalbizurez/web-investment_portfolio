@@ -37,8 +37,18 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'usuarios',
+    "rest_framework",
+    'user_try',
+    'NormalUser',  
+    'Transaction',
+    'adminUser', 
+    'gift',
+    'userActiveAndDesactive',
+    'stocks',  # NUEVA APP -
 ]
+
+# FINNHUB Data API Configuration
+FINNHUB_API_KEY = 'd3ikvd9r01qmn7fki4o0d3ikvd9r01qmn7fki4og'  # FINNHUB API KEY - FREE TIER 
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -78,12 +88,35 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'mydb',
         'USER': 'root',
-        'PASSWORD': '120365',
-        'HOST': 'localhost',   # o la IP/host del servidor SQL
+        'PASSWORD': '4521',  # USA TU PASSWORD LOCAL
+        'HOST': 'localhost',   
         'PORT': '3306',
     }
 }
 
+# JWT Configuration
+JWT_SECRET = 'your-very-secure-secret-key-change-in-production-2024'
+JWT_ALGORITHM = 'HS256'
+
+# REST Framework Configuration
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'user_try.authentication.JWTAuthentication',
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',  # authenticated by default
+    ],
+}
+
+# Configure these for email (not implemented yet)
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'  # this line is for development
+EMAIL_HOST = 'smtp.example.com'
+EMAIL_PORT = None
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = ''
+EMAIL_HOST_PASSWORD = ''
+
+DEFAULT_FROM_EMAIL = 'noreply@stocktrading.com'
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
