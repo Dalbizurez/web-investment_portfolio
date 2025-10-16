@@ -5,13 +5,16 @@ from django.utils import timezone
 
 class User(models.Model):
     
-
-    STATUS_TYPES = [
-        ("pending", "Pending Approval"),
-        ("active", "Active"),
-        ("suspended", "Suspended"),
+    USER_TYPES = [
+        ("standard", "Standard"),
+        ("admin", "Admin"),
+        ("vip", "VIP"),
     ]
-    
+    STATUS_TYPES = [
+            ("pending", "Pending Approval"),
+            ("active", "Active"),
+            ("suspended", "Suspended"),
+        ]
 
     username = models.CharField(max_length=100, unique=True)
     email = models.EmailField(unique=True)
