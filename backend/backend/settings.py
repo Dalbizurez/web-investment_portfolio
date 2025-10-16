@@ -50,7 +50,6 @@ INSTALLED_APPS = [
 # FINNHUB Data API Configuration
 FINNHUB_API_KEY = 'd3ikvd9r01qmn7fki4o0d3ikvd9r01qmn7fki4og'  # FINNHUB API KEY - FREE TIER 
 
-
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
