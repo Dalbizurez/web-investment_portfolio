@@ -1,31 +1,51 @@
 import { useState } from "react";
-import { login } from "../api/auth";
-import "../styles/LoginPage.css";
+import type { FormEvent } from "react";
+import { Link } from "react-router-dom";
+import "../styles/form_login.css";
 
+import Logo from "../assets/FIcon.png";
 
 function LoginForm() {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
-    try {
-      const tokens = await login(username, password);
-      localStorage.setItem("access", tokens.access);
-      localStorage.setItem("refresh", tokens.refresh);
-      console.log("Inicio de sesión exitoso");
-    } catch (err) {
-      console.error(err);
-      alert("Usuario o contraseña incorrectos");
-    }
+    console.log("Correo:", email);
+    console.log("Contraseña:", password);
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <input value={username} onChange={(e) => setUsername(e.target.value)} placeholder="Usuario" />
-      <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Contraseña" />
-      <button type="submit">Iniciar sesión</button>
-    </form>
+    <section className="login-section">
+      <title>Hapi | App</title>
+      <div className="login-container">
+        <img src={Logo} alt="Logo" className="login-logo" />
+
+        <div className="login-box">
+          <h2>¡Hola de nuevo!</h2>
+          <form onSubmit={handleSubmit} className="login-form">
+            <input placeholder="Email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+            <input placeholder="Contraseña"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+
+            <Link to="/invite">
+              <button type="button" className="login-button">Ingresar</button>
+            </Link>
+          </form>
+
+          <button className="register-btn">Registrarte</button>
+        </div>
+      </div>
+    </section>
   );
 }
 

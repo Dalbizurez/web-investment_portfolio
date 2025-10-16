@@ -1,0 +1,91 @@
+.download-section {
+  width: 100%;
+  padding: 4rem 5%;
+  background: linear-gradient(to right, #27A0BE, #202562);
+  box-sizing: border-box;
+}
+
+
+.download-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 2rem;
+  max-width: 1000px;
+  margin: 0 auto;
+  background: linear-gradient(to bottom, #5D7DE0, #283191);
+  border-radius: 20px;
+  border: solid #00E0FF 1px;
+}
+
+.download-left {
+  flex: 1 1 400px;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  color: #fff;
+  text-align: left;
+  font-family: "Roboto", sans-serif;
+  align-items: center;
+}
+
+.download-left h2 {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+}
+
+.download-buttons {
+  display: flex;
+  gap: 1rem;
+}
+
+.download-buttons img {
+  width: 150px;
+  height: auto;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.download-buttons img:hover {
+  transform: scale(1.05);
+}
+
+.download-right {
+  flex: 1 1 400px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.download-right img {
+  width: 100%;
+  max-width: 400px;
+  height: auto;
+  object-fit: contain;
+  transition: all 0.3s;
+}
+
+/* --- RESPONSIVE --- */
+@media (max-width: 1024px) {
+  .download-container {
+    flex-direction: column;
+    text-align: center;
+    gap: 1rem;
+  }
+
+  .download-left,
+  .download-right {
+    align-items: center;
+  }
+}
+
+@media (max-width: 600px) {
+  .download-left h2 {
+    font-size: 2rem;
+  }
+
+  .download-buttons img {
+    width: 120px;
+  }
+}

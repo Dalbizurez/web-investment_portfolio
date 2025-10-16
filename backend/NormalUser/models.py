@@ -51,7 +51,6 @@ class UserSession(models.Model):
 
 
 class AuditLog(models.Model):
-
     user = models.ForeignKey(NormalUser, on_delete=models.CASCADE, null=True, blank=True)
     ip_address = models.GenericIPAddressField()
     user_agent = models.TextField()

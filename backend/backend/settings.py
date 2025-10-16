@@ -52,8 +52,6 @@ FINNHUB_API_KEY = 'd3ikvd9r01qmn7fki4o0d3ikvd9r01qmn7fki4og'  # FINNHUB API KEY 
 
 
 MIDDLEWARE = [
-    'corsheaders.middleware.CorsMiddleware',  # debe ir arriba
-    'django.middleware.common.CommonMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
