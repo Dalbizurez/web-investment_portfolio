@@ -39,22 +39,17 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     "rest_framework",
     'user_try',
-    "NormalUser",
-    "adminUser",
-    "Transaction",
-    "userActiveAndDesactive",
-    "gift",
-    'corsheaders',
-
-
-    #agregar mas modudlos despues de aqui 
-       
+    'NormalUser',  
+    'Transaction',
+    'adminUser', 
+    'gift',
+    'userActiveAndDesactive',
+    'stocks',  # NUEVA APP -
 ]
 
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173",
-    "http://127.0.0.1:5173",
-]
+# FINNHUB Data API Configuration
+FINNHUB_API_KEY = 'd3ikvd9r01qmn7fki4o0d3ikvd9r01qmn7fki4og'  # FINNHUB API KEY - FREE TIER 
+
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',  # debe ir arriba
@@ -96,9 +91,9 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'mydb',
         'USER': 'root',
-        'PASSWORD': '120365', # CHANGE THIS TO THE PASSWORD OF YOUR MYSQL USER
+        'PASSWORD': '4521',  # USA TU PASSWORD LOCAL
         'HOST': 'localhost',   
-        'PORT': '3306', # THIS IS THE DEFAULT MYSQL PORT, CHANGE IF NEEDED
+        'PORT': '3306',
     }
 }
 
@@ -117,7 +112,13 @@ REST_FRAMEWORK = {
 }
 
 # Configure these for email (not implemented yet)
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'  # this line is for development
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'  # this line is for development
+EMAIL_HOST = 'smtp.example.com'
+EMAIL_PORT = None
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = ''
+EMAIL_HOST_PASSWORD = ''
+
 DEFAULT_FROM_EMAIL = 'noreply@stocktrading.com'
 
 # Password validation
