@@ -1,16 +1,16 @@
 import { Routes, Route } from "react-router-dom";
 import HomePage from "./pages/home_page";
 import LoginForm from "./pages/form_login";
-import HomeUser from "./pages/home_user";
+import InvitePage from "./pages/invitePage";
 
 function App() {
-   return (
+  return (
     <Routes>
       <Route path="/" element={<HomePage />} />
       <Route path="/signin" element={<LoginForm />} />
-      <Route path="homeUser" element={<HomeUser/>} />
+      <Route path="/invite" element={<InvitePage />} />
     </Routes>
   );
 }
 
-export default App
+export default App;
