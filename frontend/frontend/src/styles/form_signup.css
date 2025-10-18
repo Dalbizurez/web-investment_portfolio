@@ -1,0 +1,102 @@
+@import url('https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
+
+.signup-section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background: linear-gradient(to bottom right, #3EDBEF, #6873EF 40%, #ffffff 100%);
+  font-family: "Roboto", sans-serif;
+}
+
+.signup-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+  width: 90%;
+  max-width: 600px;
+  text-align: center;
+}
+
+.signup-logo {
+    margin-top: -5rem;
+    width: 80px;
+    height: auto;
+}
+
+.signup-box {
+  background-color: #FFF;
+  padding: 2rem;
+  border-radius: 12px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.signup-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.signup-form input {
+  padding: 0.75rem 1rem;
+  border: none;
+  border-radius: 8px;
+  margin-top: 0.5rem;
+  outline: none;
+  border: solid #6873ef3a 0.2px;
+}
+
+.signup-form input:focus{
+    border: solid #6873EF 0.2px;
+}
+
+.signup-button {
+  padding: 0.8rem;
+  border: none;
+  border-radius: 8px;
+  background-color: #6873EF;
+  color: #FFF;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.signup-button:hover {
+  background-color: #4C58ED;
+}
+
+.signup-link {
+  margin-top: 1rem;
+  font-size: 0.9rem;
+}
+.signup-link a {
+  color: #6873EF;
+  text-decoration: none;
+  font-weight: bold;
+}   
+
+.signup-link a:hover {
+  text-decoration: underline;
+}
+
+#confirm.error {
+  border: solid red 0.2px;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .signup-box {
+    padding: 1.5rem;
+  }
+    .signup-form input {
+        font-size: 0.9rem;
+    }
+    .signup-button {
+        font-size: 0.9rem;
+    }
+}

@@ -42,7 +42,9 @@ function LoginForm() {
             </Link>
           </form>
 
-          <button className="register-btn">Registrarte</button>
+          <Link to="/get-started" className="register-link">
+            <button className="register-btn">Registrarte</button>
+          </Link>
         </div>
       </div>
     </section>
