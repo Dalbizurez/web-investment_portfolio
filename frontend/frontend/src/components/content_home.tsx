@@ -76,9 +76,6 @@ export default function ContentHome() {
 					</div>
 
 				</section>
-				<section className="section-4">
-					<h1>resto de categorias</h1>		
-				</section>
 			</div>
 		</div>
 	)
