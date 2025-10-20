@@ -3,6 +3,8 @@
   font: 'Noto sans';
   display: flex;
   overflow-y: auto;
+  width: 100vw;
+  height: 100vh;
 }
 
 .search-header{
@@ -119,11 +121,10 @@
 }
 
 .sections {
-  width: 58%;
+  width: 68vw;
   background-color: #FFFFFF;
   border: 1px solid #DDE2F6;
   border-radius: 8px;
-  /* quita overflow */
   overflow: visible;
   display: flex;
   flex-direction: column; 
