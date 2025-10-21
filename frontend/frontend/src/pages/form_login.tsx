@@ -37,7 +37,7 @@ function LoginForm() {
               required
             />
 
-            <Link to="/invite">
+            <Link to="/portafolio">
               <button type="button" className="login-button">Ingresar</button>
             </Link>
           </form>

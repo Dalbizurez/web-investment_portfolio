@@ -15,7 +15,7 @@ function App() {
       <Route path="/invite" element={<InvitePage />} />
       <Route path="/get-started" element={<SignupForm />} />
       <Route path="/homeUser" element={<HomeUser />} />
-      <Route path="/portafolio/" element={<Portafolio/>} />
+      <Route path="/portafolio/" element={<Portafolio />} />
       <Route path="/transfers" element={<TransferPage />} />
     </Routes>
   );

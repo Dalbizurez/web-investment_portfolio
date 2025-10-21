@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 
 function SideBar() {
 	return (
@@ -5,10 +6,19 @@ function SideBar() {
 			<img src="/src/assets/icon.png" alt="" className="main-icon" />
 			<ul>
 				<li>Home</li>
-				<li>Transfer</li>
+				<li>
+					<Link to="/transfers">
+						Transfers
+					</Link>
+				</li>
 				<li>Search</li>
 				<li>Invite</li>
-				<li>Portafolio</li>
+
+				<li>
+					<Link to="/portafolio">
+						Portafolio
+					</Link>
+				</li>
 				<li>More</li>
 			</ul>
 		</div>

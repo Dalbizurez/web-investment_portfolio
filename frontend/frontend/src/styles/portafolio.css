@@ -32,7 +32,8 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 30px; /* espacio entre los textos */
+  gap: 30px;
+  /* espacio entre los textos */
   margin-bottom: 20px;
   cursor: pointer;
 }
@@ -52,7 +53,8 @@
 .type p.active {
   color: #000;
   font-weight: 600;
-  border-bottom: 2px solid #000; /* subrayado cuando está activo */
+  border-bottom: 2px solid #000;
+  /* subrayado cuando está activo */
 }
 
 /* === CONTENIDO QUE CAMBIA SEGÚN LA TAB === */
@@ -130,4 +132,25 @@
 
 .content-home::-webkit-scrollbar-thumb:hover {
   background-color: #999;
+}
+
+/* ... tus otros estilos ... */
+
+.back-button {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  background: none;
+  border: none;
+  color: #4f46e5;
+  /* Color índigo de tus íconos */
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin-bottom: 1.5rem;
+  padding: 0;
+}
+
+.back-button:hover {
+  text-decoration: underline;
 }
