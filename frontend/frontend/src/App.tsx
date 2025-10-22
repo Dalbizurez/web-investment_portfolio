@@ -8,7 +8,6 @@ import Portafolio from "./pages/portafolio";
 import TransferPage from "./pages/transfers";
 
 function App() {
-  const to_admin = window.location.href = "http://localhost:8000/admin/";
   return (
     <Routes>
       <Route path="/" element={<HomePage />} />
@@ -18,7 +17,6 @@ function App() {
       <Route path="/homeUser" element={<HomeUser />} />
       <Route path="/portafolio/" element={<Portafolio />} />
       <Route path="/transfers" element={<TransferPage />} />
-      <Route path="/admin" element={<Navigate to={to_admin} replace />} />
 
     </Routes>
   );
