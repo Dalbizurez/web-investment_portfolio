@@ -1,3 +1,4 @@
+# stocks/views.py - MODIFY existing file
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, AllowAny
@@ -5,6 +6,7 @@ from rest_framework.response import Response
 from stocks.services.finnhub_service import FinnhubService
 from stocks.models import UserPortfolio
 
+# PUBLIC ENDPOINTS - No authentication required
 @api_view(['GET'])
 @permission_classes([AllowAny])
 def search_stocks(request):
@@ -56,7 +58,7 @@ def get_stock_detail(request, symbol):
 @permission_classes([AllowAny])
 def get_stock_history(request, symbol):
     """Get historical stock data (public endpoint)"""
-    resolution = request.GET.get('resolution', 'D')  # D, W, M, 1, 5, 15, 30, 60
+    resolution = request.GET.get('resolution', 'D')
     count = int(request.GET.get('count', 30))
     
     service = FinnhubService()
@@ -80,9 +82,10 @@ def get_market_news(request):
     
     return Response({
         'category': category,
-        'news': news[:20]  # Limit to 20 news items
+        'news': news[:20]
     })
 
+# PROTECTED ENDPOINTS - Require Auth0 authentication
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_user_portfolio(request):
