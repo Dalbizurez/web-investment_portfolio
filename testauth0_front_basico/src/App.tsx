@@ -71,7 +71,7 @@ function TestAuth() {
     try {
       setError('');
       setProtectedApiResponse(null);
-      
+      console.log("hola")
       console.log('🔒 Probando endpoint protegido con token...');
       const response = await axios.get(`${API_URL}/stocks/balance/`, {
         headers: {
