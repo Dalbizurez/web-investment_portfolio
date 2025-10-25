@@ -8,6 +8,9 @@ from django.utils import timezone
 from .serializers import UserSerializer, AuditLogSerializer
 from .models import User, AuditLog
 
+
+
+
 def get_client_ip(request):
     """Get client IP address"""
     x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
@@ -20,7 +23,7 @@ def get_client_ip(request):
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def profile(request):
-    """Get current user profile"""
+    " ""Get current user profile"""
     return Response(UserSerializer(request.user).data)
 
 @api_view(["GET"])
@@ -93,5 +96,65 @@ def list_pending_users(request):
         'pending_users': serializer.data,
         'count': pending_users.count()
     })
+
+
+
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
+def change_password(request):
+    """Change password for users with local passwords"""
+    user = request.user
+    old_password = request.data.get("old_password")
+    new_password = request.data.get("new_password")
+
+    if not user.password:
+        return Response({"error": "Password change not allowed for Auth0 users"}, status=400)
+
+    if not user.check_password(old_password):
+        return Response({"error": "Old password is incorrect"}, status=400)
+
+    user.set_password(new_password)
+
+    # Optional: log audit
+    AuditLog.objects.create(
+        user=user,
+        action='password_change',
+        ip_address=get_client_ip(request),
+        user_agent=request.META.get('HTTP_USER_AGENT', ''),
+        details={}
+    )
+
+    return Response({"message": "Password changed successfully"})
+
+@api_view(["GET", "POST"])
+@permission_classes([IsAuthenticated])
+def update_profile(request):
+    """Get or update user profile, including language preference"""
+    user = request.user
+
+    if request.method == "GET":
+        return Response(UserSerializer(user).data)
+
+    # POST → actualizar perfil
+    username = request.data.get("username", user.username)
+    email = request.data.get("email", user.email)
+    language = request.data.get("language", user.language)
+
+    user.username = username
+    user.email = email
+    user.language = language
+    user.save()
+
+    # Log de auditoría
+    AuditLog.objects.create(
+        user=user,
+        action="update_profile",
+        ip_address=request.META.get("REMOTE_ADDR"),
+        user_agent=request.META.get("HTTP_USER_AGENT", ""),
+        details={"updated_fields": ["username", "email", "language"]}
+    )
+
+    return Response(UserSerializer(user).data)
+
 
 # Remove register, login, logout views since Auth0 handles them

@@ -7,7 +7,7 @@ import string
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ["id", "username", "email", "type", "status", "referral_code", "created_at", "auth0_id"]
+        fields = ["id", "username", "email", "type", "status", "referral_code", "created_at", "auth0_id", "language",]
         extra_kwargs = {
             "password": {"write_only": True, "required": False},  # Make password optional
             "referral_code": {"read_only": True},

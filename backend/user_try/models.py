@@ -15,6 +15,9 @@ class User(models.Model):
         ("suspended", "Suspended"),
     ]
 
+
+
+
     username = models.CharField(max_length=100, unique=True)
     email = models.EmailField(unique=True)
     password = models.CharField(max_length=128, blank=True, null=True)  # Make optional
@@ -27,6 +30,10 @@ class User(models.Model):
     last_login = models.DateTimeField(null=True, blank=True)
     ip_address = models.GenericIPAddressField(null=True, blank=True)
     auth0_id = models.CharField(max_length=100, unique=True, null=True, blank=True)  # NEW: Auth0 identifier
+
+            # user_try/models.py 
+
+    language = models.CharField(max_length=10, default="en")  # 'en', 'es', etc.
     
     def __str__(self):
         return self.username
