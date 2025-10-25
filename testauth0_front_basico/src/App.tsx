@@ -9,7 +9,7 @@ const auth0Config = {
   clientId: 'A343FOgq0hloSROFvzxoXvN2JDMqaTa2',
   authorizationParams: {
     redirect_uri: window.location.origin,
-    audience: 'https://dev-4qv4bs5w32upxtt5.us.auth0.com/api/v2/',
+    audience: 'https://web-investment-portfolio-api.com',
     scope: 'openid profile email'
   }
 };

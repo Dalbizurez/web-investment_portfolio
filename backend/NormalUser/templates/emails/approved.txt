@@ -1,4 +1,0 @@
-Welcome {{ username }}!
-
-Congratulations! Your account has been approved by an administrator. You can now log in and start using our services.
-Thank you for joining us!
