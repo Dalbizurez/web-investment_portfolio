@@ -4,18 +4,26 @@ from django.contrib.auth.hashers import make_password
 import secrets
 import string
 
-
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ["id", "username", "email", "password", "type", "status", "referral_code", "created_at"]
+        fields = ["id", "username", "email", "type", "status", "referral_code", "created_at", "auth0_id"]
         extra_kwargs = {
-            "password": {"write_only": True},
+            "password": {"write_only": True, "required": False},  # Make password optional
             "referral_code": {"read_only": True},
             "status": {"read_only": True},
+            "auth0_id": {"read_only": True},  # Auth0 ID is auto-generated
         }
 
     def create(self, validated_data):
+        # For Auth0 users, password might not be provided
+        if 'password' in validated_data:
+            validated_data["password"] = make_password(validated_data["password"])
+        else:
+            # Generate a random password for Auth0 users
+            random_password = ''.join(secrets.choice(string.ascii_letters + string.digits) for _ in range(20))
+            validated_data["password"] = make_password(random_password)
+        
         # Generate referral code
         referral_code = ''.join(secrets.choice(string.ascii_uppercase + string.digits) for _ in range(8))
         
@@ -29,7 +37,6 @@ class UserSerializer(serializers.ModelSerializer):
             except User.DoesNotExist:
                 pass
         
-        validated_data["password"] = make_password(validated_data["password"])
         user = User.objects.create(
             **validated_data,
             referral_code=referral_code,
@@ -38,10 +45,8 @@ class UserSerializer(serializers.ModelSerializer):
         
         return user
 
-
-class LoginSerializer(serializers.Serializer):
-    username = serializers.CharField()
-    password = serializers.CharField(write_only=True)
+# Remove LoginSerializer since we're using Auth0
+# Keep UserSessionSerializer and AuditLogSerializer unchanged
 
 
 class UserSessionSerializer(serializers.ModelSerializer):
@@ -56,3 +61,11 @@ class AuditLogSerializer(serializers.ModelSerializer):
     class Meta:
         model = AuditLog
         fields = ["id", "username", "action", "ip_address", "timestamp", "details"]
+
+class Auth0CallbackSerializer(serializers.Serializer):
+    """
+    Serializer for Auth0 callback - if needed for additional user data
+    """
+    auth0_id = serializers.CharField()
+    email = serializers.EmailField()
+    name = serializers.CharField(required=False)        

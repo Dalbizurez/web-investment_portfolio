@@ -1,37 +1,40 @@
+# user_try/models.py - MODIFY the User model
 from django.db import models
 from django.contrib.auth.hashers import check_password, make_password
 from django.utils import timezone
 
-
 class User(models.Model):
-    
     USER_TYPES = [
         ("standard", "Standard"),
         ("admin", "Admin"),
         ("vip", "VIP"),
     ]
     STATUS_TYPES = [
-            ("pending", "Pending Approval"),
-            ("active", "Active"),
-            ("suspended", "Suspended"),
-        ]
+        ("pending", "Pending Approval"),
+        ("active", "Active"),
+        ("suspended", "Suspended"),
+    ]
 
     username = models.CharField(max_length=100, unique=True)
     email = models.EmailField(unique=True)
-    password = models.CharField(max_length=128)
+    password = models.CharField(max_length=128, blank=True, null=True)  # Make optional
     type = models.CharField(max_length=50, choices=USER_TYPES, default="standard")
-    status = models.CharField(max_length=50, choices=STATUS_TYPES, default="pending")
+    status = models.CharField(max_length=50, choices=STATUS_TYPES, default="active")  # Default to active for Auth0 users
     referral_code = models.CharField(max_length=10, unique=True, blank=True, null=True)
     referred_by = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True)
     created_at = models.DateTimeField(default=timezone.now)
     updated_at = models.DateTimeField(auto_now=True)
     last_login = models.DateTimeField(null=True, blank=True)
     ip_address = models.GenericIPAddressField(null=True, blank=True)
+    auth0_id = models.CharField(max_length=100, unique=True, null=True, blank=True)  # NEW: Auth0 identifier
     
     def __str__(self):
         return self.username
     
     def check_password(self, raw_password):
+        # For Auth0 users, password might be null
+        if not self.password:
+            return False
         return check_password(raw_password, self.password)
     
     def set_password(self, raw_password):
@@ -40,14 +43,13 @@ class User(models.Model):
 
     @property
     def is_authenticated(self):
-        # always true for verified users
         return True
 
     @property
     def is_anonymous(self):
-        # always false for authenticated users
         return False
 
+# Keep your other models (UserSession, AuditLog) unchanged
 
 class UserSession(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)

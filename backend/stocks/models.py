@@ -71,25 +71,7 @@ class Transaction(models.Model):
 class UserBalance(models.Model):
     user = models.OneToOneField(UserModel, on_delete=models.CASCADE)
     balance = models.DecimalField(max_digits=12, decimal_places=2, default=0)
-    last_updated = models.DateTimeField(auto_now=True)  # ← CORREGIDO: models.DateTimeField
+    last_updated = models.DateTimeField(auto_now=True)
     
     def __str__(self):
         return f"{self.user.username} - ${self.balance}"
-
-class UserProfile(models.Model):
-    USER_STATUS = [
-        ('PENDING', 'Pending Approval'),
-        ('ACTIVE', 'Active'),
-        ('SUSPENDED', 'Suspended'),
-    ]
-    
-    user = models.OneToOneField(UserModel, on_delete=models.CASCADE)
-    status = models.CharField(max_length=20, choices=USER_STATUS, default='PENDING')
-    phone = models.CharField(max_length=20, blank=True, null=True)
-    address = models.TextField(blank=True, null=True)
-    date_of_birth = models.DateField(null=True, blank=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-    
-    def __str__(self):
-        return f"{self.user.username} - {self.status}"

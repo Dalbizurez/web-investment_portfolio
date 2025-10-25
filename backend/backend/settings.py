@@ -60,7 +60,6 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'corsheaders.middleware.CorsMiddleware',
-
 ]
 
 ROOT_URLCONF = 'backend.urls'
@@ -91,7 +90,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'mydb',
         'USER': 'root',
-        'PASSWORD': '120365',  # USA TU PASSWORD LOCAL
+        'PASSWORD': 'JmF120365+',  # USA TU PASSWORD LOCAL
         'HOST': 'localhost',   
         'PORT': '3306',
     }
@@ -110,6 +109,28 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticated',  # authenticated by default
     ],
 }
+
+# Auth0 Configuration
+AUTH0_CONFIG = {
+    'DOMAIN': 'dev-4qv4bs5w32upxtt5.us.auth0.com',  # Replace with your Auth0 domain
+    'CLIENT_ID': 'A343FOgq0hloSROFvzxoXvN2JDMqaTa2',      # Replace with your Auth0 client ID
+    'CLIENT_SECRET': '9Bu7e_4RCpoqpsnz-6PgRVBPPDOV-kvkQjPodlxA4uRfkBwbBBKW1cOHYQqZTcMj', # Replace with your Auth0 client secret
+    'API_AUDIENCE': 'https://dev-4qv4bs5w32upxtt5.us.auth0.com/api/v2/',   # Optional: Your API audience
+    'ALGORITHMS': ['RS256'],
+}
+
+# Django REST Framework Configuration - REPLACE existing
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'user_try.auth.Auth0Authentication',  # Primary authentication
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
+    ],
+}
+
+# Optional: Allow public access to specific views
+# We'll handle this with @permission_classes([AllowAny]) in views
 
 # Configure these for email (not implemented yet)
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'  # this line is for development
@@ -169,3 +190,9 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173",  # Puerto de Vite
+    "http://localhost:3000",
+]
+CORS_ALLOW_CREDENTIALS = True

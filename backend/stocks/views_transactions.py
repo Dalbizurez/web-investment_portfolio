@@ -10,10 +10,19 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+def get_client_ip(request):
+    """Get client IP address for no-repudiation"""
+    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+    if x_forwarded_for:
+        ip = x_forwarded_for.split(',')[0]
+    else:
+        ip = request.META.get('REMOTE_ADDR')
+    return ip
+
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def buy_stock(request):
-    """Buy stock shares - WITH ENHANCED VALIDATION"""
+    """Buy stock shares - Uses Auth0 authentication"""
     try:
         symbol = request.data.get('symbol', '').upper().strip()
         quantity = int(request.data.get('quantity', 0))
@@ -140,7 +149,7 @@ def buy_stock(request):
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def sell_stock(request):
-    """Sell stock shares - WITH BETTER VALIDATION"""
+    """Sell stock shares - Uses Auth0 authentication"""
     try:
         symbol = request.data.get('symbol', '').upper().strip()
         quantity = int(request.data.get('quantity', 0))
@@ -214,7 +223,7 @@ def sell_stock(request):
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def deposit_money(request):
-    """Simulate bank deposit"""
+    """Simulate bank deposit - Uses Auth0 authentication"""
     try:
         amount = Decimal(str(request.data.get('amount', 0)))
         transfer_reference = request.data.get('transfer_reference', '')
@@ -261,7 +270,7 @@ def deposit_money(request):
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def withdraw_money(request):
-    """Simulate bank withdrawal"""
+    """Simulate bank withdrawal - Uses Auth0 authentication"""
     try:
         amount = Decimal(str(request.data.get('amount', 0)))
         transfer_reference = request.data.get('transfer_reference', '')
@@ -314,7 +323,7 @@ def withdraw_money(request):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_transaction_history(request):
-    """Get user's transaction history"""
+    """Get user's transaction history - Uses Auth0 authentication"""
     transactions = Transaction.objects.filter(user=request.user).select_related('stock')
     
     transaction_data = []
@@ -336,7 +345,7 @@ def get_transaction_history(request):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_user_balance(request):
-    """Get user's current balance"""
+    """Get user's current balance - Uses Auth0 authentication"""
     user_balance, created = UserBalance.objects.get_or_create(
         user=request.user, 
         defaults={'balance': Decimal('0')}
@@ -346,12 +355,3 @@ def get_user_balance(request):
         'balance': float(user_balance.balance),
         'last_updated': user_balance.last_updated
     })
-
-def get_client_ip(request):
-    """Get client IP address for no-repudiation"""
-    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
-    if x_forwarded_for:
-        ip = x_forwarded_for.split(',')[0]
-    else:
-        ip = request.META.get('REMOTE_ADDR')
-    return ip
