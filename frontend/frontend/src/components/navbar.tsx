@@ -40,6 +40,8 @@ function Navbar() {
           <a href="#blog">Blog</a>
           <Link to="/signin" className="link-signin">Sign In</Link>
           <a href="/get-started" className="link-getstarted">Create Account</a>
+          <Link to="/search">Buscar Acciones</Link>
+
         </div>
       )}
     </nav>
