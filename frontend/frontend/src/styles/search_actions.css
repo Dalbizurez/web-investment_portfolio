@@ -1,0 +1,104 @@
+/* Contenedor general del buscador */
+.search-actions {
+  width: 100%;
+  max-width: 900px;
+  margin: 2rem auto;
+  padding: 1.5rem;
+  background-color: #f5f7fa;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  font-family: "Roboto", sans-serif;
+}
+
+/* Filtros + input */
+.search-actions .filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Input de búsqueda */
+.search-actions input[type="text"] {
+  flex: 1;
+  min-width: 200px;
+  padding: 0.75rem 1rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: border-color 0.2s;
+}
+
+.search-actions input[type="text"]:focus {
+  border-color: #4c58ed;
+  outline: none;
+}
+
+/* Select de categorías y filtro extra */
+.search-actions select {
+  padding: 0.65rem 1rem;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+  transition: border-color 0.2s;
+}
+
+.search-actions select:focus {
+  border-color: #4c58ed;
+  outline: none;
+}
+
+/* Contenedor de resultados */
+.search-actions .results {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 1rem;
+}
+
+/* Tarjeta individual */
+.search-actions .result-item {
+  background-color: #fff;
+  border-radius: 10px;
+  padding: 1rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.search-actions .result-item:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+}
+
+.search-actions .result-item h4 {
+  margin: 0 0 0.25rem 0;
+  font-size: 1rem;
+  color: #333;
+}
+
+.search-actions .result-item small {
+  color: #777;
+  font-size: 0.85rem;
+}
+
+.search-actions .result-item p {
+  font-weight: bold;
+  margin-top: 0.5rem;
+  color: #4c58ed;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .search-actions .filters {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .search-actions input[type="text"],
+  .search-actions select {
+    width: 100%;
+  }
+}
