@@ -15,15 +15,35 @@ def search_stocks(request):
     
     if not query:
         return Response({'error': 'Query parameter "q" is required'}, 
-                       status=status.HTTP_400_BAD_REQUEST)
+                        status=status.HTTP_400_BAD_REQUEST)
     
     service = FinnhubService()
     results = service.search_stocks(query)
-    
+
+    # Mapear resultados para incluir precio
+    mapped_results = []
+    for item in results:
+        symbol = item.get('symbol')
+        description = item.get('description', '')
+        exchange = item.get('exchange', '')
+        type_ = item.get('type', '')
+        
+        # Obtener precio actual de la acción
+        quote_data = service.get_stock_quote(symbol)
+        current_price = quote_data.get('current_price') if quote_data else None
+
+        mapped_results.append({
+            'id': symbol,                 # Usamos symbol como id
+            'name': description,          # description como name
+            'category': type_,            # type como category
+            'price': current_price or 0,  # precio actual
+            'exchange': exchange          # opcional, puedes usarlo si quieres
+        })
+
     return Response({
         'query': query,
-        'results': results,
-        'count': len(results)
+        'results': mapped_results,
+        'count': len(mapped_results)
     })
 
 @api_view(['GET'])
