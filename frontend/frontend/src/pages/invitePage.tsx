@@ -1,19 +1,20 @@
 import React from "react";
 import Layout from "../components/Layout";
-import TopBar from "../components/inviteTopBar";
+
 import InviteSection from "../components/inviteSection";
 import InviteImage from "../components/inviteImage";
 import "../styles/styles.css";
+import SideBar from "../components/sidebar";
+import Header from "../components/header_search";
 
 const InvitePage: React.FC = () => {
   return (
     <Layout>
       <div className="page-container">
-        <div className="sidebar">
-        </div>
+        <SideBar/>
 
         <div className="main-area">
-          <TopBar />
+        <Header />
 
           <div className="invite-layout">
             <InviteSection />
