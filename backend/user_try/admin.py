@@ -4,22 +4,23 @@ from .models import User, UserSession, AuditLog
 
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):
-    list_display = ['username', 'email', 'type', 'status', 'created_at', 'last_login']
-    list_filter = ['type', 'status', 'created_at']
-    search_fields = ['username', 'email', 'auth0_id']
+    list_display = ['username', 'email', 'type', 'status', 'referral_code', 'has_used_referral', 'created_at', 'last_login']
+    list_filter = ['type', 'status', 'has_used_referral', 'created_at']
+    search_fields = ['username', 'email', 'auth0_id', 'referral_code']
     readonly_fields = ['auth0_id', 'created_at', 'updated_at', 'last_login', 'referral_code']
     
     fieldsets = (
         ('Basic Information', {
-            'fields': ('username', 'email', 'auth0_id')
+            'fields': ('username', 'email', 'auth0_id', 'language')
         }),
         ('Status and Type', {
             'fields': ('type', 'status')
         }),
-        ('Referrals', {
-            'fields': ('referral_code', 'referred_by')
+        ('Referral Information', {
+            'fields': ('referral_code', 'referred_by', 'has_used_referral'),
+            'description': 'Referral code is auto-generated. Users can only use one referral code.'
         }),
-        ('Temporary Information', {
+        ('Timestamps', {
             'fields': ('created_at', 'updated_at', 'last_login', 'ip_address')
         }),
     )
@@ -29,27 +30,27 @@ class UserAdmin(admin.ModelAdmin):
     def activate_users(self, request, queryset):
         updated = queryset.update(status='active')
         self.message_user(request, f'{updated} users activated.')
-    activate_users.short_description = "✅ Activate selected users"
+    activate_users.short_description = "Activate selected users"
     
     def suspend_users(self, request, queryset):
         updated = queryset.update(status='suspended')
         self.message_user(request, f'{updated} users suspended.')
-    suspend_users.short_description = "🚫 Suspend selected users"
+    suspend_users.short_description = "Suspend selected users"
     
     def make_admin(self, request, queryset):
         updated = queryset.update(type='admin')
         self.message_user(request, f'{updated} users changed to admin.')
-    make_admin.short_description = "👑 Make admin"
+    make_admin.short_description = "Make admin"
     
     def make_vip(self, request, queryset):
         updated = queryset.update(type='vip')
         self.message_user(request, f'{updated} users changed to VIP.')
-    make_vip.short_description = "⭐ Make VIP"
+    make_vip.short_description = "Make VIP"
     
     def make_standard(self, request, queryset):
         updated = queryset.update(type='standard')
         self.message_user(request, f'{updated} users changed to Standard.')
-    make_standard.short_description = "👤 Make Standard"
+    make_standard.short_description = "Make Standard"
 
 @admin.register(AuditLog)
 class AuditLogAdmin(admin.ModelAdmin):
