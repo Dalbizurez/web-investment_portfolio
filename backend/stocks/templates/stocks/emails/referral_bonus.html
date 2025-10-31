@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Referral Bonus Received</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            color: #333333;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        .container {
+            max-width: 600px;
+            margin: 20px auto;
+            background-color: #ffffff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: #ffffff;
+            padding: 40px 20px;
+            text-align: center;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 28px;
+            font-weight: 600;
+        }
+        .content {
+            padding: 40px 30px;
+        }
+        .content h2 {
+            color: #333333;
+            font-size: 22px;
+            margin-top: 0;
+        }
+        .bonus-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #ffffff;
+            border-radius: 8px;
+            padding: 30px;
+            margin: 25px 0;
+            text-align: center;
+        }
+        .bonus-amount {
+            font-size: 48px;
+            font-weight: bold;
+            margin: 15px 0;
+        }
+        .bonus-description {
+            font-size: 18px;
+            margin: 10px 0;
+        }
+        .referral-code-box {
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            border: 2px dashed #2196F3;
+            padding: 20px;
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            margin: 25px 0;
+            letter-spacing: 3px;
+            border-radius: 8px;
+            color: #1565c0;
+        }
+        .info-box {
+            background-color: #d1ecf1;
+            border-left: 4px solid #17a2b8;
+            padding: 20px;
+            margin: 25px 0;
+            border-radius: 4px;
+        }
+        .info-box p {
+            margin: 0;
+            color: #0c5460;
+        }
+        .footer {
+            background-color: #f8f9fa;
+            text-align: center;
+            padding: 20px;
+            color: #6c757d;
+            font-size: 14px;
+        }
+        .footer p {
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>{% if is_referrer %}Referral Bonus!{% else %}Welcome Bonus!{% endif %}</h1>
+        </div>
+        <div class="content">
+            <h2>Hello {{ username }}!</h2>
+            
+            {% if is_referrer %}
+                <p>Great news! Someone used your referral code and you've received a bonus!</p>
+            {% else %}
+                <p>Welcome! You've received a bonus for joining using a referral code!</p>
+            {% endif %}
+            
+            <div class="bonus-box">
+                <div class="bonus-description">{% if is_referrer %}Referral Bonus{% else %}Welcome Bonus{% endif %}</div>
+                <div class="bonus-amount">${{ bonus_amount|floatformat:2 }}</div>
+                <div class="bonus-description">has been credited to your account</div>
+            </div>
+            
+            {% if is_referrer %}
+                <p><strong>{{ referred_user }}</strong> used your referral code and you both received bonuses!</p>
+            {% else %}
+                <p>You used <strong>{{ referred_user }}</strong>'s referral code. Thank you for joining our platform!</p>
+            {% endif %}
+            
+            <div class="info-box">
+                <p><strong>Bonus Credited:</strong> {{ transaction_date|date:"Y-m-d H:i:s" }} UTC</p>
+            </div>
+            
+            <h3 style="text-align: center; margin-top: 30px;">Your Referral Code:</h3>
+            <div class="referral-code-box">
+                {{ referral_code }}
+            </div>
+            <p style="text-align: center; color: #666666;">Share this code with friends and earn $8 for each referral!</p>
+            
+            <p style="margin-top: 30px;">The bonus has been added to your account balance and is available for trading immediately.</p>
+            
+            <p style="margin-top: 30px; color: #666666;">Best regards,<br><strong>Investment Portfolio Team</strong></p>
+        </div>
+        <div class="footer">
+            <p>This is an automated notification. Please do not reply to this email.</p>
+            <p>&copy; 2025 Investment Portfolio Platform. All rights reserved.</p>
+        </div>
+    </div>
+</body>
+</html>
