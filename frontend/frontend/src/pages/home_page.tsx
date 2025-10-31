@@ -13,6 +13,15 @@ import type { SearchResult } from "../hooks/use_search_actions";
 function HomePage() {
   const categories = ["Technology", "Finance", "Energy"];
 
+  // ✅ Datos de prueba
+  const mockResults: SearchResult[] = [
+    { id: "1", name: "Apple", category: "Technology", price: 180 },
+    { id: "2", name: "Tesla", category: "Energy", price: 240 },
+    { id: "3", name: "JPMorgan", category: "Finance", price: 145 },
+    { id: "4", name: "Microsoft", category: "Technology", price: 320 },
+    { id: "5", name: "ExxonMobil", category: "Energy", price: 115 },
+  ];
+
   const renderItem = (item: SearchResult) => (
     <div
       key={item.id}
@@ -43,6 +52,7 @@ function HomePage() {
       <SearchActions
         categories={categories}
         renderItem={renderItem}
+        mockData={mockResults}
       />
     </>
   );
