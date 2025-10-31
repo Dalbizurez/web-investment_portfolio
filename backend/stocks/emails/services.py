@@ -229,3 +229,46 @@ class TransactionEmailService:
         except Exception as e:
             logger.error(f"Error sending referral bonus email to {user.email}: {str(e)}")
             return False
+        
+
+class ReportEmailService:
+    """
+    Sends an email when a user report is ready, linking to the generated file.
+    """
+
+    @staticmethod
+    def send_report_ready_email(user, report_request):
+        try:
+            subject = "Your investment report is ready"
+
+            # Build absolute URL
+            base = getattr(settings, "SITE_URL", "http://localhost:8000")
+            file_url = f"{base}{report_request.file.url}" if report_request.file else None
+
+            context = {
+                "username": user.username,
+                "report_format": report_request.format,
+                "date_from": report_request.date_from,
+                "date_to": report_request.date_to,
+                "created_at": report_request.created_at,
+                "file_url": file_url,
+            }
+
+            html_message = render_to_string("stocks/emails/report_ready.html", context)
+            plain_message = strip_tags(html_message)
+
+            send_mail(
+                subject=subject,
+                message=plain_message,
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                recipient_list=[user.email],
+                html_message=html_message,
+                fail_silently=False,
+            )
+
+            logger.info(f"Report ready email sent to {user.email} for report {report_request.id}")
+            return True
+
+        except Exception as e:
+            logger.error(f"Error sending report ready email: {e}")
+            return False
