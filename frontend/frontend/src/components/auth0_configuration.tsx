@@ -9,7 +9,7 @@ const auth0Config = {
     audience: import.meta.env.VITE_AUTH0_AUDIENCE,
     scope: import.meta.env.VITE_AUTH0_SCOPE,
   },
-  cacheLocation: "localstorage", 
+  cacheLocation: "localstorage" as const, 
   useRefreshTokens: true,        
 };
 

@@ -328,3 +328,114 @@
 .section-4{
   border-top: 1px solid #e5e5ef;
 }
+
+/* Sidebar base */
+.sideBar {
+  width: 19%;
+  height: 100vh;
+  background-color: #fff;
+  color: #000;
+  position: fixed;
+  top: 0;
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 20px;
+  border-right: 2px solid #DDE2F6;
+  transition: transform 0.3s ease;
+  z-index: 200;
+}
+
+.sideBar ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.sideBar ul li {
+  margin: 20px 0;
+  font-size: 18px;
+  color: #616677;
+}
+
+.sideBar ul li a {
+  text-decoration: none;
+  color: inherit;
+  font-weight: 500;
+}
+
+.sideBar ul li:hover {
+  color: #4C58ED;
+}
+
+/* Logo principal (solo escritorio) */
+.sidebar-logo {
+  display: block;
+}
+
+.main-icon {
+  width: 102px;
+  height: 39px;
+  margin-bottom: 2.7rem;
+  margin-top: 0.4rem;
+  margin-left: 1rem;
+}
+
+/* Botón hamburguesa (oculto en escritorio) */
+.mobile-menu-button {
+  display: none;
+  position: fixed;
+  top: 12px;
+  left: 12px;
+  z-index: 300;
+  background: #fff;
+  border: 2px solid #DDE2F6;
+  border-radius: 8px;
+  cursor: pointer;
+  padding: 6px;
+}
+
+/* Overlay (fondo oscuro al abrir menú móvil) */
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.4);
+  z-index: 150;
+}
+
+/* Responsivo */
+@media (max-width: 768px) {
+  .sideBar {
+    width: 220px;
+    transform: translateX(-100%);
+    border-right: none;
+    background-color: #fff;
+  }
+
+  .sideBar.open {
+    transform: translateX(0);
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.3);
+  }
+
+  .mobile-menu-button {
+    display: block;
+  }
+
+  .sidebar-logo {
+    display: none; /* Se oculta el logo en móvil */
+  }
+
+  .sideBar ul li {
+    font-size: 16px;
+    margin: 15px 0;
+  }
+
+  .sideBar ul li a::before {
+    content: attr(data-icon);
+    font-size: 20px;
+    margin-right: 10px;
+  }
+}
