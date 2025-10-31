@@ -75,3 +75,48 @@ class UserBalance(models.Model):
     
     def __str__(self):
         return f"{self.user.username} - ${self.balance}"
+
+
+class ReferralBonus(models.Model):
+    """
+    Track referral bonuses given to users
+    """
+    STATUS_CHOICES = [
+        ('pending', 'Pending'),
+        ('completed', 'Completed'),
+        ('failed', 'Failed'),
+    ]
+    
+    referrer = models.ForeignKey(
+        UserModel, 
+        on_delete=models.CASCADE, 
+        related_name='referral_bonuses_given'
+    )
+    referee = models.ForeignKey(
+        UserModel, 
+        on_delete=models.CASCADE, 
+        related_name='referral_bonuses_received'
+    )
+    referrer_bonus = models.DecimalField(max_digits=10, decimal_places=2, default=8.00)
+    referee_bonus = models.DecimalField(max_digits=10, decimal_places=2, default=5.00)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='completed')
+    referrer_transaction = models.ForeignKey(
+        Transaction, 
+        on_delete=models.SET_NULL, 
+        null=True, 
+        related_name='referrer_bonus'
+    )
+    referee_transaction = models.ForeignKey(
+        Transaction, 
+        on_delete=models.SET_NULL, 
+        null=True, 
+        related_name='referee_bonus'
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        ordering = ['-created_at']
+        verbose_name_plural = 'Referral bonuses'
+    
+    def __str__(self):
+        return f"{self.referrer.username} -> {self.referee.username} (${self.referrer_bonus} / ${self.referee_bonus})"
