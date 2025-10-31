@@ -1,5 +1,8 @@
 from django.urls import path
-from .views import change_password, profile, update_profile, validate_token, activate_user, list_pending_users
+from .views import (
+    change_password, profile, update_profile, validate_token, 
+    activate_user, list_pending_users, use_referral_code, get_referral_stats
+)
 
 urlpatterns = [
     path("profile/", profile, name="profile"),
@@ -8,7 +11,8 @@ urlpatterns = [
     path("admin/pending-users/", list_pending_users, name="pending_users"),
     path("change-password/", change_password, name="change_password"),
     path("update-profile/", update_profile, name="update_profile"),
-
+    
+    # Referral endpoints
+    path("referral/use-code/", use_referral_code, name="use_referral_code"),
+    path("referral/stats/", get_referral_stats, name="referral_stats"),
 ]
-
-# Remove register, login, logout URLs

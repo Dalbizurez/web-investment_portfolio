@@ -5,15 +5,25 @@ import secrets
 import string
 
 class UserSerializer(serializers.ModelSerializer):
+    referral_count = serializers.SerializerMethodField()
+    
     class Meta:
         model = User
-        fields = ["id", "username", "email", "type", "status", "referral_code", "created_at", "auth0_id", "language",]
+        fields = [
+            "id", "username", "email", "type", "status", "referral_code", 
+            "created_at", "auth0_id", "language", "has_used_referral", "referral_count"
+        ]
         extra_kwargs = {
-            "password": {"write_only": True, "required": False},  # Make password optional
+            "password": {"write_only": True, "required": False},
             "referral_code": {"read_only": True},
             "status": {"read_only": True},
-            "auth0_id": {"read_only": True},  # Auth0 ID is auto-generated
+            "auth0_id": {"read_only": True},
+            "has_used_referral": {"read_only": True},
         }
+    
+    def get_referral_count(self, obj):
+        """Get count of successful referrals"""
+        return obj.referrals.filter(status='active').count()
 
     def create(self, validated_data):
         # For Auth0 users, password might not be provided
@@ -24,29 +34,10 @@ class UserSerializer(serializers.ModelSerializer):
             random_password = ''.join(secrets.choice(string.ascii_letters + string.digits) for _ in range(20))
             validated_data["password"] = make_password(random_password)
         
-        # Generate referral code
-        referral_code = ''.join(secrets.choice(string.ascii_uppercase + string.digits) for _ in range(8))
-        
-        # Check if referral code is provided in request
-        referral_code_used = self.context['request'].data.get('referral_code')
-        referred_by = None
-        
-        if referral_code_used:
-            try:
-                referred_by = User.objects.get(referral_code=referral_code_used, status='active')
-            except User.DoesNotExist:
-                pass
-        
-        user = User.objects.create(
-            **validated_data,
-            referral_code=referral_code,
-            referred_by=referred_by
-        )
+        # Referral code will be auto-generated in model's save method
+        user = User.objects.create(**validated_data)
         
         return user
-
-# Remove LoginSerializer since we're using Auth0
-# Keep UserSessionSerializer and AuditLogSerializer unchanged
 
 
 class UserSessionSerializer(serializers.ModelSerializer):
@@ -62,10 +53,27 @@ class AuditLogSerializer(serializers.ModelSerializer):
         model = AuditLog
         fields = ["id", "username", "action", "ip_address", "timestamp", "details"]
 
+
 class Auth0CallbackSerializer(serializers.Serializer):
     """
     Serializer for Auth0 callback - if needed for additional user data
     """
     auth0_id = serializers.CharField()
     email = serializers.EmailField()
-    name = serializers.CharField(required=False)        
+    name = serializers.CharField(required=False)
+
+
+class UseReferralCodeSerializer(serializers.Serializer):
+    """
+    Serializer for using a referral code
+    """
+    referral_code = serializers.CharField(max_length=10, required=True)
+    
+    def validate_referral_code(self, value):
+        """Validate that the referral code exists and is valid"""
+        value = value.upper().strip()
+        
+        if not User.objects.filter(referral_code=value, status='active').exists():
+            raise serializers.ValidationError("Invalid or inactive referral code")
+        
+        return value
