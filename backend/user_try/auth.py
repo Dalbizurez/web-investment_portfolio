@@ -31,7 +31,7 @@ class Auth0Authentication(BaseAuthentication):
             # Get or create user from Auth0 payload
             user = self.get_or_create_user_from_auth0(payload, token)
             
-            # ✅ NUEVO: Verificar que el usuario esté activo
+            # Check if user is active
             if user.status != 'active':
                 raise AuthenticationFailed(
                     f'Your account is {user.status}. Please wait for admin approval.'
@@ -148,25 +148,27 @@ class Auth0Authentication(BaseAuthentication):
                 # Try to find user by email (for existing users migrating to Auth0)
                 user = User.objects.get(email=email)
                 user.auth0_id = auth0_id
-                # No cambiar status aquí, mantener el que tenga
                 user.save()
                 return user
             except User.DoesNotExist:
-                # ✅ NUEVO: Crear usuario como PENDING para esperar aprobación
+                # Create new user with pending status
                 username = self.generate_unique_username(email, name)
                 
                 user = User.objects.create(
                     username=username,
                     email=email,
                     auth0_id=auth0_id,
-                    status='pending',  # ← Ahora se crea como PENDING
-                    type='standard'    # ← Por defecto standard
+                    status='pending',
+                    type='standard',
+                    has_used_referral=False
                 )
                 
                 # Generate a random password (won't be used for login)
                 random_password = ''.join(secrets.choice(string.ascii_letters + string.digits) for _ in range(20))
                 user.set_password(random_password)
                 user.save()
+                
+                # Referral code is auto-generated in model's save method
                 
                 return user
     
