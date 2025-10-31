@@ -1,6 +1,7 @@
 # user_try/admin.py
 from django.contrib import admin
 from .models import User, UserSession, AuditLog
+from user_try.emails.services import UserEmailService
 
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):
@@ -27,6 +28,15 @@ class UserAdmin(admin.ModelAdmin):
     
     actions = ['activate_users', 'suspend_users', 'make_admin', 'make_vip', 'make_standard']
     
+    def save_model(self, request, obj, form, change):
+        # Detectar cambio de estado a ACTIVE
+        if change:
+            original = User.objects.get(pk=obj.pk)
+            if original.status != "active" and obj.status == "active":
+                UserEmailService.send_account_activated_email(obj)
+
+        super().save_model(request, obj, form, change)
+
     def activate_users(self, request, queryset):
         updated = queryset.update(status='active')
         self.message_user(request, f'{updated} users activated.')

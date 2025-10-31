@@ -285,3 +285,51 @@ def get_referral_stats(request):
         'referred_by': user.referred_by.username if user.referred_by else None,
         'referred_users': list(referred_users)
     })
+
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
+def activate_user(request, user_id):
+    """Activate a pending user (Admin only)"""
+
+    # Solo administradores pueden activar usuarios
+    if request.user.type != 'admin':
+        return Response({
+            'error': 'Only administrators can activate users'
+        }, status=status.HTTP_403_FORBIDDEN)
+
+    try:
+        user_to_activate = User.objects.get(id=user_id)
+
+        # Si ya está activo, no hacemos nada
+        if user_to_activate.status == 'active':
+            return Response({
+                'error': 'User is already active'
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        # Activamos usuario (el signal se encarga del email)
+        user_to_activate.status = 'active'
+        user_to_activate.save()
+
+        # Registrar en el log
+        AuditLog.objects.create(
+            user=request.user,
+            action='activate_user',
+            ip_address=get_client_ip(request),
+            user_agent=request.META.get('HTTP_USER_AGENT', ''),
+            details={
+                'action': 'user_activation',
+                'activated_user_id': user_to_activate.id,
+                'activated_username': user_to_activate.username,
+                'email_sent_by_signal': True  # Ahora el signal lo envía
+            }
+        )
+
+        return Response({
+            'message': f'User {user_to_activate.username} activated successfully',
+            'user': UserSerializer(user_to_activate).data
+        }, status=status.HTTP_200_OK)
+
+    except User.DoesNotExist:
+        return Response({
+            'error': 'User not found'
+        }, status=status.HTTP_404_NOT_FOUND)
