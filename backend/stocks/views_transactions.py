@@ -6,6 +6,7 @@ from django.db import transaction
 from decimal import Decimal
 from .models import Stock, UserPortfolio, Transaction, UserBalance
 from .services.finnhub_service import FinnhubService
+from .utils import validate_trading_hours
 import logging
 
 logger = logging.getLogger(__name__)
@@ -40,6 +41,15 @@ def buy_stock(request):
         if len(symbol) < 1 or len(symbol) > 10:
             return Response({'error': 'Invalid stock symbol format'}, 
                            status=status.HTTP_400_BAD_REQUEST)
+        
+        # CRITICAL: Check if market is open
+        is_market_open, market_message = validate_trading_hours()
+        if not is_market_open:
+            return Response({
+                'error': 'Trading not allowed at this time',
+                'message': market_message,
+                'market_open': False
+            }, status=status.HTTP_400_BAD_REQUEST)
         
         service = FinnhubService()
         
@@ -78,7 +88,7 @@ def buy_stock(request):
             stock, created = Stock.objects.get_or_create(
                 symbol=symbol,
                 defaults={
-                    'name': f"{symbol} Corporation",  # Placeholder
+                    'name': f"{symbol} Corporation",
                     'current_price': current_price,
                     'currency': 'USD',
                     'exchange': 'NASDAQ'
@@ -93,6 +103,7 @@ def buy_stock(request):
                     stock.exchange = profile_data.get('exchange', 'NASDAQ')
                     stock.currency = profile_data.get('currency', 'USD')
                     stock.sector = profile_data.get('finnhubIndustry', '')
+                    stock.market_cap = profile_data.get('marketCapitalization')
                     stock.save()
 
             # Update current price
@@ -138,7 +149,8 @@ def buy_stock(request):
             'message': f'Successfully bought {quantity} shares of {symbol}',
             'total_cost': float(total_cost),
             'new_balance': float(user_balance.balance),
-            'stock_name': stock.name
+            'stock_name': stock.name,
+            'market_open': True
         })
         
     except Exception as e:
@@ -157,6 +169,15 @@ def sell_stock(request):
         if not symbol or quantity <= 0:
             return Response({'error': 'Symbol and valid quantity required'}, 
                            status=status.HTTP_400_BAD_REQUEST)
+        
+        # CRITICAL: Check if market is open
+        is_market_open, market_message = validate_trading_hours()
+        if not is_market_open:
+            return Response({
+                'error': 'Trading not allowed at this time',
+                'message': market_message,
+                'market_open': False
+            }, status=status.HTTP_400_BAD_REQUEST)
         
         service = FinnhubService()
         
@@ -212,7 +233,8 @@ def sell_stock(request):
         return Response({
             'message': f'Successfully sold {quantity} shares of {symbol}',
             'total_revenue': float(total_revenue),
-            'new_balance': float(user_balance.balance)
+            'new_balance': float(user_balance.balance),
+            'market_open': True
         })
         
     except Exception as e:
@@ -332,11 +354,13 @@ def get_transaction_history(request):
             'id': tx.id,
             'type': tx.transaction_type,
             'symbol': tx.stock.symbol if tx.stock else None,
+            'stock_name': tx.stock.name if tx.stock else None,
             'quantity': tx.quantity,
             'price': float(tx.price) if tx.price else None,
             'amount': float(tx.amount),
             'fee': float(tx.transaction_fee),
             'transfer_reference': tx.transfer_reference,
+            'ip_address': tx.ip_address,
             'timestamp': tx.created_at
         })
     
