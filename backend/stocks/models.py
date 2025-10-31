@@ -162,3 +162,49 @@ class ReferralBonus(models.Model):
     
     def __str__(self):
         return f"{self.referrer.username} -> {self.referee.username} (${self.referrer_bonus} / ${self.referee_bonus})"
+    
+
+import uuid
+from django.conf import settings as django_settings
+from django.core.validators import FileExtensionValidator
+
+class ReportRequest(models.Model):
+    """
+    Stores a user-driven report request for portfolio & transactions.
+    """
+    FORMAT_CHOICES = [
+        ("PDF", "PDF"),
+        ("CSV", "CSV"),
+    ]
+    STATUS_CHOICES = [
+        ("PENDING", "PENDING"),
+        ("GENERATING", "GENERATING"),
+        ("COMPLETED", "COMPLETED"),
+        ("FAILED", "FAILED"),
+    ]
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    user = models.ForeignKey(UserModel, on_delete=models.CASCADE, related_name='report_requests')
+    date_from = models.DateField(null=True, blank=True)
+    date_to = models.DateField(null=True, blank=True)
+    include_current_valuation = models.BooleanField(default=True)
+    format = models.CharField(max_length=4, choices=FORMAT_CHOICES, default="PDF")
+    status = models.CharField(max_length=12, choices=STATUS_CHOICES, default="PENDING")
+    created_at = models.DateTimeField(auto_now_add=True)
+    started_at = models.DateTimeField(null=True, blank=True)
+    finished_at = models.DateTimeField(null=True, blank=True)
+    file = models.FileField(
+        upload_to='reports/%Y/%m/%d/',
+        null=True,
+        blank=True,
+        validators=[FileExtensionValidator(allowed_extensions=['pdf', 'csv'])]
+    )
+    error_message = models.TextField(null=True, blank=True)
+
+    class Meta:
+        ordering = ['-created_at']
+
+    def __str__(self):
+        dr = self.date_from.isoformat() if self.date_from else "beginning"
+        dt = self.date_to.isoformat() if self.date_to else "today"
+        return f"Report {self.id} for {self.user.username} [{dr}..{dt}] ({self.format}) - {self.status}"
