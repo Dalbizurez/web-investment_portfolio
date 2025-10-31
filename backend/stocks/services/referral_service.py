@@ -4,6 +4,10 @@ from django.db import transaction
 from django.utils import timezone
 from django.db import models
 from stocks.models import UserBalance, Transaction, ReferralBonus
+from stocks.emails.services import TransactionEmailService
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class ReferralService:
@@ -79,14 +83,37 @@ class ReferralService:
                 referee_transaction=referee_transaction,
                 status='completed'
             )
-            
-            return {
-                'referrer_bonus': self.REFERRER_BONUS,
-                'referee_bonus': self.REFEREE_BONUS,
-                'referrer_new_balance': referrer_balance.balance,
-                'referee_new_balance': referee_balance.balance,
-                'referral_bonus_id': referral_bonus.id
-            }
+        
+        # Send email notifications (outside transaction to avoid rollback on email failure)
+        try:
+            # Send email to referrer (person who shared the code)
+            TransactionEmailService.send_referral_bonus_email(
+                user=referrer,
+                referral_bonus=referral_bonus,
+                is_referrer=True
+            )
+            logger.info(f"Referral bonus email sent to referrer: {referrer.email}")
+        except Exception as e:
+            logger.error(f"Failed to send referral email to referrer {referrer.email}: {str(e)}")
+        
+        try:
+            # Send email to referee (person who used the code)
+            TransactionEmailService.send_referral_bonus_email(
+                user=referee,
+                referral_bonus=referral_bonus,
+                is_referrer=False
+            )
+            logger.info(f"Referral bonus email sent to referee: {referee.email}")
+        except Exception as e:
+            logger.error(f"Failed to send referral email to referee {referee.email}: {str(e)}")
+        
+        return {
+            'referrer_bonus': self.REFERRER_BONUS,
+            'referee_bonus': self.REFEREE_BONUS,
+            'referrer_new_balance': referrer_balance.balance,
+            'referee_new_balance': referee_balance.balance,
+            'referral_bonus_id': referral_bonus.id
+        }
     
     def get_referral_earnings(self, user):
         """
