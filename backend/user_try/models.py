@@ -31,6 +31,9 @@ class User(models.Model):
     auth0_id = models.CharField(max_length=100, unique=True, null=True, blank=True)
     language = models.CharField(max_length=10, default="en")
     has_used_referral = models.BooleanField(default=False)
+
+    # new field to track if activation email has been sent
+    email_activation_sent = models.BooleanField(default=False)
     
     def __str__(self):
         return self.username
