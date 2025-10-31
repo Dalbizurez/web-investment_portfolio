@@ -15,6 +15,9 @@ SECRET_KEY = config('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG', default=False, cast=bool)
 
+SITE_URL = "http://localhost:8000"
+
+
 ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost,127.0.0.1', cast=Csv())
 
 # Application definition
@@ -26,6 +29,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     "rest_framework",
+    'drf_yasg', 
     'user_try.apps.UserTryConfig',
     'stocks',
     'corsheaders',
@@ -179,3 +183,7 @@ LOGGING = {
         },
     },
 }
+
+# Media files (for generated reports)
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import ReferralBonus, Stock, StockPriceHistory, UserPortfolio, Transaction, UserBalance
+from .models import ReferralBonus, Stock, StockPriceHistory, UserPortfolio, Transaction, UserBalance, ReportRequest
 
 @admin.register(Stock)
 class StockAdmin(admin.ModelAdmin):
@@ -81,3 +81,9 @@ class ReferralBonusAdmin(admin.ModelAdmin):
     list_filter = ['status', 'created_at']
     search_fields = ['referrer__username', 'referee__username']
     readonly_fields = ['created_at']
+
+@admin.register(ReportRequest)
+class ReportRequestAdmin(admin.ModelAdmin):
+    list_display = ("id", "user", "format", "status", "created_at", "finished_at")
+    list_filter = ("status", "format", "created_at")
+    search_fields = ("user__username", "user__email", "id")
