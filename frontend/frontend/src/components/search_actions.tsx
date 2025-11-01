@@ -1,9 +1,8 @@
 import React, { useState } from "react";
 import { useSearchActions } from "../hooks/use_search_actions";
 import type { SearchResult } from "../hooks/use_search_actions";
-import { useAuth0 } from "@auth0/auth0-react";
-import { useNavigate } from "react-router-dom";
 import "../styles/search_actions.css";
+import BuyDialog from "./buy-dialog";
 
 interface SearchActionsProps {
   categories: string[];
@@ -28,49 +27,15 @@ const SearchActions: React.FC<SearchActionsProps> = ({
     handleSearch,
   } = useSearchActions();
 
-  const { isAuthenticated, user, loginWithRedirect } = useAuth0();
-  const navigate = useNavigate();
-
-  const [purchases, setPurchases] = useState<SearchResult[]>([]);
+  const [selectedItem, setSelectedItem] = useState<SearchResult | null>(null);
 
   const displayResults = results && results.length > 0 ? results : mockData;
 
-  const handleBuy = async (item: SearchResult) => {
-    if (!isAuthenticated) {
-      alert("Debes iniciar sesión o registrarte para comprar.");
-      navigate("/register");
-      return;
-    }
-
-    setPurchases((prev) => [...prev, item]);
-
-    alert(`✅ Compra realizada por ${user?.name || "usuario"}: ${item.name}`);
-
-    // backend:
-    try {
-      const response = await fetch("http://localhost:8000/api/compras/", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${user?.sub || ""}`,
-        },
-        body: JSON.stringify({
-          id: item.id,
-          name: item.name,
-          category: item.category,
-          price: item.price,
-          user: user?.email,
-        }),
-      });
-
-      if (!response.ok) {
-        console.error("Error al registrar la compra:", response.status);
-      }
-    } catch (error) {
-      console.error("Error de conexión al guardar la compra:", error);
-    }
-  };
-
+  const handleConfirmPurchase = (item: SearchResult) => {
+  console.log("Compra confirmada:", item);
+  setSelectedItem(null);
+};
+  
   return (
     <div className="search-actions">
       {/* Filtros */}
@@ -114,8 +79,10 @@ const SearchActions: React.FC<SearchActionsProps> = ({
           displayResults.map((item) => (
             <div className="result-item" key={item.id}>
               {renderItem(item)}
-
-              <button className="buy-button" onClick={() => handleBuy(item)}>
+              <button
+                className="buy-button"
+                onClick={() => setSelectedItem(item)}
+              >
                 Comprar
               </button>
             </div>
@@ -125,19 +92,12 @@ const SearchActions: React.FC<SearchActionsProps> = ({
         )}
       </div>
 
-      {/* 👇 Vista de las compras guardadas */}
-      {purchases.length > 0 && (
-        <div className="purchases-section">
-          <h3>🛍️ Tus compras</h3>
-          <ul>
-            {purchases.map((p, index) => (
-              <li key={`${p.id}-${index}`}>
-                <strong>{p.name}</strong> — {p.category} — ${p.price}
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
+      {/* Dialogo de compra */}
+      <BuyDialog
+        item={selectedItem}
+        onClose={() => setSelectedItem(null)}
+        onConfirm={handleConfirmPurchase}
+      />
     </div>
   );
 };
