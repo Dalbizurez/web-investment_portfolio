@@ -13,7 +13,6 @@ import type { SearchResult } from "../hooks/use_search_actions";
 function HomePage() {
   const categories = ["Technology", "Finance", "Energy"];
 
-  // ✅ Datos de prueba
   const mockResults: SearchResult[] = [
     { id: "1", name: "Apple", category: "Technology", price: 180 },
     { id: "2", name: "Tesla", category: "Energy", price: 240 },
