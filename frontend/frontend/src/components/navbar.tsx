@@ -4,29 +4,46 @@ import { useState, useEffect } from "react";
 import { Menu, X } from "lucide-react";
 import Icon from "../assets/icon.png";
 import "../styles/navbar.css";
-import { useUser } from "./UserContext"; 
+import { useUser } from "./UserContext";
+import axios from "axios";
+
+const API_URL = "http://localhost:8000/api"; 
 
 function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const { loginWithRedirect, isAuthenticated, isLoading, logout, user } = useAuth0();
   const navigate = useNavigate();
-  
   const { userProfile, isLoadingProfile } = useUser();
 
+  const [setPublicApiResponse] = useState<any>(null);
+
+  const fetchPublicData = async () => {
+    try {
+      const response = await axios.get(`${API_URL}/stocks/search/?q=apple`);
+      setPublicApiResponse(response.data);
+    } catch (err: any) {
+      console.error("Error al llamar al endpoint público:", err.message);
+    }
+  };
+
+
   useEffect(() => {
-    if (isAuthenticated && (window.location.pathname === "/signin" || window.location.pathname === "/get-started")) {
-      navigate("/homeUser");
+    if (isAuthenticated) {
+      if (window.location.pathname === "/signin" || window.location.pathname === "/get-started") {
+        navigate("/homeUser");
+      }
+
+      fetchPublicData();
     }
   }, [isAuthenticated, navigate]);
 
-  // Función para obtener nombre de usuario limpio y con iniciales mayúsculas
   const getDisplayName = () => {
     if (!isAuthenticated) return "User";
     const fullName = userProfile?.username || user?.name || "User";
     const cleanName = fullName.replace(/_/g, " ");
-    const parts = cleanName.split(" ").slice(0, 2); // solo los primeros 1 o 2 nombres
+    const parts = cleanName.split(" ").slice(0, 2);
     return parts
-      .map(name => name.charAt(0).toUpperCase() + name.slice(1).toLowerCase())
+      .map((name) => name.charAt(0).toUpperCase() + name.slice(1).toLowerCase())
       .join(" ");
   };
 
@@ -36,7 +53,7 @@ function Navbar() {
         <div className="navbar-container">
           <div className="navbar-logo"><img src={Icon} alt="IconHapi" /></div>
           <div style={{ textAlign: "center", flex: 1 }}>
-            <span>🔄 Cargando...</span>
+            <span>Cargando...</span>
           </div>
         </div>
       </nav>
@@ -47,12 +64,14 @@ function Navbar() {
     <nav className="navbar">
       <div className="navbar-container">
         <div className="navbar-logo"><img src={Icon} alt="IconHapi" /></div>
+
         <div className="navbar-links">
           <a href="#about">About</a>
           <a href="#help">Help</a>
           <a href="#learning">Learning</a>
           <a href="#blog">Blog</a>
         </div>
+
         <div className="navbar-buttons">
           {!isAuthenticated ? (
             <>
@@ -78,6 +97,7 @@ function Navbar() {
             </>
           )}
         </div>
+
         <button className="navbar-toggle" onClick={() => setMenuOpen(!menuOpen)}>
           {menuOpen ? <X size={28} /> : <Menu size={28} />}
         </button>

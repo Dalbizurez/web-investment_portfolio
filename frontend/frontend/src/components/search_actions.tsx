@@ -1,14 +1,20 @@
-import React from "react";
+import React, { useState } from "react";
 import { useSearchActions } from "../hooks/use_search_actions";
 import type { SearchResult } from "../hooks/use_search_actions";
 import "../styles/search_actions.css";
+import BuyDialog from "./buy-dialog";
 
 interface SearchActionsProps {
   categories: string[];
   renderItem: (item: SearchResult) => React.ReactNode;
+  mockData?: SearchResult[];
 }
 
-const SearchActions: React.FC<SearchActionsProps> = ({ categories, renderItem }) => {
+const SearchActions: React.FC<SearchActionsProps> = ({
+  categories,
+  renderItem,
+  mockData = [],
+}) => {
   const {
     query,
     setQuery,
@@ -21,6 +27,15 @@ const SearchActions: React.FC<SearchActionsProps> = ({ categories, renderItem })
     handleSearch,
   } = useSearchActions();
 
+  const [selectedItem, setSelectedItem] = useState<SearchResult | null>(null);
+
+  const displayResults = results && results.length > 0 ? results : mockData;
+
+  const handleConfirmPurchase = (item: SearchResult) => {
+  console.log("Compra confirmada:", item);
+  setSelectedItem(null);
+};
+  
   return (
     <div className="search-actions">
       {/* Filtros */}
@@ -41,7 +56,10 @@ const SearchActions: React.FC<SearchActionsProps> = ({ categories, renderItem })
           ))}
         </select>
 
-        <select value={extraFilter} onChange={(e) => setExtraFilter(e.target.value)}>
+        <select
+          value={extraFilter}
+          onChange={(e) => setExtraFilter(e.target.value)}
+        >
           <option value="">Todos</option>
           <option value="high">Alto rendimiento</option>
           <option value="medium">Rendimiento medio</option>
@@ -53,19 +71,33 @@ const SearchActions: React.FC<SearchActionsProps> = ({ categories, renderItem })
         Buscar
       </button>
 
+      {/* Resultados */}
       <div className="results">
         {loading ? (
           <p>Cargando...</p>
-        ) : results.length > 0 ? (
-          results.map((item) => (
+        ) : displayResults.length > 0 ? (
+          displayResults.map((item) => (
             <div className="result-item" key={item.id}>
               {renderItem(item)}
+              <button
+                className="buy-button"
+                onClick={() => setSelectedItem(item)}
+              >
+                Comprar
+              </button>
             </div>
           ))
         ) : (
           <p>No se encontraron resultados.</p>
         )}
       </div>
+
+      {/* Dialogo de compra */}
+      <BuyDialog
+        item={selectedItem}
+        onClose={() => setSelectedItem(null)}
+        onConfirm={handleConfirmPurchase}
+      />
     </div>
   );
 };
