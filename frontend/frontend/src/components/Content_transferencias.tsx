@@ -60,7 +60,7 @@ function Content_transferencias() {
     return (
       <div className="content-home">
         <p style={{ color: "red", textAlign: "center" }}>
-          ⚠️ No se encontró token de autenticación.
+          No se encontró token de autenticación.
         </p>
       </div>
     );
@@ -214,7 +214,7 @@ const FormTransferirBanco = ({ onBack, token }: FormProps) => {
 
   const handleSubmit = async () => {
     if (!amount || !reference) {
-      setMessage("Completa todos los campos.");
+      setMessage(" Completa todos los campos.");
       return;
     }
 
@@ -235,7 +235,7 @@ const FormTransferirBanco = ({ onBack, token }: FormProps) => {
       );
 
       if (res.status === 200 || res.status === 201) {
-        setMessage("Retiro realizado correctamente.");
+        setMessage(" Retiro realizado correctamente.");
         setAmount("");
         setReference("");
       }
