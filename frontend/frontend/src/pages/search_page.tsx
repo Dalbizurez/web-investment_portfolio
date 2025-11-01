@@ -4,15 +4,6 @@ import Header from "../components/header_search";
 import SearchActions from "../components/search_actions";
 import type { SearchResult } from "../hooks/use_search_actions";
 
-const categories = ["Technology", "Finance", "Energy"];
-
-// Datos de prueba para SearchActions
-const mockResults: SearchResult[] = [
-  { id: "1", name: "Apple", category: "Technology", price: 180 },
-  { id: "2", name: "Tesla", category: "Energy", price: 240 },
-  { id: "3", name: "JPMorgan", category: "Finance", price: 145 },
-];
-
 const renderItem = (item: SearchResult) => (
   <div
     key={item.id}
@@ -38,9 +29,7 @@ const SearchPage: React.FC = () => {
       <Header />
       <div className="content-home">
         <SearchActions
-          categories={categories}
           renderItem={renderItem}
-          mockData={mockResults}
         />
       </div>
     </main>
