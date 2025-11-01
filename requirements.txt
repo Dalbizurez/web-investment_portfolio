@@ -1,7 +1,23 @@
-asgiref==3.9.1
-Django==5.2.6
+asgiref==3.9.2
+Authlib==1.6.5
+certifi==2025.10.5
+cffi==2.0.0
+charset-normalizer==3.4.3
+cryptography==46.0.3
+Django==5.2.7
+django-cors-headers==4.9.0
+djangorestframework==3.16.1
+djangorestframework_simplejwt==5.5.1
+ecdsa==0.19.1
+idna==3.10
+mysqlclient==2.2.7
+pyasn1==0.6.1
+pycparser==2.23
+PyJWT==2.10.1
+python-jose==3.5.0
+requests==2.32.5
+rsa==4.9.1
+six==1.17.0
 sqlparse==0.5.3
-python3 -m venv venv
-source venv/bin/activate
-pip install django
-pip install django mysqlclient
+tzdata==2025.2
+urllib3==2.5.0

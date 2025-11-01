@@ -1,0 +1,50 @@
+.fourth-section {
+  width: 100%;
+  padding: 2rem 5%;
+  background-color: #383E54;
+  text-align: center;
+  box-sizing: border-box;
+  color: #FFF;
+}
+
+.fourth-section h2 {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  font-family: "Roboto", sans-serif;
+}
+
+.investor-images {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.5rem;
+}
+
+.investor-images img {
+  width: 200px;
+  height: auto;
+  object-fit: contain;
+}
+
+.investor-text {
+  font-size: 0.8rem;
+  line-height: 1.5;
+  margin: 0 auto;
+  font-family: "Raleway", sans-serif;
+}
+
+/* ------------ Responsive --------------- */
+@media (max-width: 600px) {
+  .investor-images img {
+    width: 130px;
+  }
+
+  .fourth-section h2 {
+    font-size: 1.5rem;
+  }
+
+  .investor-text {
+    font-size: 0.9rem;
+  }
+}
