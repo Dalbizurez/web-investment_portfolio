@@ -5,6 +5,7 @@ import HomeUser from "./pages/home_user";
 import Portafolio from "./pages/portafolio";
 import TransferPage from "./pages/transfers";
 import ProtectedRoute from "./components/ProtectedRoute";
+import SearchPage from "./pages/search_page";
 
 function App() {
   return (
@@ -19,6 +20,13 @@ function App() {
             <HomeUser />
           </ProtectedRoute>
         }
+      />
+      <Route 
+        path="/search" 
+        element={
+          <ProtectedRoute>
+            <SearchPage />
+          </ProtectedRoute>} 
       />
       <Route
         path="/portafolio"

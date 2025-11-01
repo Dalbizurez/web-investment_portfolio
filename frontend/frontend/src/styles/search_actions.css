@@ -58,7 +58,6 @@
 .search-actions .result-item {
   background-color: #fff;
   border-radius: 10px;
-  padding: 1rem;
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
   transition: transform 0.2s, box-shadow 0.2s;
 }

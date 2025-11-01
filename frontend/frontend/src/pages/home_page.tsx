@@ -7,28 +7,7 @@ import FifthSection from "../components/hp_fifth_section";
 import CarouselSection from "../components/hp_sixth_section";
 import SeventhSection from "../components/hp_seventh_section";
 
-import SearchActions from "../components/search_actions";
-import type { SearchResult } from "../hooks/use_search_actions";
-
 function HomePage() {
-  const categories = ["Technology", "Finance", "Energy"];
-
-  const renderItem = (item: SearchResult) => (
-    <div
-      key={item.id}
-      style={{
-        border: "1px solid #ddd",
-        padding: "10px",
-        borderRadius: "8px",
-        background: "#fff",
-      }}
-    >
-      <h4>{item.name}</h4>
-      <small>{item.category}</small>
-      <p>${item.price}</p>
-    </div>
-  );
-
   return (
     <>
       <Navbar />
@@ -39,11 +18,6 @@ function HomePage() {
       <FifthSection />
       <CarouselSection />
       <SeventhSection />
-
-      <SearchActions
-        categories={categories}
-        renderItem={renderItem}
-      />
     </>
   );
 }
