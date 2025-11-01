@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import { useSearchActions } from "../hooks/use_search_actions";
+import { useBuyStock } from "../hooks/use_buy_actions"; 
 import type { SearchResult } from "../hooks/use_search_actions";
-import "../styles/search_actions.css";
 import BuyDialog from "./buy-dialog";
+import "../styles/search_actions.css";
 
 interface SearchActionsProps {
   categories: string[];
@@ -15,6 +16,7 @@ const SearchActions: React.FC<SearchActionsProps> = ({
   renderItem,
   mockData = [],
 }) => {
+  // Hook de búsqueda
   const {
     query,
     setQuery,
@@ -27,15 +29,33 @@ const SearchActions: React.FC<SearchActionsProps> = ({
     handleSearch,
   } = useSearchActions();
 
+  // Hook de compra
+  const { buyStock, loading: buying, error, success } = useBuyStock();
+
+  // Estado del ítem seleccionado para comprar
   const [selectedItem, setSelectedItem] = useState<SearchResult | null>(null);
 
-  const displayResults = results && results.length > 0 ? results : mockData;
+  // Mostrar resultados reales o de prueba
+  const displayResults = results.length > 0 ? results : mockData;
 
-  const handleConfirmPurchase = (item: SearchResult) => {
-  console.log("Compra confirmada:", item);
-  setSelectedItem(null);
-};
-  
+  // Confirmar compra (llama a la API)
+  const handleConfirmPurchase = async (item: SearchResult, percentage?: number) => {
+    try {
+      // Si el usuario especifica porcentaje, calculamos cantidad estimada
+      // (puedes ajustar esta lógica según tu modelo o API)
+      const quantity = percentage ? Math.max(1, Math.round((percentage / 100) * 10)) : 1;
+
+      await buyStock(item.id, quantity);
+
+      alert(`✅ Compra exitosa: ${quantity} acciones de ${item.id}`);
+    } catch (err) {
+      console.error("Error al comprar:", err);
+      alert("❌ Error al realizar la compra. Intenta nuevamente.");
+    } finally {
+      setSelectedItem(null);
+    }
+  };
+
   return (
     <div className="search-actions">
       {/* Filtros */}
@@ -67,8 +87,8 @@ const SearchActions: React.FC<SearchActionsProps> = ({
         </select>
       </div>
 
-      <button className="search-button" onClick={handleSearch}>
-        Buscar
+      <button className="search-button" onClick={handleSearch} disabled={loading}>
+        {loading ? "Buscando..." : "Buscar"}
       </button>
 
       {/* Resultados */}
@@ -82,6 +102,7 @@ const SearchActions: React.FC<SearchActionsProps> = ({
               <button
                 className="buy-button"
                 onClick={() => setSelectedItem(item)}
+                disabled={buying}
               >
                 Comprar
               </button>
@@ -92,7 +113,14 @@ const SearchActions: React.FC<SearchActionsProps> = ({
         )}
       </div>
 
-      {/* Dialogo de compra */}
+      {/* Mensajes de estado de compra */}
+      <div className="status-messages">
+        {buying && <p>Procesando compra...</p>}
+        {error && <p style={{ color: "red" }}>{error}</p>}
+        {success && <p style={{ color: "green" }}>{success}</p>}
+      </div>
+
+      {/* Diálogo de compra */}
       <BuyDialog
         item={selectedItem}
         onClose={() => setSelectedItem(null)}
