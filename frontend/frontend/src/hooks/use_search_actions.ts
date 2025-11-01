@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { STOCK_THEMATIC_FILTERS } from "../hooks/fil.ts";
 
 export interface SearchResult {
   id: string;        // symbol
@@ -9,19 +10,19 @@ export interface SearchResult {
 
 export const useSearchActions = () => {
   const [query, setQuery] = useState("");
-  const [category, setCategory] = useState("");
-  const [extraFilter, setExtraFilter] = useState("");
+  const [category, setCategory] = useState("");      // Código oficial (EQS, ETF, etc.)
+  const [extraFilter, setExtraFilter] = useState(""); // Categoría personalizada (temática)
   const [results, setResults] = useState<SearchResult[]>([]);
   const [loading, setLoading] = useState(false);
 
-  // Fetch integrado
+  // 🔍 API local
   const fetchStocks = async (query: string): Promise<SearchResult[]> => {
     if (!query) return [];
 
-    const response = await fetch(`http://localhost:8000/api/stocks/search/?q=${encodeURIComponent(query)}`, {
-      method: "GET",
-      headers: { "Content-Type": "application/json" },
-    });
+    const response = await fetch(
+      `http://localhost:8000/api/stocks/search/?q=${encodeURIComponent(query)}`,
+      { method: "GET", headers: { "Content-Type": "application/json" } }
+    );
 
     if (!response.ok) {
       console.error("Error al obtener datos:", response.status);
@@ -35,19 +36,37 @@ export const useSearchActions = () => {
   const handleSearch = async () => {
     setLoading(true);
     try {
-      // Traemos resultados solo por query
+      // Paso 1: búsqueda base
       let data = await fetchStocks(query);
 
-      // Filtrado manual
+      // Paso 2: filtro por categoría oficial (type)
       if (category) {
-        data = data.filter((item) =>
-          item.category.toLowerCase().includes(category.toLowerCase())
+        data = data.filter(
+          (item) =>
+            item.category &&
+            item.category.toLowerCase().includes(category.toLowerCase())
         );
       }
+
+      // Paso 3: filtro por categoría personalizada (temática)
       if (extraFilter) {
-        data = data.filter((item) =>
-          item.name.toLowerCase().includes(extraFilter.toLowerCase())
+        const thematic = STOCK_THEMATIC_FILTERS.find(
+          (f) => f.category === extraFilter
         );
+
+        if (thematic) {
+          // Generamos una lista de símbolos relevantes (ejemplo: ["AAPL", "MSFT"])
+          const symbols = thematic.examples.map((ex) => ex.split(" - ")[0].toUpperCase());
+
+          data = data.filter((item) =>
+            symbols.includes(item.id.toUpperCase())
+          );
+        } else {
+          // Si no hay coincidencia exacta, aplicamos filtro textual
+          data = data.filter((item) =>
+            item.name.toLowerCase().includes(extraFilter.toLowerCase())
+          );
+        }
       }
 
       setResults(data);
@@ -59,6 +78,7 @@ export const useSearchActions = () => {
     }
   };
 
+  // 🕒 Efecto de búsqueda automática
   useEffect(() => {
     const delay = setTimeout(() => {
       if (query || category || extraFilter) {

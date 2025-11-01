@@ -10,34 +10,42 @@ from stocks.models import UserPortfolio
 @api_view(['GET'])
 @permission_classes([AllowAny])
 def search_stocks(request):
-    """Search stocks by symbol or name (public endpoint)"""
+    """
+    Search all types of instruments (stocks, ETFs, crypto, indices, funds, etc.)
+    by symbol or name.
+    """
     query = request.GET.get('q', '')
-    
+
     if not query:
-        return Response({'error': 'Query parameter "q" is required'}, 
+        return Response({'error': 'Query parameter "q" is required'},
                         status=status.HTTP_400_BAD_REQUEST)
-    
+
     service = FinnhubService()
     results = service.search_stocks(query)
 
-    # Mapear resultados para incluir precio
     mapped_results = []
+
     for item in results:
         symbol = item.get('symbol')
         description = item.get('description', '')
         exchange = item.get('exchange', '')
-        type_ = item.get('type', '')
-        
-        # Obtener precio actual de la acción
-        quote_data = service.get_stock_quote(symbol)
-        current_price = quote_data.get('current_price') if quote_data else None
+        type_ = item.get('type', 'Unknown')
+
+        # Intentar obtener precio actual (si aplica)
+        current_price = 0
+        try:
+            quote_data = service.get_stock_quote(symbol)
+            if quote_data:
+                current_price = quote_data.get('current_price') or 0
+        except Exception:
+            current_price = 0
 
         mapped_results.append({
-            'id': symbol,                 # Usamos symbol como id
-            'name': description,          # description como name
-            'category': type_,            # type como category
-            'price': current_price or 0,  # precio actual
-            'exchange': exchange          # opcional, puedes usarlo si quieres
+            'id': symbol,
+            'name': description,
+            'category': type_,   # Puede ser: Common Stock, ETF, Crypto, Index, etc.
+            'price': current_price,
+            'exchange': exchange
         })
 
     return Response({
