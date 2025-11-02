@@ -9,6 +9,7 @@ import axios from "axios";
 
 const API_URL = "http://localhost:8000/api"; 
 
+
 function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const { loginWithRedirect, isAuthenticated, isLoading, logout, user } = useAuth0();
