@@ -100,14 +100,14 @@ function ContentPortfolio() {
   if (isLoadingProfile || isLoading)
     return (
       <div className="content-home">
-        <p style={{ textAlign: "center", padding: "30px" }}>Loading portfolio...</p>
+        <p style={{ textAlign: "center", padding: "30px", color: "#616677" }}>Loading portfolio...</p>
       </div>
     );
 
   if (error)
     return (
       <div className="content-home">
-        <p style={{ color: "red", textAlign: "center" }}>Error: {error}</p>
+        <p style={{ color: "#dc2626", textAlign: "center" }}>Error: {error}</p>
       </div>
     );
 
@@ -115,7 +115,7 @@ function ContentPortfolio() {
   const summary = portfolioData?.summary;
   const portfolio = portfolioData?.portfolio || [];
 
-  // Preparar datos para el gráfico CORREGIDO
+  // Preparar datos para el gráfico
   const chartData = portfolio
     .filter(item => item && item.current_value > 0)
     .map((item) => ({
@@ -123,9 +123,8 @@ function ContentPortfolio() {
       value: item.current_value || 0,
     }));
 
-
-  
-  const COLORS = ["#4CAF50", "#2196F3", "#FFC107", "#FF5722", "#9C27B0", "#00BCD4"];
+  // Colores azules de Hapi
+  const COLORS = ["#4c58ed", "#6b73ff", "#3b43f1", "#5d67f5", "#8b95ff", "#2a32d9"];
 
   return (
     <div className="content-home">
@@ -151,10 +150,10 @@ function ContentPortfolio() {
           {activeTab === "portfolio" && (
             <div className="container-portfolio">
               <div style={{ textAlign: "center" }}>
-                <h2 style={{ fontSize: "1.5rem", color: "#333", margin: "0 0 0.5rem 0" }}>
+                <h2 style={{ fontSize: "1.5rem", color: "#1e2134", margin: "0 0 0.5rem 0", fontWeight: "600" }}>
                   Total Balance
                 </h2>
-                <h1 style={{ fontSize: "2.5rem", fontWeight: "bold", color: "#2196F3", margin: "0 0 2rem 0" }}>
+                <h1 style={{ fontSize: "2.5rem", fontWeight: "bold", color: "#4c58ed", margin: "0 0 2rem 0" }}>
                   {formatCurrency(totalBalance)}
                 </h1>
               </div>
@@ -169,21 +168,36 @@ function ContentPortfolio() {
                     textAlign: "center",
                   }}
                 >
-                  <div style={{ padding: "1rem", backgroundColor: "#f5f5f5", borderRadius: "8px" }}>
-                    <p style={{ color: "#777", fontWeight: "600", margin: "0 0 0.5rem 0" }}>Total Invested</p>
-                    <h3 style={{ margin: 0 }}>{formatCurrency(summary.total_invested)}</h3>
+                  <div style={{ 
+                    padding: "1.5rem", 
+                    background: "linear-gradient(135deg, #f5f7ff 0%, #eef2ff 100%)", 
+                    borderRadius: "12px",
+                    border: "1px solid #e6ebfe"
+                  }}>
+                    <p style={{ color: "#616677", fontWeight: "600", margin: "0 0 0.5rem 0", fontSize: "0.9rem" }}>Total Invested</p>
+                    <h3 style={{ margin: 0, color: "#1e2134", fontWeight: "700" }}>{formatCurrency(summary.total_invested)}</h3>
                   </div>
-                  <div style={{ padding: "1rem", backgroundColor: "#f5f5f5", borderRadius: "8px" }}>
-                    <p style={{ color: "#777", fontWeight: "600", margin: "0 0 0.5rem 0" }}>Current Value</p>
-                    <h3 style={{ margin: 0 }}>{formatCurrency(summary.total_current_value)}</h3>
+                  <div style={{ 
+                    padding: "1.5rem", 
+                    background: "linear-gradient(135deg, #f5f7ff 0%, #eef2ff 100%)", 
+                    borderRadius: "12px",
+                    border: "1px solid #e6ebfe"
+                  }}>
+                    <p style={{ color: "#616677", fontWeight: "600", margin: "0 0 0.5rem 0", fontSize: "0.9rem" }}>Current Value</p>
+                    <h3 style={{ margin: 0, color: "#1e2134", fontWeight: "700" }}>{formatCurrency(summary.total_current_value)}</h3>
                   </div>
-                  <div style={{ padding: "1rem", backgroundColor: "#f5f5f5", borderRadius: "8px" }}>
-                    <p style={{ color: "#777", fontWeight: "600", margin: "0 0 0.5rem 0" }}>Profit / Loss</p>
+                  <div style={{ 
+                    padding: "1.5rem", 
+                    background: "linear-gradient(135deg, #f5f7ff 0%, #eef2ff 100%)", 
+                    borderRadius: "12px",
+                    border: "1px solid #e6ebfe"
+                  }}>
+                    <p style={{ color: "#616677", fontWeight: "600", margin: "0 0 0.5rem 0", fontSize: "0.9rem" }}>Profit / Loss</p>
                     <h3
                       style={{
                         margin: 0,
-                        color: (summary.total_profit_loss || 0) >= 0 ? "#4CAF50" : "#F44336",
-                        fontWeight: "bold",
+                        color: (summary.total_profit_loss || 0) >= 0 ? "#10b981" : "#ef4444",
+                        fontWeight: "700",
                       }}
                     >
                       {formatCurrency(summary.total_profit_loss)} ({(summary.total_profit_loss_percentage || 0).toFixed(2)}%)
@@ -198,10 +212,10 @@ function ContentPortfolio() {
                   style={{
                     marginTop: "2rem",
                     padding: "2rem",
-                    backgroundColor: "#fff",
+                    background: "linear-gradient(135deg, #f5f7ff 0%, #eef2ff 100%)",
                     borderRadius: "12px",
-                    boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
-                    border: "1px solid #e0e0e0",
+                    boxShadow: "0 4px 12px rgba(76, 88, 237, 0.1)",
+                    border: "1px solid #e6ebfe",
                     width: "100%",
                     maxWidth: "700px",
                     marginLeft: "auto",
@@ -213,7 +227,8 @@ function ContentPortfolio() {
                       textAlign: "center",
                       marginBottom: "2rem",
                       fontSize: "1.3rem",
-                      color: "#333"
+                      color: "#1e2134",
+                      fontWeight: "600"
                     }}
                   >
                     Portfolio Distribution
@@ -227,7 +242,7 @@ function ContentPortfolio() {
                           cx="50%"
                           cy="50%"
                           outerRadius={120}
-                          fill="#8884d8"
+                          fill="#4c58ed"
                           dataKey="value"
                           nameKey="name"
                           label={({ name, value }) => `${name}: ${formatCurrency(value)}`}
@@ -236,7 +251,15 @@ function ContentPortfolio() {
                             <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                           ))}
                         </Pie>
-                        <Tooltip formatter={(value: unknown) => formatCurrency(value)} />
+                        <Tooltip 
+                          formatter={(value: unknown) => formatCurrency(value)}
+                          contentStyle={{
+                            backgroundColor: '#fff',
+                            border: '1px solid #e6ebfe',
+                            borderRadius: '8px',
+                            boxShadow: '0 4px 12px rgba(76, 88, 237, 0.1)'
+                          }}
+                        />
                         <Legend verticalAlign="bottom" height={36}/>
                       </PieChart>
                     </ResponsiveContainer>
@@ -244,7 +267,7 @@ function ContentPortfolio() {
 
                   <p style={{
                     textAlign: "center",
-                    color: "#999",
+                    color: "#616677",
                     fontSize: "0.9rem",
                     marginTop: "1rem",
                     marginBottom: 0
@@ -256,21 +279,21 @@ function ContentPortfolio() {
                 <div style={{
                   marginTop: "2rem",
                   padding: "3rem 2rem",
-                  backgroundColor: "#f9f9f9",
+                  background: "linear-gradient(135deg, #f5f7ff 0%, #eef2ff 100%)",
                   borderRadius: "12px",
                   textAlign: "center",
-                  border: "2px dashed #ddd"
+                  border: "2px dashed #dde2f6"
                 }}>
-                  <p style={{ color: "#777", fontSize: "1.1rem", margin: 0 }}>
+                  <p style={{ color: "#616677", fontSize: "1.1rem", margin: 0, fontWeight: "500" }}>
                     No portfolio data available for chart.<br />
-                    <span style={{ fontSize: "0.95rem" }}>Start investing to see your distribution chart!</span>
+                    <span style={{ fontSize: "0.95rem", color: "#9ca3af" }}>Start investing to see your distribution chart!</span>
                   </p>
                 </div>
               )}
 
               <p style={{
                 marginTop: "2rem",
-                color: "#999",
+                color: "#9ca3af",
                 textAlign: "center",
                 fontSize: "0.9rem"
               }}>
@@ -282,7 +305,13 @@ function ContentPortfolio() {
           {/* Assets Table */}
           {activeTab === "assets" && (
             <div className="container-portfolio">
-              <h2 style={{ fontSize: "1.5rem", marginBottom: "1.5rem", textAlign: "center", color: "#333" }}>
+              <h2 style={{ 
+                fontSize: "1.5rem", 
+                marginBottom: "1.5rem", 
+                textAlign: "center", 
+                color: "#1e2134",
+                fontWeight: "600"
+              }}>
                 My Assets
               </h2>
 
@@ -290,11 +319,11 @@ function ContentPortfolio() {
                 <div style={{
                   textAlign: "center",
                   padding: "3rem 2rem",
-                  backgroundColor: "#f9f9f9",
+                  background: "linear-gradient(135deg, #f5f7ff 0%, #eef2ff 100%)",
                   borderRadius: "12px",
-                  border: "2px dashed #ddd"
+                  border: "2px dashed #dde2f6"
                 }}>
-                  <p style={{ color: "#777", fontSize: "1.1rem", margin: 0 }}>
+                  <p style={{ color: "#616677", fontSize: "1.1rem", margin: 0, fontWeight: "500" }}>
                     You don't own any stocks yet.
                   </p>
                 </div>
@@ -302,18 +331,22 @@ function ContentPortfolio() {
                 <div style={{
                   overflowX: "auto",
                   borderRadius: "12px",
-                  boxShadow: "0 2px 8px rgba(0,0,0,0.08)"
+                  boxShadow: "0 4px 12px rgba(76, 88, 237, 0.1)",
+                  border: "1px solid #e6ebfe"
                 }}>
                   <table className="asset-table" style={{ width: "100%", borderCollapse: "collapse" }}>
-                    <thead style={{ backgroundColor: "#2196F3", color: "white" }}>
+                    <thead style={{ 
+                      background: "linear-gradient(135deg, #4c58ed 0%, #6b73ff 100%)", 
+                      color: "white" 
+                    }}>
                       <tr>
-                        <th style={{ padding: "14px 10px", fontWeight: "600" }}>Symbol</th>
-                        <th style={{ padding: "14px 10px", fontWeight: "600" }}>Company</th>
-                        <th style={{ padding: "14px 10px", fontWeight: "600" }}>Qty</th>
-                        <th style={{ padding: "14px 10px", fontWeight: "600" }}>Avg Price</th>
-                        <th style={{ padding: "14px 10px", fontWeight: "600" }}>Current</th>
-                        <th style={{ padding: "14px 10px", fontWeight: "600" }}>Value</th>
-                        <th style={{ padding: "14px 10px", fontWeight: "600" }}>P/L</th>
+                        <th style={{ padding: "16px 12px", fontWeight: "600", fontSize: "0.9rem" }}>Symbol</th>
+                        <th style={{ padding: "16px 12px", fontWeight: "600", fontSize: "0.9rem" }}>Company</th>
+                        <th style={{ padding: "16px 12px", fontWeight: "600", fontSize: "0.9rem" }}>Qty</th>
+                        <th style={{ padding: "16px 12px", fontWeight: "600", fontSize: "0.9rem" }}>Avg Price</th>
+                        <th style={{ padding: "16px 12px", fontWeight: "600", fontSize: "0.9rem" }}>Current</th>
+                        <th style={{ padding: "16px 12px", fontWeight: "600", fontSize: "0.9rem" }}>Value</th>
+                        <th style={{ padding: "16px 12px", fontWeight: "600", fontSize: "0.9rem" }}>P/L</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -322,21 +355,38 @@ function ContentPortfolio() {
                           key={item.symbol}
                           style={{
                             textAlign: "center",
-                            backgroundColor: index % 2 === 0 ? "#fafafa" : "#ffffff",
+                            backgroundColor: index % 2 === 0 ? "#fafbff" : "#ffffff",
                             transition: "background-color 0.2s"
                           }}
-                          onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "#f0f0f0"}
-                          onMouseLeave={(e) => e.currentTarget.style.backgroundColor = index % 2 === 0 ? "#fafafa" : "#ffffff"}
+                          onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "#f5f7ff"}
+                          onMouseLeave={(e) => e.currentTarget.style.backgroundColor = index % 2 === 0 ? "#fafbff" : "#ffffff"}
                         >
-                          <td style={{ padding: "12px 10px", fontWeight: "600", color: "#2196F3" }}>
+                          <td style={{ 
+                            padding: "14px 12px", 
+                            fontWeight: "600", 
+                            color: "#4c58ed",
+                            fontSize: "0.9rem"
+                          }}>
                             {item.symbol}
                           </td>
-                          <td style={{ padding: "12px 10px" }}>{item.name}</td>
-                          <td style={{ padding: "12px 10px" }}>{item.quantity}</td>
-                          <td style={{ padding: "12px 10px" }}>{formatCurrency(item.average_price)}</td>
-                          <td style={{ padding: "12px 10px" }}>{formatCurrency(item.current_price)}</td>
-                          <td style={{ padding: "12px 10px", fontWeight: "600" }}>{formatCurrency(item.current_value)}</td>
-                          <td style={{ padding: "12px 10px", color: (item.profit_loss || 0) >= 0 ? "#4CAF50" : "#F44336", fontWeight: "bold" }}>
+                          <td style={{ padding: "14px 12px", color: "#1e2134", fontSize: "0.9rem" }}>{item.name}</td>
+                          <td style={{ padding: "14px 12px", color: "#616677", fontSize: "0.9rem" }}>{item.quantity}</td>
+                          <td style={{ padding: "14px 12px", color: "#616677", fontSize: "0.9rem" }}>{formatCurrency(item.average_price)}</td>
+                          <td style={{ padding: "14px 12px", color: "#616677", fontSize: "0.9rem" }}>{formatCurrency(item.current_price)}</td>
+                          <td style={{ 
+                            padding: "14px 12px", 
+                            fontWeight: "600", 
+                            color: "#1e2134",
+                            fontSize: "0.9rem"
+                          }}>
+                            {formatCurrency(item.current_value)}
+                          </td>
+                          <td style={{ 
+                            padding: "14px 12px", 
+                            color: (item.profit_loss || 0) >= 0 ? "#10b981" : "#ef4444", 
+                            fontWeight: "700",
+                            fontSize: "0.9rem"
+                          }}>
                             {formatCurrency(item.profit_loss)} ({(item.profit_loss_percentage || 0).toFixed(2)}%)
                           </td>
                         </tr>

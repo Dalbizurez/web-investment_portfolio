@@ -1,27 +1,26 @@
-import { FaFilePdf, FaUserPlus } from "react-icons/fa"; // importas los iconos que quieras
-
-
-
+import { FaFilePdf, FaUserPlus } from "react-icons/fa";
+import { useReferralCode } from '../hooks/useReferralCode';
+import { useStockReports } from "../hooks/useStockReports";
 
 export default function ContentHome() {
+  const { 
+    shareReferralCode, 
+    isSharing 
+  } = useReferralCode();
+  
+  const { 
+    requestReport, 
+    isRequesting, 
+    error, 
+    successMessage 
+  } = useStockReports();
+
   const handleGeneratePDF = async () => {
-    try {
-      alert("Financial statements PDF has been generated and sent to your email");
-    } catch (error) {
-      alert("Error generating PDF. Please try again.");
-    }
-  };
+    const result = await requestReport({
+      include_current_valuation: true,
+      format: "PDF"
+    });
 
-  const handleCopyReferralCode = async () => {
-    try {
-
-      
-      const referralCode = "HAPI-REF-12345";
-      await navigator.clipboard.writeText(referralCode);
-      alert("Referral code copied to clipboard: " + referralCode);
-    } catch (error) {
-      alert("Error copying referral code. Please try again.");
-    }
   };
 
   return (
@@ -34,21 +33,43 @@ export default function ContentHome() {
             <p className="description">Fund your account and invest in your favorite stocks</p>
             <button className="btn-primary">Fund your account</button>
           </div>
-
         </section>
-			<section className="section-22">
-			{/* Utility Buttons Section */}
-			<div className="utility-buttons">
-				<button className="btn-pdf" onClick={handleGeneratePDF}>
-				<FaFilePdf className="button-icon" />  {/* icono PDF */}
-				Generate Financial PDF
-				</button>
-				<button className="btn-referral" onClick={handleCopyReferralCode}>
-				<FaUserPlus className="button-icon" />  {/* icono de referral */}
-				Copy Referral Code
-				</button>
-			</div>
-			</section>
+
+        <section className="section-22">
+          {/* Utility Buttons Section */}
+          <div className="utility-buttons">
+            <button 
+              className="btn-pdf" 
+              onClick={handleGeneratePDF}
+              disabled={isRequesting}
+            >
+              <FaFilePdf className="button-icon" />
+              {isRequesting ? 'Generating PDF...' : 'Generate Financial PDF'}
+            </button>
+            
+            <button 
+              className="btn-referral" 
+              onClick={shareReferralCode}
+              disabled={isSharing}
+            >
+              <FaUserPlus className="button-icon" />
+              {isSharing ? 'Copying...' : 'Copy Referral Code'}
+            </button>
+          </div>
+
+          {/* Mensajes del sistema */}
+          {error && (
+            <div className="error-message">
+              Error: {error}
+            </div>
+          )}
+          
+          {successMessage && (
+            <div className="success-message">
+              {successMessage}
+            </div>
+          )}
+        </section>
 
         <section className="section-3">
           {/* Referral Bonus Card */}

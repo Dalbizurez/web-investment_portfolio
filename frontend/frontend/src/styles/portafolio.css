@@ -3,7 +3,7 @@
   width: 81%;
   height: 91%;
   background-color: #FAFBFF;
-  color: black;
+  color: #1e2134;
   position: fixed;
   bottom: 0;
   right: 0;
@@ -19,12 +19,13 @@
   width: 68vw;
   background-color: #FFFFFF;
   border: 1px solid #DDE2F6;
-  border-radius: 8px;
+  border-radius: 12px;
   overflow: visible;
   display: flex;
   flex-direction: column;
-  gap: 1em;
-  padding: 1em;
+  gap: 1.5em;
+  padding: 2em;
+  box-shadow: 0 2px 8px rgba(75, 88, 237, 0.08);
 }
 
 /* === TABS (Portafolio / Assets) === */
@@ -33,28 +34,27 @@
   justify-content: center;
   align-items: center;
   gap: 30px;
-  /* espacio entre los textos */
   margin-bottom: 20px;
   cursor: pointer;
 }
 
 .type p {
   font-size: 1.1rem;
-  color: #555;
-  padding-bottom: 5px;
+  color: #616677;
+  padding-bottom: 8px;
   border-bottom: 2px solid transparent;
   transition: all 0.2s ease;
+  font-weight: 500;
 }
 
 .type p:hover {
-  color: #000;
+  color: #4c58ed;
 }
 
 .type p.active {
-  color: #000;
+  color: #4c58ed;
   font-weight: 600;
-  border-bottom: 2px solid #000;
-  /* subrayado cuando está activo */
+  border-bottom: 2px solid #4c58ed;
 }
 
 /* === CONTENIDO QUE CAMBIA SEGÚN LA TAB === */
@@ -80,6 +80,8 @@
 .totales h1 {
   text-align: center;
   margin-bottom: 15px;
+  color: #1e2134;
+  font-weight: 700;
 }
 
 .total {
@@ -87,22 +89,42 @@
   justify-content: center;
   align-items: center;
   gap: 20px;
-  margin-bottom: 10px;
+  margin-bottom: 15px;
+  padding: 15px;
+  background: #f5f7ff;
+  border-radius: 10px;
+  border: 1px solid #e6ebfe;
 }
 
-.total h3,
+.total h3 {
+  margin: 0;
+  color: #1e2134;
+  font-weight: 600;
+  font-size: 1rem;
+}
+
 .total p {
   margin: 0;
+  color: #4c58ed;
+  font-weight: 700;
+  font-size: 1.1rem;
 }
 
 /* === GRÁFICO / TARJETA A LA DERECHA === */
 .graphics {
   flex: 0 0 250px;
   text-align: center;
-  background-color: #f5f5f5;
-  padding: 20px;
+  background: linear-gradient(135deg, #f5f7ff 0%, #eef2ff 100%);
+  padding: 25px;
   border-radius: 12px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e6ebfe;
+  box-shadow: 0 4px 12px rgba(76, 88, 237, 0.1);
+}
+
+.graphics h3 {
+  color: #1e2134;
+  margin-bottom: 15px;
+  font-weight: 600;
 }
 
 /* === BLOQUE DE ASSETS === */
@@ -114,43 +136,92 @@
 }
 
 .assets .total {
-  background-color: #f5f5f5;
-  padding: 20px 40px;
+  background: linear-gradient(135deg, #f5f7ff 0%, #eef2ff 100%);
+  padding: 25px 40px;
   border-radius: 12px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e6ebfe;
+  box-shadow: 0 4px 12px rgba(76, 88, 237, 0.1);
 }
 
-/* === SCROLLBAR PERSONALIZADO (opcional) === */
+.assets .total h3 {
+  color: #1e2134;
+  font-size: 1.2rem;
+}
+
+.assets .total p {
+  color: #4c58ed;
+  font-size: 1.3rem;
+}
+
+/* === SCROLLBAR PERSONALIZADO === */
 .content-home::-webkit-scrollbar {
   width: 8px;
 }
 
 .content-home::-webkit-scrollbar-thumb {
-  background-color: #ccc;
+  background-color: #dde2f6;
   border-radius: 4px;
 }
 
 .content-home::-webkit-scrollbar-thumb:hover {
-  background-color: #999;
+  background-color: #4c58ed;
 }
 
-/* ... tus otros estilos ... */
-
+/* === BOTÓN VOLVER === */
 .back-button {
   display: flex;
   align-items: center;
-  gap: 0.25rem;
+  gap: 0.5rem;
   background: none;
   border: none;
-  color: #4f46e5;
-  /* Color índigo de tus íconos */
-  font-size: 0.9rem;
+  color: #4c58ed;
+  font-size: 0.95rem;
   font-weight: 600;
   cursor: pointer;
-  margin-bottom: 1.5rem;
-  padding: 0;
+  padding: 0.5rem 0;
+  margin-bottom: 1rem;
+  transition: all 0.2s ease;
 }
 
 .back-button:hover {
-  text-decoration: underline;
+  color: #3b43f1;
+  gap: 0.75rem;
+}
+
+/* === RESPONSIVE === */
+@media (max-width: 1024px) {
+  .sections {
+    width: 85vw;
+    padding: 1.5em;
+  }
+  
+  .container-portafolio {
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  .graphics {
+    flex: 1;
+    width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .content-home {
+    width: 100%;
+    padding: 1em 0;
+  }
+  
+  .sections {
+    width: 95vw;
+    padding: 1em;
+  }
+  
+  .type {
+    gap: 20px;
+  }
+  
+  .type p {
+    font-size: 1rem;
+  }
 }

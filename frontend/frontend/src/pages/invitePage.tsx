@@ -1,5 +1,3 @@
-import React from "react";
-import Layout from "../components/Layout";
 import InviteSection from "../components/inviteSection";
 import InviteImage from "../components/inviteImage";
 import "../styles/invite_section.css";
