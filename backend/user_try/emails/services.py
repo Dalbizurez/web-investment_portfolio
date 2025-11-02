@@ -86,3 +86,70 @@ class UserEmailService:
         except Exception as e:
             logger.error(f"Error sending account activated email to {user.email}: {str(e)}")
             return False
+        
+
+    @staticmethod
+    def send_account_suspended_email(user):
+        """Send email to user when account is suspended"""
+        try:
+            subject = 'Your Account Has Been Suspended'
+
+            context = {
+                'username': user.username,
+                'email': user.email,
+            }
+
+            html_message = render_to_string(
+                'user_try/emails/account_suspended.html',
+                context
+            )
+
+            plain_message = strip_tags(html_message)
+
+            send_mail(
+                subject=subject,
+                message=plain_message,
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                recipient_list=[user.email],
+                html_message=html_message,
+                fail_silently=False,
+            )
+
+            logger.info(f"Account suspension email sent to {user.email}")
+            return True
+        except Exception as e:
+            logger.error(f"Error sending suspension email to {user.email}: {str(e)}")
+            return False
+
+    @staticmethod
+    def send_account_reactivated_email(user):
+        """Send email to user when account is reactivated"""
+        try:
+            subject = 'Your Account Has Been Reactivated'
+
+            context = {
+                'username': user.username,
+                'email': user.email,
+            }
+
+            html_message = render_to_string(
+                'user_try/emails/account_reactivated.html',
+                context
+            )
+
+            plain_message = strip_tags(html_message)
+
+            send_mail(
+                subject=subject,
+                message=plain_message,
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                recipient_list=[user.email],
+                html_message=html_message,
+                fail_silently=False,
+            )
+
+            logger.info(f"Account reactivation email sent to {user.email}")
+            return True
+        except Exception as e:
+            logger.error(f"Error sending reactivation email to {user.email}: {str(e)}")
+            return False

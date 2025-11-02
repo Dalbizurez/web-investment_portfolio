@@ -1,4 +1,3 @@
-# user_try/auth.py
 from rest_framework.authentication import BaseAuthentication
 from rest_framework.exceptions import AuthenticationFailed
 from django.conf import settings
@@ -8,6 +7,7 @@ from .models import User
 import secrets
 import string
 from django.utils import timezone
+
 
 class Auth0Authentication(BaseAuthentication):
     """
@@ -34,7 +34,7 @@ class Auth0Authentication(BaseAuthentication):
                 )
             
             user.last_login = timezone.now()
-            user.save()
+            user.save(update_fields=["last_login"])
             
             return (user, token)
             
@@ -124,40 +124,48 @@ class Auth0Authentication(BaseAuthentication):
                 email = f"{auth0_id.replace('|', '_')}@auth0-user.local"
         
         try:
+            # User exists by auth0_id
             user = User.objects.get(auth0_id=auth0_id)
-            
+
+            # Update email if placeholder used previously
             if email and user.email != email and '@auth0-user.local' in user.email:
                 user.email = email
-                user.save()
+                user.save(update_fields=["email"])
             
             return user
+        
         except User.DoesNotExist:
-            try:
+            # User may exist by email (first login via form, later via Auth0)
+            if email and User.objects.filter(email=email).exists():
                 user = User.objects.get(email=email)
                 user.auth0_id = auth0_id
-                user.save()
+                user.save(update_fields=["auth0_id"])
                 return user
-            except User.DoesNotExist:
-                username = self.generate_unique_username(email, name)
-                
-                user = User.objects.create(
-                    username=username,
-                    email=email,
-                    auth0_id=auth0_id,
-                    status='pending',
-                    type='standard',
-                    has_used_referral=False
-                )
-                
-                random_password = ''.join(secrets.choice(string.ascii_letters + string.digits) for _ in range(20))
-                user.set_password(random_password)
-                user.save()
-                
-                # Send registration pending email
+            
+            # Create new user
+            username = self.generate_unique_username(email, name)
+            
+            user = User.objects.create(
+                username=username,
+                email=email,
+                auth0_id=auth0_id,
+                status='pending',
+                type='standard',
+                has_used_referral=False
+            )
+            
+            # Generate random password so Django login cannot be used
+            random_password = ''.join(secrets.choice(string.ascii_letters + string.digits) for _ in range(20))
+            user.set_password(random_password)
+
+            # Send registration pending email only once
+            if not user.email_pending_sent:
                 from user_try.emails.services import UserEmailService
                 UserEmailService.send_registration_pending_email(user)
-                
-                return user
+                user.email_pending_sent = True
+                user.save(update_fields=["email_pending_sent"])
+
+            return user
     
     def generate_unique_username(self, email, name):
         """Generate unique username from email or name"""

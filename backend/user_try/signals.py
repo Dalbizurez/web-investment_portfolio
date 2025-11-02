@@ -13,18 +13,25 @@ def track_previous_status(sender, instance, **kwargs):
     else:
         instance._old_status = None
 
+
 @receiver(post_save, sender=User)
-def send_activation_email(sender, instance, created, **kwargs):
-    # Don't send email on user creation (only on status change)
+def handle_status_change(sender, instance, created, **kwargs):
     if created:
-        return
+        return  # no enviar nada al crear
 
-    previous_status = getattr(instance, '_old_status', None)
+    prev = getattr(instance, '_old_status', None)
+    new = instance.status
 
-    # If the user changed from pending - active and no email has been sent
-    if previous_status == "pending" and instance.status == "active":
+    # Pending -> Active (first approval)
+    if prev == "pending" and new == "active":
         if not instance.email_activation_sent:
             UserEmailService.send_account_activated_email(instance)
-
-            # Mark that the email has been sent
             User.objects.filter(pk=instance.pk).update(email_activation_sent=True)
+
+    # Active -> Suspended
+    elif prev == "active" and new == "suspended":
+        UserEmailService.send_account_suspended_email(instance)
+
+    # Suspended -> Active (reactivation)
+    elif prev == "suspended" and new == "active":
+        UserEmailService.send_account_reactivated_email(instance)

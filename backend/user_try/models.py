@@ -35,6 +35,7 @@ class User(models.Model):
     # new field to track if activation email has been sent
     email_activation_sent = models.BooleanField(default=False)
     
+    email_pending_sent = models.BooleanField(default=False)
     def __str__(self):
         return self.username
     
