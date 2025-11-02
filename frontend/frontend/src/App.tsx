@@ -12,13 +12,20 @@ function App() {
   return (
     <Routes>
       <Route path="/" element={<HomePage />} />
-      <Route path="/invite" element={<InvitePage />} />
       {/* Rutas protegidas */}
       <Route
         path="/homeUser"
         element={
           <ProtectedRoute>
             <HomeUser />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/invite"
+        element={
+          <ProtectedRoute>
+            <InvitePage />
           </ProtectedRoute>
         }
       />
