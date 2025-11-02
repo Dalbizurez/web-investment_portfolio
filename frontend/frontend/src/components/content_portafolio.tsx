@@ -1,11 +1,17 @@
 import { useState, useEffect } from "react";
 import { useUser } from "./UserContext";
 import axios from "axios";
-import { VictoryPie } from "victory";
+import {
+  PieChart,
+  Pie,
+  Tooltip,
+  Cell,
+  Legend,
+  ResponsiveContainer,
+} from "recharts";
 
 const API_URL = "http://localhost:8000/api";
 
-// Interfaces
 interface BalanceData {
   balance: number;
   last_updated: string;
@@ -13,24 +19,26 @@ interface BalanceData {
 
 interface PortfolioItem {
   symbol: string;
+  name: string;
   quantity: number;
   average_price: number;
   current_price: number;
-  total_value: number;
+  current_value: number;
+  invested_value: number;
   profit_loss: number;
   profit_loss_percentage: number;
-}
-
-interface PortfolioSummary {
-  total_invested: number;
-  total_current_value: number;
-  total_profit_loss: number;
-  total_profit_loss_percentage: number;
+  daily_change: number;
+  daily_change_percentage: number;
 }
 
 interface PortfolioResponse {
-  summary: PortfolioSummary;
   portfolio: PortfolioItem[];
+  summary: {
+    total_invested: number;
+    total_current_value: number;
+    total_profit_loss: number;
+    total_profit_loss_percentage: number;
+  };
 }
 
 function ContentPortfolio() {
@@ -47,7 +55,7 @@ function ContentPortfolio() {
       try {
         setIsLoading(true);
         setError(null);
-
+        
         const [balanceRes, portfolioRes] = await Promise.all([
           axios.get(`${API_URL}/stocks/balance/`, {
             headers: { Authorization: `Bearer ${token}` },
@@ -57,12 +65,9 @@ function ContentPortfolio() {
           }),
         ]);
 
-        console.log("Balance:", balanceRes.data);
-        console.log("Portfolio:", portfolioRes.data);
-
-
         setBalanceData(balanceRes.data);
         setPortfolioData(portfolioRes.data);
+
       } catch (err: any) {
         setError(err.response?.data?.error || err.message);
       } finally {
@@ -73,236 +78,272 @@ function ContentPortfolio() {
     fetchPortfolio();
   }, [token]);
 
-  const formatCurrency = (amount: number) =>
-    new Intl.NumberFormat("en-US", { 
-      style: "currency", 
-      currency: "USD" 
-    }).format(amount || 0);
+  const formatCurrency = (amount: unknown): string => {
+    const numAmount = typeof amount === 'number' ? amount : 
+                     typeof amount === 'string' ? parseFloat(amount) : 0;
+    
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD",
+    }).format(isNaN(numAmount) ? 0 : numAmount);
+  };
 
   const formatDateOnly = (isoDate: string) => {
     const date = new Date(isoDate);
-    return date.toLocaleDateString("en-US", { 
-      year: "numeric", 
-      month: "long", 
-      day: "numeric" 
+    return date.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
     });
   };
 
-  if (isLoadingProfile || isLoading) {
+  if (isLoadingProfile || isLoading)
     return (
       <div className="content-home">
-        <p style={{ textAlign: "center", padding: "30px" }}>
-          Loading portfolio...
-        </p>
+        <p style={{ textAlign: "center", padding: "30px" }}>Loading portfolio...</p>
       </div>
     );
-  }
 
-  if (error) {
+  if (error)
     return (
       <div className="content-home">
-        <p style={{ color: "red", textAlign: "center" }}>
-          Error: {error}
-        </p>
+        <p style={{ color: "red", textAlign: "center" }}>Error: {error}</p>
       </div>
     );
-  }
 
   const totalBalance = balanceData?.balance || 0;
   const summary = portfolioData?.summary;
   const portfolio = portfolioData?.portfolio || [];
 
-  // Prepara los datos para Victory
-  const chartData = portfolio.map((item) => ({
-    x: item.symbol,
-    y: item.total_value,
-  }));
+  // Preparar datos para el gráfico CORREGIDO
+  const chartData = portfolio
+    .filter(item => item && item.current_value > 0)
+    .map((item) => ({
+      name: item.symbol || 'Unknown',
+      value: item.current_value || 0,
+    }));
 
-  const COLORS = [
-    "#4CAF50", 
-    "#2196F3", 
-    "#FFC107", 
-    "#FF5722", 
-    "#9C27B0", 
-    "#00BCD4"
-  ];
+
+  
+  const COLORS = ["#4CAF50", "#2196F3", "#FFC107", "#FF5722", "#9C27B0", "#00BCD4"];
 
   return (
     <div className="content-home">
       <div className="sections">
+        {/* Navigation Tabs */}
         <div className="type">
-          <p 
-            className={activeTab === "portfolio" ? "active" : ""} 
+          <p
+            className={activeTab === "portfolio" ? "active" : ""}
             onClick={() => setActiveTab("portfolio")}
           >
             Portfolio
           </p>
-          <p 
-            className={activeTab === "assets" ? "active" : ""} 
+          <p
+            className={activeTab === "assets" ? "active" : ""}
             onClick={() => setActiveTab("assets")}
           >
             Assets
           </p>
         </div>
 
+        {/* Portfolio Summary */}
         <div className="content">
           {activeTab === "portfolio" && (
             <div className="container-portfolio">
               <div style={{ textAlign: "center" }}>
-                <h2>Total Balance</h2>
-                <h1 style={{ color: "#2196F3" }}>
+                <h2 style={{ fontSize: "1.5rem", color: "#333", margin: "0 0 0.5rem 0" }}>
+                  Total Balance
+                </h2>
+                <h1 style={{ fontSize: "2.5rem", fontWeight: "bold", color: "#2196F3", margin: "0 0 2rem 0" }}>
                   {formatCurrency(totalBalance)}
                 </h1>
               </div>
 
               {summary && (
-                <div 
-                  style={{ 
-                    display: "grid", 
-                    gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", 
-                    gap: "1rem", 
-                    marginBottom: "2rem", 
-                    textAlign: "center" 
+                <div
+                  style={{
+                    display: "grid",
+                    gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
+                    gap: "1rem",
+                    marginBottom: "2rem",
+                    textAlign: "center",
                   }}
                 >
-                  <div 
-                    style={{ 
-                      padding: "1rem", 
-                      backgroundColor: "#f5f5f5", 
-                      borderRadius: "8px" 
-                    }}
-                  >
-                    <p>Total Invested</p>
-                    <h3>{formatCurrency(summary.total_invested)}</h3>
+                  <div style={{ padding: "1rem", backgroundColor: "#f5f5f5", borderRadius: "8px" }}>
+                    <p style={{ color: "#777", fontWeight: "600", margin: "0 0 0.5rem 0" }}>Total Invested</p>
+                    <h3 style={{ margin: 0 }}>{formatCurrency(summary.total_invested)}</h3>
                   </div>
-                  <div 
-                    style={{ 
-                      padding: "1rem", 
-                      backgroundColor: "#f5f5f5", 
-                      borderRadius: "8px" 
-                    }}
-                  >
-                    <p>Current Value</p>
-                    <h3>{formatCurrency(summary.total_current_value)}</h3>
+                  <div style={{ padding: "1rem", backgroundColor: "#f5f5f5", borderRadius: "8px" }}>
+                    <p style={{ color: "#777", fontWeight: "600", margin: "0 0 0.5rem 0" }}>Current Value</p>
+                    <h3 style={{ margin: 0 }}>{formatCurrency(summary.total_current_value)}</h3>
                   </div>
-                  <div 
-                    style={{ 
-                      padding: "1rem", 
-                      backgroundColor: "#f5f5f5", 
-                      borderRadius: "8px" 
-                    }}
-                  >
-                    <p>Profit / Loss</p>
-                    <h3 
-                      style={{ 
-                        color: summary.total_profit_loss >= 0 
-                          ? "#4CAF50" 
-                          : "#F44336" 
+                  <div style={{ padding: "1rem", backgroundColor: "#f5f5f5", borderRadius: "8px" }}>
+                    <p style={{ color: "#777", fontWeight: "600", margin: "0 0 0.5rem 0" }}>Profit / Loss</p>
+                    <h3
+                      style={{
+                        margin: 0,
+                        color: (summary.total_profit_loss || 0) >= 0 ? "#4CAF50" : "#F44336",
+                        fontWeight: "bold",
                       }}
                     >
-                      {formatCurrency(summary.total_profit_loss)} (
-                      {summary.total_profit_loss_percentage.toFixed(2)}%)
+                      {formatCurrency(summary.total_profit_loss)} ({(summary.total_profit_loss_percentage || 0).toFixed(2)}%)
                     </h3>
                   </div>
                 </div>
               )}
 
-              {/* Gráfica circular con Victory */}
-              {portfolio.length > 0 ? (
-                <div 
-                  style={{ 
-                    marginTop: "2rem", 
-                    padding: "2rem", 
-                    backgroundColor: "#fff", 
-                    borderRadius: "12px" 
+              {/* Chart Section */}
+              {chartData.length > 0 ? (
+                <div
+                  style={{
+                    marginTop: "2rem",
+                    padding: "2rem",
+                    backgroundColor: "#fff",
+                    borderRadius: "12px",
+                    boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
+                    border: "1px solid #e0e0e0",
+                    width: "100%",
+                    maxWidth: "700px",
+                    marginLeft: "auto",
+                    marginRight: "auto"
                   }}
                 >
-                  <h3 style={{ textAlign: "center" }}>
+                  <h3
+                    style={{
+                      textAlign: "center",
+                      marginBottom: "2rem",
+                      fontSize: "1.3rem",
+                      color: "#333"
+                    }}
+                  >
                     Portfolio Distribution
                   </h3>
-                  <VictoryPie
-                    data={chartData}
-                    colorScale={COLORS}
-                    innerRadius={50}
-                    labels={({ datum }) => `${datum.x}: ${formatCurrency(datum.y)}`}
-                    style={{ 
-                      labels: { fontSize: 12 } 
-                    }}
-                  />
-                  <p style={{ textAlign: "center", color: "#999" }}>
-                    📊 Displaying {portfolio.length} asset
-                    {portfolio.length > 1 ? 's' : ''}
+
+                  <div style={{ width: "100%", height: "400px" }}>
+                    <ResponsiveContainer width="100%" height="100%">
+                      <PieChart>
+                        <Pie
+                          data={chartData}
+                          cx="50%"
+                          cy="50%"
+                          outerRadius={120}
+                          fill="#8884d8"
+                          dataKey="value"
+                          nameKey="name"
+                          label={({ name, value }) => `${name}: ${formatCurrency(value)}`}
+                        >
+                          {chartData.map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                          ))}
+                        </Pie>
+                        <Tooltip formatter={(value: unknown) => formatCurrency(value)} />
+                        <Legend verticalAlign="bottom" height={36}/>
+                      </PieChart>
+                    </ResponsiveContainer>
+                  </div>
+
+                  <p style={{
+                    textAlign: "center",
+                    color: "#999",
+                    fontSize: "0.9rem",
+                    marginTop: "1rem",
+                    marginBottom: 0
+                  }}>
+                    Displaying {chartData.length} asset{chartData.length > 1 ? 's' : ''}
                   </p>
                 </div>
               ) : (
-                <p>No portfolio data available yet.</p>
+                <div style={{
+                  marginTop: "2rem",
+                  padding: "3rem 2rem",
+                  backgroundColor: "#f9f9f9",
+                  borderRadius: "12px",
+                  textAlign: "center",
+                  border: "2px dashed #ddd"
+                }}>
+                  <p style={{ color: "#777", fontSize: "1.1rem", margin: 0 }}>
+                    No portfolio data available for chart.<br />
+                    <span style={{ fontSize: "0.95rem" }}>Start investing to see your distribution chart!</span>
+                  </p>
+                </div>
               )}
 
-              <p style={{ textAlign: "center", color: "#999" }}>
-                Last updated: {balanceData?.last_updated 
-                  ? formatDateOnly(balanceData.last_updated) 
-                  : "N/A"}
+              <p style={{
+                marginTop: "2rem",
+                color: "#999",
+                textAlign: "center",
+                fontSize: "0.9rem"
+              }}>
+                Last updated: {balanceData?.last_updated ? formatDateOnly(balanceData.last_updated) : "N/A"}
               </p>
             </div>
           )}
 
+          {/* Assets Table */}
           {activeTab === "assets" && (
-            <div className="container-assets">
-              {portfolio.length > 0 ? (
-                <table style={{ width: "100%", borderCollapse: "collapse" }}>
-                  <thead>
-                    <tr style={{ backgroundColor: "#f5f5f5" }}>
-                      <th style={{ padding: "1rem", textAlign: "left" }}>Symbol</th>
-                      <th style={{ padding: "1rem", textAlign: "right" }}>Quantity</th>
-                      <th style={{ padding: "1rem", textAlign: "right" }}>Avg Price</th>
-                      <th style={{ padding: "1rem", textAlign: "right" }}>Current Price</th>
-                      <th style={{ padding: "1rem", textAlign: "right" }}>Total Value</th>
-                      <th style={{ padding: "1rem", textAlign: "right" }}>P/L</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {portfolio.map((item, index) => (
-                      <tr 
-                        key={item.symbol} 
-                        style={{ 
-                          borderBottom: "1px solid #eee",
-                          backgroundColor: index % 2 === 0 ? "#fff" : "#fafafa"
-                        }}
-                      >
-                        <td style={{ padding: "1rem", fontWeight: "bold" }}>
-                          {item.symbol}
-                        </td>
-                        <td style={{ padding: "1rem", textAlign: "right" }}>
-                          {item.quantity}
-                        </td>
-                        <td style={{ padding: "1rem", textAlign: "right" }}>
-                          {formatCurrency(item.average_price)}
-                        </td>
-                        <td style={{ padding: "1rem", textAlign: "right" }}>
-                          {formatCurrency(item.current_price)}
-                        </td>
-                        <td style={{ padding: "1rem", textAlign: "right" }}>
-                          {formatCurrency(item.total_value)}
-                        </td>
-                        <td 
-                          style={{ 
-                            padding: "1rem", 
-                            textAlign: "right",
-                            color: item.profit_loss >= 0 ? "#4CAF50" : "#F44336",
-                            fontWeight: "bold"
-                          }}
-                        >
-                          {formatCurrency(item.profit_loss)} (
-                          {item.profit_loss_percentage.toFixed(2)}%)
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+            <div className="container-portfolio">
+              <h2 style={{ fontSize: "1.5rem", marginBottom: "1.5rem", textAlign: "center", color: "#333" }}>
+                My Assets
+              </h2>
+
+              {portfolio.length === 0 ? (
+                <div style={{
+                  textAlign: "center",
+                  padding: "3rem 2rem",
+                  backgroundColor: "#f9f9f9",
+                  borderRadius: "12px",
+                  border: "2px dashed #ddd"
+                }}>
+                  <p style={{ color: "#777", fontSize: "1.1rem", margin: 0 }}>
+                    You don't own any stocks yet.
+                  </p>
+                </div>
               ) : (
-                <p style={{ textAlign: "center", padding: "2rem" }}>
-                  No assets in your portfolio yet.
-                </p>
+                <div style={{
+                  overflowX: "auto",
+                  borderRadius: "12px",
+                  boxShadow: "0 2px 8px rgba(0,0,0,0.08)"
+                }}>
+                  <table className="asset-table" style={{ width: "100%", borderCollapse: "collapse" }}>
+                    <thead style={{ backgroundColor: "#2196F3", color: "white" }}>
+                      <tr>
+                        <th style={{ padding: "14px 10px", fontWeight: "600" }}>Symbol</th>
+                        <th style={{ padding: "14px 10px", fontWeight: "600" }}>Company</th>
+                        <th style={{ padding: "14px 10px", fontWeight: "600" }}>Qty</th>
+                        <th style={{ padding: "14px 10px", fontWeight: "600" }}>Avg Price</th>
+                        <th style={{ padding: "14px 10px", fontWeight: "600" }}>Current</th>
+                        <th style={{ padding: "14px 10px", fontWeight: "600" }}>Value</th>
+                        <th style={{ padding: "14px 10px", fontWeight: "600" }}>P/L</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {portfolio.map((item, index) => (
+                        <tr
+                          key={item.symbol}
+                          style={{
+                            textAlign: "center",
+                            backgroundColor: index % 2 === 0 ? "#fafafa" : "#ffffff",
+                            transition: "background-color 0.2s"
+                          }}
+                          onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "#f0f0f0"}
+                          onMouseLeave={(e) => e.currentTarget.style.backgroundColor = index % 2 === 0 ? "#fafafa" : "#ffffff"}
+                        >
+                          <td style={{ padding: "12px 10px", fontWeight: "600", color: "#2196F3" }}>
+                            {item.symbol}
+                          </td>
+                          <td style={{ padding: "12px 10px" }}>{item.name}</td>
+                          <td style={{ padding: "12px 10px" }}>{item.quantity}</td>
+                          <td style={{ padding: "12px 10px" }}>{formatCurrency(item.average_price)}</td>
+                          <td style={{ padding: "12px 10px" }}>{formatCurrency(item.current_price)}</td>
+                          <td style={{ padding: "12px 10px", fontWeight: "600" }}>{formatCurrency(item.current_value)}</td>
+                          <td style={{ padding: "12px 10px", color: (item.profit_loss || 0) >= 0 ? "#4CAF50" : "#F44336", fontWeight: "bold" }}>
+                            {formatCurrency(item.profit_loss)} ({(item.profit_loss_percentage || 0).toFixed(2)}%)
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               )}
             </div>
           )}
