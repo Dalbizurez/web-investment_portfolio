@@ -29,23 +29,20 @@ class UserAdmin(admin.ModelAdmin):
     actions = ['activate_users', 'suspend_users', 'make_admin', 'make_vip', 'make_standard']
     
     def save_model(self, request, obj, form, change):
-        # Detectar cambio de estado a ACTIVE
-        if change:
-            original = User.objects.get(pk=obj.pk)
-            if original.status != "active" and obj.status == "active":
-                UserEmailService.send_account_activated_email(obj)
-
         super().save_model(request, obj, form, change)
 
+
     def activate_users(self, request, queryset):
-        updated = queryset.update(status='active')
-        self.message_user(request, f'{updated} users activated.')
-    activate_users.short_description = "Activate selected users"
+        for user in queryset:
+            user.status = 'active'
+            user.save()
+        self.message_user(request, f'{queryset.count()} users activated.')
     
     def suspend_users(self, request, queryset):
-        updated = queryset.update(status='suspended')
-        self.message_user(request, f'{updated} users suspended.')
-    suspend_users.short_description = "Suspend selected users"
+        for user in queryset:
+            user.status = 'suspended'
+            user.save()
+        self.message_user(request, f'{queryset.count()} users suspended.')
     
     def make_admin(self, request, queryset):
         updated = queryset.update(type='admin')
