@@ -9,7 +9,7 @@ import SeventhSection from "../components/hp_seventh_section";
 
 function HomePage() {
   return (
-    <>
+    <div className="home-page-container">
       <Navbar />
       <FirstSection />
       <SecondSection />
@@ -18,7 +18,7 @@ function HomePage() {
       <FifthSection />
       <CarouselSection />
       <SeventhSection />
-    </>
+    </div>
   );
 }
 

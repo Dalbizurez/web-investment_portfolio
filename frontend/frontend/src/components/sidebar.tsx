@@ -38,7 +38,12 @@ function SideBar() {
           </li>
           <li>
             <Link to="/search" onClick={handleLinkClick} >
-              Search
+              Purchases
+            </Link>
+          </li>
+          <li>
+            <Link to="/sells" onClick={handleLinkClick} >
+              Sells
             </Link>
           </li>
           <li>

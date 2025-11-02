@@ -6,6 +6,7 @@ import Portafolio from "./pages/portafolio";
 import TransferPage from "./pages/transfers";
 import ProtectedRoute from "./components/ProtectedRoute";
 import SearchPage from "./pages/search_page";
+import SellsPage from "./pages/sells_page";
 
 function App() {
   return (
@@ -21,8 +22,13 @@ function App() {
           </ProtectedRoute>
         }
       />
-      <Route 
-        path="/search" 
+      <Route path="/sells" 
+        element={
+          <ProtectedRoute>
+            <SellsPage />
+          </ProtectedRoute>} 
+      />
+      <Route path="/search" 
         element={
           <ProtectedRoute>
             <SearchPage />

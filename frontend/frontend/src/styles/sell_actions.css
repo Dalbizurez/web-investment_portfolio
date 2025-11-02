@@ -1,0 +1,232 @@
+.sell-actions-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 20px;
+  width: 95%;   
+  max-width: 1400px;    
+  margin: 0 auto;
+  font-family: Arial, sans-serif;
+}
+
+.sell-action {
+  border: 1px solid #ccc;
+  padding: 30px;
+  border-radius: 8px;
+  background-color: #fafafa;
+  box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.05);
+  transition: box-shadow 0.2s ease-in-out;
+}
+
+.sell-action:hover {
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.sell-action h3 {
+  margin: 0 0 10px 0;
+  font-size: 1.2rem;
+  color: #333;
+}
+
+.sell-action p {
+  margin: 5px 0;
+  color: #555;
+}
+
+.sell-action label {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+  font-size: 0.95rem;
+  color: #333;
+}
+
+.sell-action input[type="number"] {
+  width: 80px;
+  margin-left: 10px;
+  padding: 5px 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.sell-action button {
+  padding: 6px 12px;
+  background-color: #4caf50;
+  border: none;
+  color: white;
+  font-weight: bold;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.sell-action button:hover {
+  background-color: #45a049;
+}
+
+.sell-actions-container {
+  max-height: 75vh; 
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  padding: 15px;
+  border-radius: 8px;
+  background: #f9f9f9;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.sell-action {
+  border: 1px solid #ccc;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 6px;
+  background: #fff;
+}
+
+.sell-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 50;
+}
+
+.sell-modal {
+  background: #fff;
+  border-radius: 12px;
+  padding: 24px;
+  width: 420px;
+  max-width: 90%;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+  animation: fadeIn 0.3s ease;
+  font-family: Arial, sans-serif;
+}
+
+.sell-details p {
+  margin: 6px 0;
+}
+
+.input-group {
+  margin: 10px 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.input-group input,
+.input-group select {
+  padding: 6px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+.sell-warning {
+  background: #fff8e1;
+  color: #6a4f00;
+  padding: 10px;
+  border-radius: 6px;
+  margin: 12px 0;
+  font-size: 0.9rem;
+}
+
+.modal-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 12px;
+}
+
+button.cancel {
+  background: #ccc;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 8px;
+}
+
+button.confirm {
+  background: #007aff;
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 8px;
+}
+
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.sell-modal h2 {
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+.input-group {
+  margin: 10px 0;
+}
+
+.input-group label {
+  display: block;
+  font-size: 0.9rem;
+  margin-bottom: 5px;
+}
+
+.input-group input {
+  width: 100%;
+  padding: 6px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.modal-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.modal-buttons button {
+  padding: 8px 14px;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.modal-buttons .cancel {
+  background-color: #ccc;
+  color: #222;
+}
+
+.modal-buttons .confirm {
+  background-color: #4caf50;
+  color: white;
+}
+
+.modal-buttons .confirm:hover {
+  background-color: #3d8b41;
+}
+
+
+@media (max-width: 600px) {
+  .sell-action label {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .sell-action input[type="number"] {
+    margin-left: 0;
+    margin-top: 5px;
+  }
+
+  .sell-action button {
+    margin-top: 10px;
+  }
+}
