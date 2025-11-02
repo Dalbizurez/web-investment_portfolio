@@ -1,29 +1,25 @@
-import React from "react";
-import Layout from "../components/Layout";
-
 import InviteSection from "../components/inviteSection";
 import InviteImage from "../components/inviteImage";
+import "../styles/invite_section.css";
 import "../styles/styles.css";
 import SideBar from "../components/sidebar";
 import Header from "../components/header_search";
 
-const InvitePage: React.FC = () => {
+function InvitePage() {
   return (
-    <Layout>
-      <div className="page-container">
-        <SideBar/>
-
-        <div className="main-area">
+    <main className="page-container">
+      <SideBar />
+      <div className="main-area">
         <Header />
-
-          <div className="invite-layout">
-            <InviteSection />
-            <div className="inviteImage"><InviteImage /></div>
+        <div className="invite-layout">
+          <InviteSection />
+          <div className="inviteImage">
+            <InviteImage />
           </div>
         </div>
       </div>
-    </Layout>
+    </main>
   );
-};
+}
 
 export default InvitePage;

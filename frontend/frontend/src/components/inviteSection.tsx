@@ -1,73 +1,57 @@
-import React, { useEffect } from "react";
-import "../styles/styles.css";
-
+import React from 'react';
+import { useReferralCode } from '../hooks/useReferralCode';
 
 const InviteSection: React.FC = () => {
-    useEffect(() => {
-        const shareButton = document.getElementById("shareButton");
+  const { 
+    shareReferralCode, 
+    isSharing, 
+    error 
+  } = useReferralCode();
 
-        const handleShare = async () => {
-        const link = "https://hapi.app/ref/invite";
+  return (
+    <section className="invite-section">
+      <p className="section-title">Referred</p>
+      <h2>Invite friends. Earn rewards!</h2>
+      <p>
+        Invite your friends to Hapi. Once they register and use the app,
+        both of you will receive special rewards.
+      </p>
 
-        if (navigator.share) {
-            try {
-            await navigator.share({
-                title: "Invite to Hapi",
-                text: "Join Hapi and earn free cryptocurrency.",
-                url: link,
-            });
-            alert("Link shared successfully!");
-            } catch (err) {
-            console.error("Error sharing link:", err);
-            }
-        } else {
-            navigator.clipboard.writeText(link);
-            alert("Link copied to clipboard: " + link);
-        }
-        };
+      <button 
+        className="share-button" 
+        onClick={shareReferralCode}
+        disabled={isSharing}
+      >
+        {isSharing ? 'Sharing...' : 'Share code'}
+      </button>
 
-        shareButton?.addEventListener("click", handleShare);
+      {error && (
+        <div className="error-message" style={{color: 'red', marginTop: '10px'}}>
+          {error}
+        </div>
+      )}
 
-        return () => {
-        shareButton?.removeEventListener("click", handleShare);
-        };
-    }, []);
-
-    return (
-        <section className="invite-section">
-        <p className="section-title">Referred</p>
-        <h2>Invite friends. Earn crypto!</h2>
+      <div className="details">
+        <h3>Referral Bonus Program</h3>
         <p>
-            Invite your friends to Hapi. Once they register and deposit funds, both
-            of you will receive free cryptocurrency rewards.
+          Earn $8 when you refer friends and your friends get $5 discount 
+          on their first investment. Share your code and both get rewarded!
         </p>
 
-        <button className="share-button" id="shareButton">
-            Share link
-        </button>
+        <h3>Instant Rewards</h3>
+        <p>
+          Get immediate rewards when your friends sign up and make their 
+          first deposit. No waiting periods!
+        </p>
 
-        <div className="details">
-            <h3>100% chance to win a prize</h3>
-            <p>
-            Every time a friend registers and deposits, you get a free crypto
-            reward in your account.{" "}
-            <a href="#">Read terms and conditions here.</a>
-            </p>
-
-            <h3>Win up to $500 in crypto</h3>
-            <p>
-            You have 1 in 400 chance to win $500, 1 in 100 to win $20, 1 in 20 to
-            win $10, and 1 in 2 to win $1.
-            </p>
-
-            <h3>Unlimited invitations</h3>
-            <p>
-            Invite as many friends as you want and earn crypto rewards for each
-            one.
-            </p>
-        </div>
-        </section>
-    );
+        <h3>Unlimited Referrals</h3>
+        <p>
+          Invite as many friends as you want! There's no limit to how much 
+          you can earn through our referral program.
+        </p>
+      </div>
+    </section>
+  );
 };
 
 export default InviteSection;

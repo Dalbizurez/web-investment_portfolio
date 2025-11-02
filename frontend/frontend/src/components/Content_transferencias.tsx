@@ -27,7 +27,6 @@ type FormProps = {
   token: string;
 };
 
-// --- COMPONENTE PRINCIPAL ---
 function Content_transferencias() {
   const [currentView, setCurrentView] = useState<"main" | "toHapi" | "toBank">(
     "main"
