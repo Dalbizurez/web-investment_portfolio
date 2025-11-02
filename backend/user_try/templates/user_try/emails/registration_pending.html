@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Account Registration Pending</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            color: #333333;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        .container {
+            max-width: 600px;
+            margin: 20px auto;
+            background-color: #ffffff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #ffffff;
+            padding: 40px 20px;
+            text-align: center;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 28px;
+            font-weight: 600;
+        }
+        .content {
+            padding: 40px 30px;
+        }
+        .content h2 {
+            color: #333333;
+            font-size: 22px;
+            margin-top: 0;
+        }
+        .info-box {
+            background-color: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 20px;
+            margin: 25px 0;
+            border-radius: 4px;
+        }
+        .info-box strong {
+            color: #856404;
+            display: block;
+            margin-bottom: 10px;
+        }
+        .info-box p {
+            margin: 0;
+            color: #856404;
+        }
+        .details-list {
+            background-color: #f8f9fa;
+            border-radius: 4px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .details-list li {
+            margin: 10px 0;
+            color: #555555;
+        }
+        .details-list strong {
+            color: #333333;
+        }
+        .footer {
+            background-color: #f8f9fa;
+            text-align: center;
+            padding: 20px;
+            color: #6c757d;
+            font-size: 14px;
+        }
+        .footer p {
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Account Registration</h1>
+        </div>
+        <div class="content">
+            <h2>Hello {{ username }}!</h2>
+            <p>Thank you for registering with our Investment Portfolio Platform.</p>
+            
+            <div class="info-box">
+                <strong>Your account is currently pending approval.</strong>
+                <p>Our administrators will review your information and activate your account within 24-48 hours.</p>
+            </div>
+            
+            <h3>Account Details:</h3>
+            <ul class="details-list">
+                <li><strong>Username:</strong> {{ username }}</li>
+                <li><strong>Email:</strong> {{ email }}</li>
+                <li><strong>Registration Date:</strong> {{ created_at|date:"Y-m-d H:i" }} UTC</li>
+            </ul>
+            
+            <p>You will receive another email once your account has been activated and you can start trading.</p>
+            
+            <p style="margin-top: 30px;">If you have any questions, please contact our support team.</p>
+            
+            <p style="margin-top: 30px; color: #666666;">Best regards,<br><strong>Investment Portfolio Team</strong></p>
+        </div>
+        <div class="footer">
+            <p>This is an automated message. Please do not reply to this email.</p>
+            <p>&copy; 2025 Investment Portfolio Platform. All rights reserved.</p>
+        </div>
+    </div>
+</body>
+</html>
