@@ -1,0 +1,94 @@
+@import url('https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
+.login-section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background: linear-gradient(to bottom right, #3EDBEF, #6873EF 40%, #ffffff 100%);
+  font-family: "Roboto", sans-serif;
+}
+
+.login-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+  width: 90%;
+  max-width: 600px;
+  text-align: center;
+}
+
+.login-logo {
+    margin-top: -5rem;
+    width: 80px;
+    height: auto;
+}
+
+.login-box {
+  background-color: #FFF;
+  padding: 2rem;
+  border-radius: 12px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.login-form input {
+  padding: 0.75rem 1rem;
+  border: none;
+  border-radius: 8px;
+  margin-top: 0.5rem;
+  outline: none;
+  border: solid #6873ef3a 0.2px;
+}
+
+.login-form input:focus{
+    border: solid #6873EF 0.2px;
+}
+
+.login-button, .register-btn {
+  padding: 0.8rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.2s;
+}
+
+.login-button{
+  width: 100%;
+  background-color: #4C58ED;
+  color: #FFF;
+}
+
+.login-button:hover {
+  background-color: #3e48ce;
+}
+
+.register-btn {
+  background-color: transparent;
+  color: #3e48ce;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .login-box {
+    padding: 1.5rem;
+  }
+
+  .login-form input {
+    font-size: 0.9rem;
+  }
+
+  .login-btn, .register-btn {
+    font-size: 0.9rem;
+  }
+}

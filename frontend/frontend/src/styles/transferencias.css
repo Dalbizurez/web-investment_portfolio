@@ -1,0 +1,302 @@
+/* === ZONA PRINCIPAL === */
+.content-home {
+    width: 81%;
+    height: 91%;
+    background-color: #fafbff;
+    color: black;
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 2em 0;
+    overflow-y: auto;
+}
+
+/* === SECCIÓN INTERNA === */
+.sections {
+    width: 68vw;
+    background-color: #ffffff;
+    border: 1px solid #dde2f6;
+    border-radius: 8px;
+    overflow: visible;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5em;
+    padding: 1.5em;
+}
+
+/* === CONTENEDOR DE TRANSFERENCIAS === */
+.transfer-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 2rem;
+    width: 100%;
+}
+
+/* === SECCIÓN IZQUIERDA (Opciones) === */
+.transfer-dinero {
+    display: flex;
+    flex-direction: column;
+    flex: 2;
+    background: #fff;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.transfer-dinero h2 {
+    font-size: 1.4rem;
+    margin-bottom: 1.5rem;
+    font-weight: 600;
+    color: #1f2937;
+}
+
+.transfer-options {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+/* === OPCIONES INDIVIDUALES === */
+.transfer-option {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    border-radius: 12px;
+    background: #fff;
+    border: 1px solid #eee;
+    transition: background 0.2s, transform 0.1s;
+    cursor: pointer;
+}
+
+.transfer-option:hover {
+    background-color: #f3f6ff;
+    transform: translateY(-2px);
+}
+
+.transfer-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.transfer-icon {
+    background: #eef2ff;
+    color: #4f46e5;
+    border-radius: 50%;
+    padding: 0.6rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.transfer-info h3 {
+    margin: 0;
+    font-size: 1rem;
+    color: #1f2937;
+}
+
+.transfer-info p {
+    margin: 0;
+    font-size: 0.875rem;
+    color: #6b7280;
+}
+
+.transfer-arrow {
+    color: #9ca3af;
+    font-size: 1.2rem;
+}
+
+/* === SECCIÓN DERECHA (Historial / recientes) === */
+.transfer-recientes {
+    flex: 1;
+}
+
+.recent-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.recent-card h2 {
+    font-size: 1.3rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: #1f2937;
+}
+
+.recent-box {
+    background: #f5f7ff;
+    border-radius: 10px;
+    padding: 1rem;
+    text-align: left;
+}
+
+.recent-title {
+    font-weight: 600;
+    color: #111827;
+}
+
+.recent-subtitle {
+    font-size: 0.875rem;
+    color: #6b7280;
+    margin-top: 0.5rem;
+}
+
+/* === SCROLLBAR PERSONALIZADO === */
+.content-home::-webkit-scrollbar {
+    width: 8px;
+}
+
+.content-home::-webkit-scrollbar-thumb {
+    background-color: #ccc;
+    border-radius: 4px;
+}
+
+.content-home::-webkit-scrollbar-thumb:hover {
+    background-color: #999;
+}
+
+/* === ESTILOS PARA LOS FORMULARIOS DE TRANSFERENCIA === */
+
+/* Contenedor principal del formulario */
+.transfer-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    /* Espacio entre elementos (título, grupos, botón) */
+}
+
+/* Botón de volver */
+.back-button {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    background: none;
+    border: none;
+    color: #4f46e5;
+    /* Color principal */
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 0;
+}
+
+.back-button:hover {
+    text-decoration: underline;
+}
+
+/* Grupo de formulario (label + input/display) */
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.form-group label {
+    font-size: 0.875rem;
+    /* 14px */
+    font-weight: 500;
+    color: #374151;
+    /* Gris oscuro */
+}
+
+/* Caja para mostrar la cuenta bancaria (no editable) */
+.account-display {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    /* Espacio entre ícono y texto */
+    padding: 1rem;
+    background-color: #f8f9ff;
+    /* Fondo muy claro */
+    border: 1px solid #eef2ff;
+    /* Borde sutil */
+    border-radius: 8px;
+    color: #1f2937;
+    font-size: 0.95rem;
+}
+
+.account-display svg {
+    color: #4f46e5;
+    /* Color del ícono */
+    font-size: 1.2rem;
+}
+
+/* Contenedor del input de monto */
+.amount-input-wrapper {
+    display: flex;
+    align-items: center;
+    border: 1px solid #dde2f6;
+    /* Borde suave */
+    border-radius: 8px;
+    background: #fff;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.amount-input-wrapper:focus-within {
+    border-color: #4f46e5;
+    /* Resaltar al enfocar */
+    box-shadow: 0 0 0 2px #e0e7ff;
+    /* Sombra de foco */
+}
+
+.amount-input-wrapper span {
+    padding: 0 1rem;
+    font-size: 1rem;
+    font-weight: 500;
+    color: #6b7280;
+    /* Color gris */
+}
+
+/* Input de monto */
+.amount-input {
+    flex: 1;
+    border: none;
+    outline: none;
+    background: none;
+    padding: 1rem 0;
+    font-size: 1.5rem;
+    /* Números grandes */
+    font-weight: 700;
+    color: #1f2937;
+    /* Ocultar flechas de input number */
+}
+
+.amount-input::-webkit-outer-spin-button,
+.amount-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* El botón "bonito" de Enviar/Retirar */
+.submit-button {
+    background-color: #4f46e5;
+    /* Color principal de Hapi */
+    color: white;
+    font-size: 1rem;
+    font-weight: 600;
+    padding: 1rem;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+    width: 100%;
+    margin-top: 1rem;
+    /* Espacio extra arriba */
+}
+
+.submit-button:hover {
+    background-color: #4338ca;
+    /* Un poco más oscuro al pasar el mouse */
+}
+
+.submit-button:active {
+    transform: scale(0.98);
+    /* Efecto de clic */
+}
