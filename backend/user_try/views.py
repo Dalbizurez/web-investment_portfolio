@@ -129,7 +129,7 @@ def change_password(request):
     return Response({"message": "Password changed successfully"})
 
 
-@api_view(["GET", "POST"])
+@api_view(["GET", "PATCH"])  # Cambiamos POST por PATCH
 @permission_classes([IsAuthenticated])
 def update_profile(request):
     """Get or update user profile, including language preference"""
@@ -138,27 +138,33 @@ def update_profile(request):
     if request.method == "GET":
         return Response(UserSerializer(user).data)
 
-    # POST - update profile
-    username = request.data.get("username", user.username)
-    email = request.data.get("email", user.email)
-    language = request.data.get("language", user.language)
+    # PATCH - update profile (actualización parcial)
+    updated_fields = []
+    
+    if 'username' in request.data:
+        user.username = request.data['username']
+        updated_fields.append('username')
+    
+    if 'email' in request.data:
+        user.email = request.data['email']
+        updated_fields.append('email')
+    
+    if 'language' in request.data:
+        user.language = request.data['language']
+        updated_fields.append('language')
 
-    user.username = username
-    user.email = email
-    user.language = language
     user.save()
 
-    # Audit log
-    AuditLog.objects.create(
-        user=user,
-        action="update_profile",
-        ip_address=request.META.get("REMOTE_ADDR"),
-        user_agent=request.META.get("HTTP_USER_AGENT", ""),
-        details={"updated_fields": ["username", "email", "language"]}
-    )
+    if updated_fields:  
+        AuditLog.objects.create(
+            user=user,
+            action="update_profile",
+            ip_address=request.META.get("REMOTE_ADDR"),
+            user_agent=request.META.get("HTTP_USER_AGENT", ""),
+            details={"updated_fields": updated_fields}
+        )
 
     return Response(UserSerializer(user).data)
-
 
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])

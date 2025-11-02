@@ -57,8 +57,8 @@ function SideBar() {
             </Link>
           </li>
           <li>
-            <Link to="/more" onClick={handleLinkClick} data-icon="⋯">
-              More
+            <Link to="/profile" onClick={handleLinkClick} data-icon="⋯">
+              Profile
             </Link>
           </li>
         </ul>

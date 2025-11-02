@@ -7,6 +7,9 @@ import TransferPage from "./pages/transfers";
 import ProtectedRoute from "./components/ProtectedRoute";
 import SearchPage from "./pages/search_page";
 import SellsPage from "./pages/sells_page";
+import ProfilePage from "./pages/profile";
+
+
 
 function App() {
   return (
@@ -54,6 +57,14 @@ function App() {
         element={
           <ProtectedRoute>
             <TransferPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/profile"
+        element={
+          <ProtectedRoute>
+            <ProfilePage />
           </ProtectedRoute>
         }
       />
