@@ -42,13 +42,14 @@ def buy_stock(request):
             return Response({'error': 'Invalid stock symbol format'}, 
                            status=status.HTTP_400_BAD_REQUEST)
         
-        is_market_open, market_message = validate_trading_hours()
-        if not is_market_open:
-            return Response({
-                'error': 'Trading not allowed at this time',
-                'message': market_message,
-                'market_open': False
-            }, status=status.HTTP_400_BAD_REQUEST)
+        # --- COMENTADO para ignorar horario de mercado ---
+        # is_market_open, market_message = validate_trading_hours()
+        # if not is_market_open:
+        #     return Response({
+        #         'error': 'Trading not allowed at this time',
+        #         'message': market_message,
+        #         'market_open': False
+        #     }, status=status.HTTP_400_BAD_REQUEST)
         
         service = FinnhubService()
         
@@ -152,6 +153,7 @@ def buy_stock(request):
         logger.error(f"Error buying stock: {e}")
         return Response({'error': 'Internal server error'}, 
                        status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])

@@ -51,7 +51,7 @@ function Content_transferencias() {
   if (isLoadingProfile)
     return (
       <div className="content-home">
-        <p style={{ textAlign: "center", padding: "20px" }}>🔄 Cargando...</p>
+        <p style={{ textAlign: "center", padding: "20px" }}> Cargando...</p>
       </div>
     );
 

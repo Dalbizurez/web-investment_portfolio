@@ -1,0 +1,262 @@
+/* === ZONA PRINCIPAL === */
+.content-home {
+    width: 81%;
+    height: 91%;
+    background-color: #f7f8ff; /* ligero azul Hapi */
+    color: #1e2134;
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 2em 0;
+    overflow-y: auto;
+}
+
+/* === SECCIÓN INTERNA === */
+.search-section {
+    width: 68vw;
+    background-color: #ffffff;
+    border: 1px solid #dde2f6;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5em;
+    padding: 2em;
+}
+
+/* === Barra de búsqueda === */
+.search-bar {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.search-input {
+    flex: 1;
+    padding: 0.7rem 1rem;
+    border: 2px solid #dde2f6;
+    border-radius: 10px;
+    font-size: 1rem;
+    background-color: #fff;
+    color: #1e2134;
+    transition: all 0.2s ease;
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: #4c58ed;
+    box-shadow: 0 0 0 3px rgba(76, 88, 237, 0.1);
+}
+
+.search-button {
+    padding: 0.7rem 1.2rem;
+    background: linear-gradient(135deg, #4c58ed 0%, #5d67f5 100%);
+    color: white;
+    font-size: 1rem;
+    font-weight: 700;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 12px rgba(76, 88, 237, 0.3);
+}
+
+.search-button:hover {
+    background: linear-gradient(135deg, #3b43f1 0%, #4c58ed 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(76, 88, 237, 0.4);
+}
+
+/* === Mensajes de carga y error === */
+.error {
+    color: #991b1b;
+    font-weight: 500;
+}
+
+/* === Grid de resultados === */
+.results-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1rem;
+}
+
+/* === Card de cada resultado === */
+.result-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 1.5rem;
+    border: 1px solid #dde2f6;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(75, 88, 237, 0.08);
+}
+
+.result-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(75, 88, 237, 0.15);
+}
+
+.result-card h3 {
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: #1e2134;
+    margin-bottom: 0.5rem;
+}
+
+.result-card p,
+.result-card small {
+    font-size: 0.875rem;
+    color: #616677;
+}
+
+/* === MODAL === */
+.modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.modal {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 2.5rem;
+    max-width: 500px;
+    width: 90%;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    position: relative;
+    animation: slideUp 0.3s ease;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+@keyframes slideUp {
+    from { transform: translateY(50px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+.modal h2 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #1e2134;
+    margin-bottom: 1.5rem;
+    border-bottom: 2px solid #dde2f6;
+    padding-bottom: 0.75rem;
+}
+
+.modal p {
+    font-size: 0.95rem;
+    color: #616677;
+    margin-bottom: 0.75rem;
+    line-height: 1.5;
+}
+
+.purchase-section {
+    margin-top: 2rem;
+    margin-bottom: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.purchase-section input {
+    width: 100%;
+    padding: 0.9rem 1rem;
+    border: 2px solid #dde2f6;
+    border-radius: 10px;
+    font-size: 1rem;
+    background-color: #f7f8ff;
+    color: #1e2134;
+    transition: all 0.2s ease;
+}
+
+.purchase-section input:focus {
+    outline: none;
+    border-color: #4c58ed;
+    box-shadow: 0 0 0 3px rgba(76, 88, 237, 0.1);
+}
+
+.purchase-section button {
+    width: 100%;
+    padding: 0.9rem 1rem;
+    background: linear-gradient(135deg, #4c58ed 0%, #5d67f5 100%);
+    color: white;
+    font-size: 1rem;
+    font-weight: 700;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 12px rgba(76, 88, 237, 0.3);
+}
+
+.purchase-section button:hover {
+    background: linear-gradient(135deg, #3b43f1 0%, #4c58ed 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(76, 88, 237, 0.4);
+}
+
+.close-modal {
+    width: 100%;
+    padding: 0.9rem 1rem;
+    background: #f3f4f6;
+    color: #616677;
+    font-size: 0.95rem;
+    font-weight: 600;
+    border: 2px solid #dde2f6;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.close-modal:hover {
+    background: #e5e7eb;
+    border-color: #9ca3af;
+    color: #374151;
+}
+
+/* === SCROLLBAR PERSONALIZADO === */
+.content-home::-webkit-scrollbar,
+.modal::-webkit-scrollbar {
+    width: 8px;
+}
+
+.content-home::-webkit-scrollbar-thumb,
+.modal::-webkit-scrollbar-thumb {
+    background-color: #dde2f6;
+    border-radius: 4px;
+}
+
+.content-home::-webkit-scrollbar-thumb:hover,
+.modal::-webkit-scrollbar-thumb:hover {
+    background-color: #4c58ed;
+}
+
+/* === RESPONSIVE === */
+@media (max-width: 1024px) {
+    .results-grid {
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    }
+}
+
+@media (max-width: 768px) {
+    .content-home { width: 100%; padding: 1em 0; }
+    .search-section { width: 95vw; padding: 1em; }
+    .modal { width: 95%; padding: 1.5rem; }
+    .modal h2 { font-size: 1.25rem; }
+}
