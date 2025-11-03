@@ -1,5 +1,4 @@
 import InviteSection from "../components/inviteSection";
-import InviteImage from "../components/inviteImage";
 import "../styles/invite_section.css";
 import "../styles/styles.css";
 import SideBar from "../components/sidebar";
@@ -11,11 +10,8 @@ function InvitePage() {
       <SideBar />
       <div className="main-area">
         <Header />
-        <div className="invite-layout">
+        <div className="invite-layout invite-layout--single">
           <InviteSection />
-          <div className="inviteImage">
-            <InviteImage />
-          </div>
         </div>
       </div>
     </main>
