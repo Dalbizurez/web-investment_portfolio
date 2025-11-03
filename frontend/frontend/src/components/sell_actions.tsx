@@ -112,6 +112,15 @@ const SellActions = () => {
 
   return (
     <div className={`sell-actions-container ${modalOpen ? "blurred" : ""}`}>
+      {/* === ENCABEZADO CON ESTILO DE VENTAS === */}
+      <div className="sell-header">
+        <h1> Sell Your Stocks</h1>
+        <p>
+          Review your current holdings and make quick, secure sales with one click.
+        </p>
+      </div>
+
+      {/* === LISTA DE ACCIONES === */}
       {stocks.map((stock) => {
         const profitColor = stock.profit_loss >= 0 ? "green" : "red";
 
@@ -126,11 +135,14 @@ const SellActions = () => {
                 ? `+${stock.profit_loss.toFixed(2)}`
                 : stock.profit_loss.toFixed(2)}
             </span>
-            <button onClick={() => openSellModal(stock)}>Sell</button>
+            <button onClick={() => openSellModal(stock)} className="sell-button">
+              Sell
+            </button>
           </div>
         );
       })}
 
+      {/* === MODAL DE VENTA === */}
       {modalOpen && selectedStock && (
         <>
           <div className="modal-overlay" onClick={closeModal}></div>
