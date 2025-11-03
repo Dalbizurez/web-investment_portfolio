@@ -14,10 +14,17 @@ interface SearchResult {
   symbol: string;
   type: string;
   current_price?: number | null;
+  sector?: string;
+  exchange?: string;
 }
 
 const SearchActions: React.FC = () => {
   const [query, setQuery] = useState("");
+  const [sector, setSector] = useState("");
+  const [exchange, setExchange] = useState("");
+  const [minPrice, setMinPrice] = useState("");
+  const [maxPrice, setMaxPrice] = useState("");
+
   const [results, setResults] = useState<SearchResult[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -27,34 +34,44 @@ const SearchActions: React.FC = () => {
   const [quantity, setQuantity] = useState<number>(0);
   const [buyLoading, setBuyLoading] = useState(false);
 
-  // Tomamos token desde el contexto global
   const { token, isLoadingProfile } = useUser();
 
   // --- Buscar acciones ---
   const handleSearch = async () => {
-    if (!query.trim()) return;
+    if (!query.trim()) return alert("Ingrese un símbolo o nombre para buscar.");
     if (!token) return alert("No has iniciado sesión.");
     setLoading(true);
     setError(null);
 
     try {
+      const params: Record<string, string> = { q: query };
+      if (sector) params["sector"] = sector;
+      if (exchange) params["exchange"] = exchange;
+      if (minPrice) params["min_price"] = minPrice;
+      if (maxPrice) params["max_price"] = maxPrice;
+
       const response = await axios.get(API_URL, {
-        params: { q: query },
+        params,
         headers: { Authorization: `Bearer ${token}` },
       });
 
       const stocks: SearchResult[] = response.data.results || [];
 
+      // --- Llenar sector y exchange desde detalle ---
       const updatedStocks = await Promise.all(
         stocks.map(async (stock) => {
           try {
             const detailResp = await axios.get(`${DETAIL_URL}${stock.symbol}/`, {
               headers: { Authorization: `Bearer ${token}` },
             });
-            const quote = detailResp.data.quote;
-            return { ...stock, current_price: quote?.current_price ?? null };
-          } catch (err) {
-            console.error(`Error cargando detalle de ${stock.symbol}`, err);
+            const detail = detailResp.data;
+            return { 
+              ...stock, 
+              current_price: detail.quote?.current_price ?? null,
+              sector: detail.profile?.finnhubIndustry ?? stock.sector,
+              exchange: detail.profile?.exchange ?? stock.exchange,
+            };
+          } catch {
             return { ...stock, current_price: null };
           }
         })
@@ -62,14 +79,13 @@ const SearchActions: React.FC = () => {
 
       setResults(updatedStocks);
     } catch (err) {
-      setError("Error al buscar acciones.");
+      setError("Error al buscar acciones. Intente nuevamente.");
       console.error(err);
     } finally {
       setLoading(false);
     }
   };
 
-  // --- Abrir modal ---
   const openStockModal = async (stock: SearchResult) => {
     setSelectedStock(stock);
     if (!token) return;
@@ -85,32 +101,27 @@ const SearchActions: React.FC = () => {
     }
   };
 
-  // --- Ejecutar compra ---
   const handleConfirmPurchase = async () => {
     if (!quantity || quantity <= 0) return alert("Ingrese una cantidad válida");
     if (!token) return alert("No has iniciado sesión.");
+    if (!selectedStock) return;
 
     setBuyLoading(true);
     try {
-      console.log("Enviando compra:", {
-  symbol: selectedStock?.symbol,
-  quantity,
-});
       const res = await axios.post(
         BUY_URL,
-        { symbol: selectedStock?.symbol, quantity },
+        { symbol: selectedStock.symbol, quantity },
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
-      alert(`Compra confirmada: ${quantity} acciones de ${selectedStock?.displaySymbol}`);
+      alert(`Compra confirmada: ${quantity} acciones de ${selectedStock.displaySymbol}`);
       console.log("Respuesta API:", res.data);
-
-      setSelectedStock(null);
-      setStockDetail(null);
-      setQuantity(0);
+      closeModal();
     } catch (err: any) {
       console.error("Error ejecutando la compra", err.response?.data || err.message);
       alert("Error al ejecutar la compra. Intente nuevamente.");
+    } finally {
+      setBuyLoading(false);
     }
   };
 
@@ -144,6 +155,8 @@ const SearchActions: React.FC = () => {
       <div className="content-home">
         <section className="search-section">
           <h2>Buscar acciones</h2>
+
+          {/* --- BARRA DE BÚSQUEDA Y FILTROS --- */}
           <div className="search-bar">
             <input
               type="text"
@@ -157,9 +170,37 @@ const SearchActions: React.FC = () => {
             </button>
           </div>
 
+          <div className="filter-section">
+            <input
+              type="text"
+              placeholder="Sector (opcional)"
+              value={sector}
+              onChange={(e) => setSector(e.target.value)}
+            />
+            <input
+              type="text"
+              placeholder="Exchange (NASDAQ, NYSE...)"
+              value={exchange}
+              onChange={(e) => setExchange(e.target.value)}
+            />
+            <input
+              type="number"
+              placeholder="Precio mínimo"
+              value={minPrice}
+              onChange={(e) => setMinPrice(e.target.value)}
+            />
+            <input
+              type="number"
+              placeholder="Precio máximo"
+              value={maxPrice}
+              onChange={(e) => setMaxPrice(e.target.value)}
+            />
+          </div>
+
           {loading && <p>Buscando acciones...</p>}
           {error && <p className="error">{error}</p>}
 
+          {/* --- RESULTADOS --- */}
           <div className="results-grid">
             {results.map((item) => (
               <div
@@ -169,10 +210,15 @@ const SearchActions: React.FC = () => {
               >
                 <h3>{item.displaySymbol}</h3>
                 <p>{item.description}</p>
-                <small>{item.type}</small>
                 <p>
-                  Precio actual:{" "}
-                  {item.current_price !== null && item.current_price !== undefined
+                  <strong>Sector:</strong> {item.sector || "Desconocido"}
+                </p>
+                <p>
+                  <strong>Exchange:</strong> {item.exchange || "N/D"}
+                </p>
+                <p>
+                  <strong>Precio actual:</strong>{" "}
+                  {item.current_price
                     ? `$${item.current_price.toFixed(2)}`
                     : "No disponible"}
                 </p>
@@ -184,7 +230,7 @@ const SearchActions: React.FC = () => {
             <p>No se encontraron resultados.</p>
           )}
 
-          {/* Modal */}
+          {/* --- MODAL --- */}
           {selectedStock && stockDetail && (
             <div className="modal-backdrop">
               <form
