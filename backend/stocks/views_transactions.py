@@ -384,9 +384,6 @@ def get_user_balance(request):
     })
 
 
-@api_view(['GET'])
-@permission_classes([IsAuthenticated])
-def get_user_portfolio(request):
     """Get user's current stock portfolio - stocks available to sell"""
     try:
         portfolio_items = UserPortfolio.objects.filter(

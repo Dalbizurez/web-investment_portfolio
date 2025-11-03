@@ -19,7 +19,6 @@ urlpatterns = [
     path('transactions/sell/', views_transactions.sell_stock, name='sell-stock'),
     path('transactions/history/', views_transactions.get_transaction_history, name='transaction-history'),
     path('balance/', views_transactions.get_user_balance, name='user-balance'),
-    path('transactions/get_user_portfolio/', views_transactions.get_user_portfolio, name='get_user_portfolio'),
 
      # Reports
     path('reports/request/', views_reports.request_report, name='request-report'),
