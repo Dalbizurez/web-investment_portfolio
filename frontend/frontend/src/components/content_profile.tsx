@@ -10,17 +10,11 @@ interface UserData {
   language: string;
 }
 
-interface PasswordData {
-  old_password: string;
-  new_password: string;
-}
 
 function ContentProfile() {
   const { token, isLoadingProfile } = useUser();
   const [userData, setUserData] = useState<UserData | null>(null);
-  const [passwordData, setPasswordData] = useState<PasswordData>({
-    old_password: "",
-    new_password: "",
+  ({
   });
 
   const [isLoading, setIsLoading] = useState(false);
@@ -101,6 +95,43 @@ function ContentProfile() {
               margin: "auto",
             }}
           >
+            {/* Referral: use code manually */}
+            <div style={{ padding:"20px", background:"#fff", borderRadius:"10px", boxShadow:"0 2px 8px rgba(0,0,0,0.08)" }}>
+              <h3>Use a referral code</h3>
+              <input
+                type="text"
+                placeholder="Enter referral code"
+                id="refToApply"
+                style={{ padding:"8px", width:"100%", marginTop:"10px", borderRadius:"8px", border:"1px solid #ccc" }}
+              />
+              <button
+                style={{
+                  marginTop:"10px",
+                  background:"#4c58ed",
+                  padding:"10px",
+                  borderRadius:"8px",
+                  color:"#fff",
+                  width:"100%",
+                  fontWeight:"600"
+                }}
+                onClick={async () => {
+                  const code = (document.getElementById("refToApply") as HTMLInputElement)?.value;
+                  if (!code) return alert("Enter a code");
+
+                  try {
+                    await axios.post("http://localhost:8000/api/user_try/use-referral-code/", { referral_code: code }, {
+                      headers: { Authorization: `Bearer ${token}` }
+                    });
+                    alert("✅ Code applied! Bonus received");
+                  } catch (e:any) {
+                    alert(e.response?.data?.error || "Error applying code");
+                  }
+                }}
+              >
+                Apply code
+              </button>
+            </div>
+
             {/* Mensajes */}
             {successMsg && (
               <div
