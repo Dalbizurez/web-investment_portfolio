@@ -1,8 +1,12 @@
 import { Link } from "react-router-dom";
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
+import { useUser } from "./UserContext";
+
 
 function SideBar() {
+  const { userProfile } = useUser();
+  const isAdmin = userProfile?.type === "admin";
   const [menuOpen, setMenuOpen] = useState(false);
 
   const handleLinkClick = () => {
@@ -60,6 +64,9 @@ function SideBar() {
             <Link to="/profile" onClick={handleLinkClick} data-icon="⋯">
               Profile
             </Link>
+          </li>
+          <li>
+            {isAdmin && <Link to="/admin">Admin Panel</Link>}
           </li>
         </ul>
       </div>

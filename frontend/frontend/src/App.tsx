@@ -8,6 +8,12 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import SearchPage from "./pages/search_page";
 import SellsPage from "./pages/sells_page";
 import ProfilePage from "./pages/profile";
+import AdminRoute from "./components/admin/AdminRoute";
+import AdminLayout from "./pages/admin/AdminLayout";
+import AdminDashboard from "./pages/admin/AdminDashboard";
+import AdminUsers from "./pages/admin/AdminUsers";
+import AdminStocks from "./pages/admin/AdminStocks";
+import AdminTransactions from "./pages/admin/AdminTransactions";
 
 
 
@@ -68,6 +74,12 @@ function App() {
           </ProtectedRoute>
         }
       />
+      <Route path="/admin" element={<AdminRoute><AdminLayout /></AdminRoute>}>
+        <Route index element={<AdminDashboard />} />
+        <Route path="users" element={<AdminUsers />} />
+        <Route path="stocks" element={<AdminStocks />} />
+        <Route path="transactions" element={<AdminTransactions />} />
+      </Route>
     </Routes>
   );
 }
