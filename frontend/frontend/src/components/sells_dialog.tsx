@@ -1,4 +1,3 @@
-
 import React, { useState, useMemo } from "react";
 import "../styles/sell_actions.css";
 import type { SellActionItem } from "./sell_actions";
@@ -13,13 +12,14 @@ const SellDialog: React.FC<SellDialogProps> = ({ item, onClose, onConfirm }) => 
   const [quantity, setQuantity] = useState<number>(item?.quantity ?? 0);
   const [orderType, setOrderType] = useState<string>("Mercado");
   const [usePercent, setUsePercent] = useState<boolean>(false);
-  const [percent, setPercent] = useState<number>(0); // porcentaje por defecto 0
-  const commission = 2.5; // comisión simulada fija
+  const [percent, setPercent] = useState<number>(0);
+  const commission = 2.5;
 
-  // Calcula cantidad basada en porcentaje si checkbox activo
   const computedQuantity = useMemo(() => {
     if (!item) return 0;
-    return usePercent ? Math.max(1, Math.round((percent / 100) * (item.quantity ?? 1))) : quantity;
+    return usePercent
+      ? Math.max(1, Math.round((percent / 100) * (item.quantity ?? 1)))
+      : quantity;
   }, [usePercent, percent, quantity, item]);
 
   const { total, net } = useMemo(() => {
@@ -49,7 +49,8 @@ const SellDialog: React.FC<SellDialogProps> = ({ item, onClose, onConfirm }) => 
           </p>
 
           <div className="input-group">
-            <label><p>Activar Porcentaje</p>
+            <label>
+              <p>Activar Porcentaje</p>
               <input
                 type="checkbox"
                 checked={usePercent}
@@ -63,7 +64,9 @@ const SellDialog: React.FC<SellDialogProps> = ({ item, onClose, onConfirm }) => 
                 min={1}
                 max={100}
                 value={percent}
-                onChange={(e) => setPercent(Math.min(100, Math.max(1, parseInt(e.target.value) || 1)))}
+                onChange={(e) =>
+                  setPercent(Math.min(100, Math.max(1, parseInt(e.target.value) || 1)))
+                }
                 placeholder="% a vender"
               />
             )}
@@ -105,7 +108,8 @@ const SellDialog: React.FC<SellDialogProps> = ({ item, onClose, onConfirm }) => 
 
           <div className="sell-warning">
             ¿Estás seguro de que deseas vender <strong>{computedQuantity}</strong> acciones de{" "}
-            <strong>{item.name}</strong> por un valor estimado de <strong>${net.toFixed(2)}</strong>?
+            <strong>{item.name}</strong> por un valor estimado de{" "}
+            <strong>${net.toFixed(2)}</strong>?
           </div>
 
           <div className="modal-buttons">
