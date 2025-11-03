@@ -15,7 +15,7 @@
   box-sizing: border-box;
 }
 
-/* === CONTENEDOR DE ACCIONES === */
+/* === CONTENEDOR DE ACCIONES (opcional si usas otro wrapper) */
 .sell-actions-container {
   width: 100%;
   display: flex;
@@ -93,7 +93,8 @@
   box-shadow: 0 2px 8px rgba(76, 88, 237, 0.3);
 }
 
-/* Botón rojo para vender */
+/* Si quieres un botón rojo para "Vender" en vez del gradiente azul,
+   añade una clase .sell-button y sobreescribe fondo allí. */
 .sell-action-row .sell-button {
   background: linear-gradient(135deg, #ff3d3d 0%, #ff6b6b 100%);
   box-shadow: 0 4px 12px rgba(255, 61, 61, 0.25);
@@ -175,72 +176,59 @@
   color: #374151;
 }
 
-/* === MODAL BACKDROP Y MODAL (Glassmorphism estilo imagen) === */
 .modal-backdrop {
   position: fixed;
   top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
-  background-color: rgba(30, 33, 52, 0.45);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  background-color: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 10000;
-  animation: fadeIn 0.3s ease forwards;
+  z-index: 9999;
+  animation: fadeIn 0.2s ease;
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; backdrop-filter: blur(0px); }
-  to { opacity: 1; backdrop-filter: blur(10px); }
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 .modal {
-  background: rgba(255, 255, 255, 0.75);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-radius: 18px;
+  background: #ffffff;
+  border-radius: 16px;
   padding: 2.5rem;
-  max-width: 480px;
+  max-width: 500px;
   width: 90%;
-  box-shadow:
-    0 8px 32px rgba(31, 38, 135, 0.2),
-    0 4px 8px rgba(0, 0, 0, 0.15);
-  animation: slideFadeUp 0.35s ease forwards;
-  transform-origin: center;
-  z-index: 10001;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  position: relative;
+  animation: slideUp 0.3s ease;
   max-height: 90vh;
   overflow-y: auto;
   box-sizing: border-box;
-  border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
-@keyframes slideFadeUp {
-  from {
-    transform: translateY(40px) scale(0.96);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0) scale(1);
-    opacity: 1;
-  }
+@keyframes slideUp {
+  from { transform: translateY(50px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
 }
 
 .modal h2 {
   font-size: 1.5rem;
   font-weight: 700;
-  color: #1a1a2f;
+  color: #1e2134;
   margin-bottom: 1rem;
-  border-bottom: 1px solid rgba(220, 225, 255, 0.6);
+  border-bottom: 2px solid #dde2f6;
   padding-bottom: 0.75rem;
 }
 
 .modal p {
   font-size: 0.95rem;
-  color: #444a63;
+  color: #616677;
   margin-bottom: 0.75rem;
+  line-height: 1.5;
 }
 
 /* === SCROLLBAR PERSONALIZADO === */
@@ -260,7 +248,7 @@
   background-color: #4c58ed;
 }
 
-/* === UTILS / TEXT TRUNCATION === */
+/* === UTILS / TEXT TRUNCATION (opcional) === */
 .result-name {
   white-space: nowrap;
   overflow: hidden;
