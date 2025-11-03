@@ -67,74 +67,58 @@ const ViewStocks: React.FC = () => {
   };
 
   return (
-    <div className="view-stocks-container" style={{ textAlign: "left" }}>
-      <h2>Search Stocks</h2>
+    <div className="view-stocks-container">
+      <h2> Explore Stocks</h2>
 
-      <div className="search-bar" style={{ marginBottom: "20px" }}>
+      {/* === SEARCH BAR === */}
+      <div className="search-bar">
         <input
           type="text"
-          placeholder="Example: AAPL, TSLA, AMZN..."
+          placeholder="Search by symbol or company..."
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          style={{ padding: "8px", width: "250px", marginRight: "10px" }}
         />
-        <button onClick={handleSearch} style={{ padding: "8px 12px" }}>
-          Search
-        </button>
+        <button onClick={handleSearch}>Search</button>
       </div>
 
-      <div className="filter-section" style={{ marginBottom: "20px" }}>
+      {/* === FILTERS === */}
+      <div className="filter-section">
         <input
           type="text"
-          placeholder="Sector (optional)"
+          placeholder="Sector"
           value={sector}
           onChange={(e) => setSector(e.target.value)}
-          style={{ marginRight: "8px", padding: "6px" }}
         />
         <input
           type="text"
           placeholder="Exchange"
           value={exchange}
           onChange={(e) => setExchange(e.target.value)}
-          style={{ marginRight: "8px", padding: "6px" }}
         />
         <input
           type="number"
-          placeholder="Minimum price"
+          placeholder="Min Price"
           value={minPrice}
           onChange={(e) => setMinPrice(e.target.value)}
-          style={{ marginRight: "8px", padding: "6px" }}
         />
         <input
           type="number"
-          placeholder="Maximum price"
+          placeholder="Max Price"
           value={maxPrice}
           onChange={(e) => setMaxPrice(e.target.value)}
-          style={{ padding: "6px" }}
         />
       </div>
 
-      {loading && <p>Searching stocks...</p>}
-      {error && <p style={{ color: "red" }}>{error}</p>}
+      {/* === LOADING & ERROR === */}
+      {loading && <p className="status-msg">Searching stocks...</p>}
+      {error && <p className="status-msg error">{error}</p>}
 
-      <div
-        className="results-grid"
-        style={{ display: "flex", flexWrap: "wrap", gap: "15px" }}
-      >
+      {/* === RESULTS GRID === */}
+      <div className="results-grid">
         {results.map((item) => (
-          <div
-            key={item.symbol}
-            className="result-card"
-            style={{
-              border: "1px solid #ddd",
-              padding: "12px",
-              borderRadius: "8px",
-              width: "calc(33% - 10px)",
-              background: "#fff",
-            }}
-          >
+          <div key={item.symbol} className="result-card">
             <h3>{item.displaySymbol}</h3>
-            <p>{item.description}</p>
+            <p className="description">{item.description}</p>
             <p>
               <strong>Sector:</strong> {item.sector || "Unknown"}
             </p>
@@ -142,15 +126,18 @@ const ViewStocks: React.FC = () => {
               <strong>Exchange:</strong> {item.exchange || "N/A"}
             </p>
             <p>
-              <strong>Current Price:</strong>{" "}
-              {item.current_price ? `$${item.current_price.toFixed(2)}` : "Not available"}
+              <strong>Price:</strong>{" "}
+              {item.current_price ? `$${item.current_price.toFixed(2)}` : "N/A"}
             </p>
           </div>
         ))}
       </div>
 
+      {/* === NO RESULTS MESSAGE === */}
       {results.length === 0 && !loading && !error && (
-        <p>No results found.</p>
+        <div className="no-results">
+          <p> No stocks found. Try a different search or adjust filters.</p>
+        </div>
       )}
     </div>
   );
