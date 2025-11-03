@@ -3,6 +3,7 @@ import SideBar from "../components/sidebar";
 import ContentHome from "../components/content_home";
 import "../styles/Dashboard.css";
 
+
 function HomeUser() {
 	return (
 		<main className='search-navigation'>

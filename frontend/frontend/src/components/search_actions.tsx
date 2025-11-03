@@ -36,10 +36,9 @@ const SearchActions: React.FC = () => {
 
   const { token, isLoadingProfile } = useUser();
 
-  // --- Buscar acciones ---
   const handleSearch = async () => {
-    if (!query.trim()) return alert("Ingrese un símbolo o nombre para buscar.");
-    if (!token) return alert("No has iniciado sesión.");
+    if (!query.trim()) return alert("Please enter a symbol or name to search.");
+    if (!token) return alert("You are not logged in.");
     setLoading(true);
     setError(null);
 
@@ -57,7 +56,6 @@ const SearchActions: React.FC = () => {
 
       const stocks: SearchResult[] = response.data.results || [];
 
-      // --- Llenar sector y exchange desde detalle ---
       const updatedStocks = await Promise.all(
         stocks.map(async (stock) => {
           try {
@@ -79,7 +77,7 @@ const SearchActions: React.FC = () => {
 
       setResults(updatedStocks);
     } catch (err) {
-      setError("Error al buscar acciones. Intente nuevamente.");
+      setError("Error searching for stocks. Please try again.");
       console.error(err);
     } finally {
       setLoading(false);
@@ -96,14 +94,14 @@ const SearchActions: React.FC = () => {
       setStockDetail(response.data);
       setQuantity(0);
     } catch (err) {
-      console.error("Error cargando detalles del stock", err);
+      console.error("Error loading stock details", err);
       setStockDetail(null);
     }
   };
 
   const handleConfirmPurchase = async () => {
-    if (!quantity || quantity <= 0) return alert("Ingrese una cantidad válida");
-    if (!token) return alert("No has iniciado sesión.");
+    if (!quantity || quantity <= 0) return alert("Please enter a valid quantity");
+    if (!token) return alert("You are not logged in.");
     if (!selectedStock) return;
 
     setBuyLoading(true);
@@ -114,12 +112,12 @@ const SearchActions: React.FC = () => {
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
-      alert(`Compra confirmada: ${quantity} acciones de ${selectedStock.displaySymbol}`);
-      console.log("Respuesta API:", res.data);
+      alert(`Purchase confirmed: ${quantity} shares of ${selectedStock.displaySymbol}`);
+      console.log("API response:", res.data);
       closeModal();
     } catch (err: any) {
-      console.error("Error ejecutando la compra", err.response?.data || err.message);
-      alert("Error al ejecutar la compra. Intente nuevamente.");
+      console.error("Error executing purchase", err.response?.data || err.message);
+      alert("Error executing purchase. Please try again.");
     } finally {
       setBuyLoading(false);
     }
@@ -134,7 +132,7 @@ const SearchActions: React.FC = () => {
   if (isLoadingProfile)
     return (
       <div className="content-home">
-        <p style={{ textAlign: "center", padding: "20px" }}>Cargando perfil...</p>
+        <p style={{ textAlign: "center", padding: "20px" }}>Loading profile...</p>
       </div>
     );
 
@@ -142,7 +140,7 @@ const SearchActions: React.FC = () => {
     return (
       <div className="content-home">
         <p style={{ color: "red", textAlign: "center" }}>
-          No se encontró token de autenticación. Inicia sesión para comprar acciones.
+          Authentication token not found. Please log in to buy stocks.
         </p>
       </div>
     );
@@ -154,26 +152,25 @@ const SearchActions: React.FC = () => {
 
       <div className="content-home">
         <section className="search-section">
-          <h2>Buscar acciones</h2>
+          <h2>Search Stocks</h2>
 
-          {/* --- BARRA DE BÚSQUEDA Y FILTROS --- */}
           <div className="search-bar">
             <input
               type="text"
-              placeholder="Ejemplo: AAPL, TSLA, AMZN..."
+              placeholder="Example: AAPL, TSLA, AMZN..."
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               className="search-input"
             />
             <button onClick={handleSearch} className="search-button">
-              Buscar
+              Search
             </button>
           </div>
 
           <div className="filter-section">
             <input
               type="text"
-              placeholder="Sector (opcional)"
+              placeholder="Sector (optional)"
               value={sector}
               onChange={(e) => setSector(e.target.value)}
             />
@@ -185,22 +182,21 @@ const SearchActions: React.FC = () => {
             />
             <input
               type="number"
-              placeholder="Precio mínimo"
+              placeholder="Minimum price"
               value={minPrice}
               onChange={(e) => setMinPrice(e.target.value)}
             />
             <input
               type="number"
-              placeholder="Precio máximo"
+              placeholder="Maximum price"
               value={maxPrice}
               onChange={(e) => setMaxPrice(e.target.value)}
             />
           </div>
 
-          {loading && <p>Buscando acciones...</p>}
+          {loading && <p>Searching stocks...</p>}
           {error && <p className="error">{error}</p>}
 
-          {/* --- RESULTADOS --- */}
           <div className="results-grid">
             {results.map((item) => (
               <div
@@ -211,26 +207,25 @@ const SearchActions: React.FC = () => {
                 <h3>{item.displaySymbol}</h3>
                 <p>{item.description}</p>
                 <p>
-                  <strong>Sector:</strong> {item.sector || "Desconocido"}
+                  <strong>Sector:</strong> {item.sector || "Unknown"}
                 </p>
                 <p>
-                  <strong>Exchange:</strong> {item.exchange || "N/D"}
+                  <strong>Exchange:</strong> {item.exchange || "N/A"}
                 </p>
                 <p>
-                  <strong>Precio actual:</strong>{" "}
+                  <strong>Current Price:</strong>{" "}
                   {item.current_price
                     ? `$${item.current_price.toFixed(2)}`
-                    : "No disponible"}
+                    : "Not available"}
                 </p>
               </div>
             ))}
           </div>
 
           {results.length === 0 && !loading && !error && (
-            <p>No se encontraron resultados.</p>
+            <p>No results found.</p>
           )}
 
-          {/* --- MODAL --- */}
           {selectedStock && stockDetail && (
             <div className="modal-backdrop">
               <form
@@ -243,20 +238,20 @@ const SearchActions: React.FC = () => {
                 <h2>
                   {selectedStock.displaySymbol} - {selectedStock.description}
                 </h2>
-                <p>Exchange: {stockDetail.profile?.exchange || "No disponible"}</p>
-                <p>Industry: {stockDetail.profile?.finnhubIndustry || "No disponible"}</p>
+                <p>Exchange: {stockDetail.profile?.exchange || "Not available"}</p>
+                <p>Industry: {stockDetail.profile?.finnhubIndustry || "Not available"}</p>
                 <p>
                   Current Price:{" "}
                   {stockDetail.quote?.current_price
                     ? `$${stockDetail.quote.current_price.toFixed(2)}`
-                    : "No disponible"}
+                    : "Not available"}
                 </p>
 
                 <div className="purchase-section">
                   <input
                     type="number"
                     min={1}
-                    placeholder="Cantidad de acciones"
+                    placeholder="Number of shares"
                     value={quantity}
                     onChange={(e) => {
                       const value = Number(e.target.value);
@@ -265,12 +260,12 @@ const SearchActions: React.FC = () => {
                     required
                   />
                   <button type="submit" disabled={buyLoading}>
-                    {buyLoading ? "Comprando..." : "Ejecutar compra"}
+                    {buyLoading ? "Buying..." : "Execute Purchase"}
                   </button>
                 </div>
 
                 <button type="button" onClick={closeModal} className="close-modal">
-                  Cerrar
+                  Close
                 </button>
               </form>
             </div>
