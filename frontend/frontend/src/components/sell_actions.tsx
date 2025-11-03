@@ -1,53 +1,96 @@
-import React, { useState } from "react";
-import "../styles/sell_actions.css";
-import SellDialog from "./sells_dialog";
+import { useState, useEffect } from "react";
+import { useUser } from "./UserContext";
+import axios from "axios";
 
-export interface SellActionItem {
-  id: string;
-  name: string;
-  category: string;
-  price: number;
-  quantity?: number;
+interface Stock {
+  symbol: string;
+  stock_name: string;
+  quantity: number;
+  average_price: number;
+  current_price: number;
+  profit_loss: number;
 }
 
-interface SellActionsProps {
-  mockData?: SellActionItem[];
-}
+const API_URL = "http://localhost:8000/api/stocks/transactions/get_user_portfolio/";
+const SELL_URL = "http://localhost:8000/api/stocks/transactions/sell/";
 
-const SellActions: React.FC<SellActionsProps> = ({ mockData = [] }) => {
-  const [actions] = useState<SellActionItem[]>(mockData);
-  const [selectedItem, setSelectedItem] = useState<SellActionItem | null>(null);
+const SellActions = () => {
+  const { token, isLoadingProfile } = useUser();
+  const [stocks, setStocks] = useState<Stock[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleSell = (item: SellActionItem) => {
-    setSelectedItem(item);
+  useEffect(() => {
+    if (!token) return;
+
+    const fetchPortfolio = async () => {
+      try {
+        const res = await axios.get(API_URL, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setStocks(res.data.portfolio);
+      } catch (err: any) {
+        console.error(err);
+        setError("Error al cargar el portafolio");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPortfolio();
+  }, [token]);
+
+  const handleSell = async (stock: Stock) => {
+    const confirmed = window.confirm(`¿Estás seguro de vender ${stock.quantity} acciones de ${stock.stock_name}?`);
+    if (!confirmed) return;
+
+    try {
+      const res = await axios.post(
+        SELL_URL,
+        {
+          symbol: stock.symbol,
+          quantity: stock.quantity,
+        },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      alert(`Venta realizada correctamente: ${res.data.message || "Éxito"}`);
+
+      setStocks((prev) => prev.filter((s) => s.symbol !== stock.symbol));
+    } catch (err: any) {
+      console.error(err);
+      alert("Error al vender la acción");
+    }
   };
 
-  const handleConfirmSell = (item: SellActionItem, percent: number, quantity: number) => {
-    alert(
-      `✅ Vendiendo ${percent}% (${quantity} acciones) de ${item.name} a $${item.price}`
-    );
-    setSelectedItem(null);
-  };
+  if (isLoadingProfile || loading)
+    return <p style={{ textAlign: "center", padding: "20px" }}>Cargando portafolio...</p>;
+
+  if (!token)
+    return <p style={{ color: "red", textAlign: "center" }}>No se encontró token de autenticación.</p>;
+
+  if (error) return <p style={{ color: "red", textAlign: "center" }}>{error}</p>;
 
   return (
     <div className="sell-actions-container">
-      <div className="sell-actions-list">
-        {actions.map((item) => (
-          <div className="sell-action" key={item.id}>
-            <h3>{item.name}</h3>
-            <p>Categoría: {item.category}</p>
-            <p>Precio actual: ${item.price}</p>
-            <p>Cantidad disponible: {item.quantity ?? 0}</p>
-            <button onClick={() => handleSell(item)}>Vender acción</button>
-          </div>
-        ))}
-      </div>
+      {stocks.map((stock) => {
+        const profitColor = stock.profit_loss >= 0 ? "green" : "red";
 
-      <SellDialog
-        item={selectedItem}
-        onClose={() => setSelectedItem(null)}
-        onConfirm={handleConfirmSell}
-      />
+        return (
+          <div key={stock.symbol} className="sell-action-row">
+            <span>{stock.stock_name}</span>
+            <span>Valor comprado: ${stock.average_price.toFixed(2)}</span>
+            <span>Valor ahora: ${stock.current_price.toFixed(2)}</span>
+            <span>Cantidad: {stock.quantity}</span>
+            <span className="profit" style={{ color: profitColor }}>
+              {stock.profit_loss >= 0 ? `+${stock.profit_loss.toFixed(2)}` : stock.profit_loss.toFixed(2)}
+            </span>
+            <button onClick={() => handleSell(stock)}>Vender</button>
+          </div>
+        );
+      })}
     </div>
   );
 };

@@ -1,232 +1,91 @@
-.sell-actions-list {
+.sell-actions-container {
   display: flex;
   flex-direction: column;
-  gap: 20px;
-  padding: 20px;
-  width: 95%;   
-  max-width: 1400px;    
-  margin: 0 auto;
-  font-family: Arial, sans-serif;
-}
-
-.sell-action {
-  border: 1px solid #ccc;
-  padding: 30px;
-  border-radius: 8px;
-  background-color: #fafafa;
-  box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.05);
-  transition: box-shadow 0.2s ease-in-out;
-}
-
-.sell-action:hover {
-  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
-}
-
-.sell-action h3 {
-  margin: 0 0 10px 0;
-  font-size: 1.2rem;
-  color: #333;
-}
-
-.sell-action p {
-  margin: 5px 0;
-  color: #555;
-}
-
-.sell-action label {
-  display: flex;
-  align-items: center;
-  margin-bottom: 10px;
-  font-size: 0.95rem;
-  color: #333;
-}
-
-.sell-action input[type="number"] {
-  width: 80px;
-  margin-left: 10px;
-  padding: 5px 8px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-}
-
-.sell-action button {
-  padding: 6px 12px;
-  background-color: #4caf50;
-  border: none;
-  color: white;
-  font-weight: bold;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.2s ease-in-out;
-}
-
-.sell-action button:hover {
-  background-color: #45a049;
-}
-
-.sell-actions-container {
-  max-height: 75vh; 
-  overflow-y: auto;
-  border: 1px solid #ddd;
-  padding: 15px;
-  border-radius: 8px;
-  background: #f9f9f9;
+  gap: 1.5rem;
   width: 100%;
+  background-color: #fafbff;
+  padding: 2em;
+  border-radius: 12px;
   box-sizing: border-box;
 }
 
-.sell-action {
-  border: 1px solid #ccc;
-  padding: 10px;
-  margin-bottom: 10px;
-  border-radius: 6px;
-  background: #fff;
-}
-
-.sell-modal-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.55);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 50;
-}
-
-.sell-modal {
-  background: #fff;
-  border-radius: 12px;
-  padding: 24px;
-  width: 420px;
-  max-width: 90%;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
-  animation: fadeIn 0.3s ease;
-  font-family: Arial, sans-serif;
-}
-
-.sell-details p {
-  margin: 6px 0;
-}
-
-.input-group {
-  margin: 10px 0;
-  display: flex;
-  flex-direction: column;
-}
-
-.input-group input,
-.input-group select {
-  padding: 6px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-}
-
-.sell-warning {
-  background: #fff8e1;
-  color: #6a4f00;
-  padding: 10px;
-  border-radius: 6px;
-  margin: 12px 0;
-  font-size: 0.9rem;
-}
-
-.modal-buttons {
+.sell-action-row {
   display: flex;
   justify-content: space-between;
-  margin-top: 12px;
+  align-items: center;
+  border: 1px solid #dde2f6;
+  border-radius: 12px;
+  padding: 1rem 1.5rem;
+  background-color: #fff;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(75, 88, 237, 0.08);
 }
 
-button.cancel {
-  background: #ccc;
-  border: none;
-  padding: 8px 14px;
-  border-radius: 8px;
+.sell-action-row:hover {
+  background-color: #f5f7ff;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(75, 88, 237, 0.15);
 }
 
-button.confirm {
-  background: #007aff;
-  color: white;
-  border: none;
-  padding: 8px 14px;
-  border-radius: 8px;
-}
-
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(-10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-.sell-modal h2 {
-  margin-bottom: 15px;
+.sell-action-row span {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #1e2134;
   text-align: center;
 }
 
-.input-group {
-  margin: 10px 0;
+.sell-action-row span:first-child {
+  flex: 2;
+  text-align: left;
 }
 
-.input-group label {
-  display: block;
-  font-size: 0.9rem;
-  margin-bottom: 5px;
+.sell-action-row span:nth-child(2),
+.sell-action-row span:nth-child(3),
+.sell-action-row span:nth-child(4),
+.sell-action-row span:nth-child(5) {
+  flex: 1;
 }
 
-.input-group input {
-  width: 100%;
-  padding: 6px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
+.sell-action-row .profit {
+  font-weight: 600;
 }
 
-.checkbox-label {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-top: 10px;
-}
-
-.modal-buttons {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 20px;
-}
-
-.modal-buttons button {
-  padding: 8px 14px;
+.sell-action-row button {
+  flex: 0.5;
+  background: linear-gradient(135deg, #4c58ed 0%, #5d67f5 100%);
+  color: #fff;
+  font-size: 0.95rem;
+  font-weight: 600;
+  padding: 0.6rem 1rem;
   border: none;
-  border-radius: 6px;
-  font-weight: bold;
+  border-radius: 10px;
   cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 12px rgba(76, 88, 237, 0.3);
 }
 
-.modal-buttons .cancel {
-  background-color: #ccc;
-  color: #222;
+.sell-action-row button:hover {
+  background: linear-gradient(135deg, #3b43f1 0%, #4c58ed 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(76, 88, 237, 0.4);
 }
 
-.modal-buttons .confirm {
-  background-color: #4caf50;
-  color: white;
+.sell-action-row button:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(76, 88, 237, 0.3);
 }
 
-.modal-buttons .confirm:hover {
-  background-color: #3d8b41;
-}
-
-
-@media (max-width: 600px) {
-  .sell-action label {
+/* Responsive */
+@media (max-width: 1024px) {
+  .sell-action-row {
     flex-direction: column;
     align-items: flex-start;
+    gap: 0.5rem;
   }
 
-  .sell-action input[type="number"] {
-    margin-left: 0;
-    margin-top: 5px;
-  }
-
-  .sell-action button {
-    margin-top: 10px;
+  .sell-action-row span,
+  .sell-action-row button {
+    text-align: left;
+    flex: unset;
   }
 }

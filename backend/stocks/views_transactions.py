@@ -381,3 +381,50 @@ def get_user_balance(request):
         'balance': float(user_balance.balance),
         'last_updated': user_balance.last_updated
     })
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_user_portfolio(request):
+    """Get user's current stock portfolio - stocks available to sell"""
+    try:
+        portfolio_items = UserPortfolio.objects.filter(
+            user=request.user, 
+            quantity__gt=0
+        ).select_related('stock')
+        
+        portfolio_data = []
+        total_portfolio_value = Decimal('0')
+        
+        for item in portfolio_items:
+            current_value = item.stock.current_price * item.quantity
+            total_invested = item.average_price * item.quantity
+            profit_loss = current_value - total_invested
+            profit_loss_percentage = (profit_loss / total_invested * 100) if total_invested > 0 else Decimal('0')
+            
+            portfolio_data.append({
+                'symbol': item.stock.symbol,
+                'stock_name': item.stock.name,
+                'quantity': item.quantity,
+                'average_price': float(item.average_price),
+                'current_price': float(item.stock.current_price),
+                'total_invested': float(total_invested),
+                'current_value': float(current_value),
+                'profit_loss': float(profit_loss),
+                'profit_loss_percentage': float(profit_loss_percentage),
+                'currency': item.stock.currency,
+                'exchange': item.stock.exchange
+            })
+            
+            total_portfolio_value += current_value
+        
+        return Response({
+            'portfolio': portfolio_data,
+            'total_portfolio_value': float(total_portfolio_value),
+            'total_stocks': len(portfolio_data)
+        })
+        
+    except Exception as e:
+        logger.error(f"Error getting user portfolio: {e}")
+        return Response({'error': 'Internal server error'}, 
+                       status=status.HTTP_500_INTERNAL_SERVER_ERROR)
