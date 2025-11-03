@@ -20,6 +20,11 @@ const SellActions = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedStock, setSelectedStock] = useState<Stock | null>(null);
+  const [sellQuantity, setSellQuantity] = useState<number>(1);
+  const [sellLoading, setSellLoading] = useState(false);
+
   useEffect(() => {
     if (!token) return;
 
@@ -31,7 +36,7 @@ const SellActions = () => {
         setStocks(res.data.portfolio);
       } catch (err: any) {
         console.error(err);
-        setError("Error al cargar el portafolio");
+        setError("Error loading portfolio");
       } finally {
         setLoading(false);
       }
@@ -40,36 +45,63 @@ const SellActions = () => {
     fetchPortfolio();
   }, [token]);
 
-  const handleSell = async (stock: Stock) => {
-    const confirmed = window.confirm(`¿Estás seguro de vender ${stock.quantity} acciones de ${stock.stock_name}?`);
+  const openSellModal = (stock: Stock) => {
+    setSelectedStock(stock);
+    setSellQuantity(1); // reset quantity
+    setModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setModalOpen(false);
+    setSelectedStock(null);
+  };
+
+  const handleConfirmSell = async () => {
+    if (!selectedStock || sellQuantity <= 0 || sellQuantity > selectedStock.quantity) {
+      alert("Please enter a valid quantity.");
+      return;
+    }
+
+    const confirmed = window.confirm(
+      `Are you sure you want to sell ${sellQuantity} shares of ${selectedStock.stock_name}?`
+    );
     if (!confirmed) return;
 
     try {
+      setSellLoading(true);
       const res = await axios.post(
         SELL_URL,
-        {
-          symbol: stock.symbol,
-          quantity: stock.quantity,
-        },
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
+        { symbol: selectedStock.symbol, quantity: sellQuantity },
+        { headers: { Authorization: `Bearer ${token}` } }
       );
 
-      alert(`Venta realizada correctamente: ${res.data.message || "Éxito"}`);
+      alert(`Sale successful: ${res.data.message || "Success"}`);
 
-      setStocks((prev) => prev.filter((s) => s.symbol !== stock.symbol));
+      // Update state
+      setStocks((prev) =>
+        prev
+          .map((s) =>
+            s.symbol === selectedStock.symbol
+              ? { ...s, quantity: s.quantity - sellQuantity }
+              : s
+          )
+          .filter((s) => s.quantity > 0)
+      );
+
+      closeModal();
     } catch (err: any) {
       console.error(err);
-      alert("Error al vender la acción");
+      alert("Error selling the stock");
+    } finally {
+      setSellLoading(false);
     }
   };
 
   if (isLoadingProfile || loading)
-    return <p style={{ textAlign: "center", padding: "20px" }}>Cargando portafolio...</p>;
+    return <p style={{ textAlign: "center", padding: "20px" }}>Loading portfolio...</p>;
 
   if (!token)
-    return <p style={{ color: "red", textAlign: "center" }}>No se encontró token de autenticación.</p>;
+    return <p style={{ color: "red", textAlign: "center" }}>Authentication token not found.</p>;
 
   if (error) return <p style={{ color: "red", textAlign: "center" }}>{error}</p>;
 
@@ -81,16 +113,55 @@ const SellActions = () => {
         return (
           <div key={stock.symbol} className="sell-action-row">
             <span>{stock.stock_name}</span>
-            <span>Valor comprado: ${stock.average_price.toFixed(2)}</span>
-            <span>Valor ahora: ${stock.current_price.toFixed(2)}</span>
-            <span>Cantidad: {stock.quantity}</span>
+            <span>Purchase Value: ${stock.average_price.toFixed(2)}</span>
+            <span>Current Value: ${stock.current_price.toFixed(2)}</span>
+            <span>Quantity: {stock.quantity}</span>
             <span className="profit" style={{ color: profitColor }}>
-              {stock.profit_loss >= 0 ? `+${stock.profit_loss.toFixed(2)}` : stock.profit_loss.toFixed(2)}
+              {stock.profit_loss >= 0
+                ? `+${stock.profit_loss.toFixed(2)}`
+                : stock.profit_loss.toFixed(2)}
             </span>
-            <button onClick={() => handleSell(stock)}>Vender</button>
+            <button onClick={() => openSellModal(stock)}>Sell</button>
           </div>
         );
       })}
+
+      {modalOpen && selectedStock && (
+        <form
+          className="modal"
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleConfirmSell();
+          }}
+        >
+          <h2>{selectedStock.stock_name}</h2>
+          <p>Purchase Value: ${selectedStock.average_price.toFixed(2)}</p>
+          <p>Current Value: ${selectedStock.current_price.toFixed(2)}</p>
+          <p>Available: {selectedStock.quantity}</p>
+
+          <div className="sell-section">
+            <input
+              type="number"
+              min={1}
+              max={selectedStock.quantity}
+              placeholder="Quantity to sell"
+              value={sellQuantity}
+              onChange={(e) => {
+                const value = Number(e.target.value);
+                setSellQuantity(isNaN(value) || value < 0 ? 1 : value);
+              }}
+              required
+            />
+            <button type="submit" disabled={sellLoading}>
+              {sellLoading ? "Selling..." : "Confirm Sale"}
+            </button>
+          </div>
+
+          <button type="button" onClick={closeModal} className="close-modal">
+            Close
+          </button>
+        </form>
+      )}
     </div>
   );
 };
