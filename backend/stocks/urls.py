@@ -8,6 +8,9 @@ urlpatterns = [
     path('news/', views.get_market_news, name='market-news'),
     path('portfolio/', views.get_user_portfolio, name='user-portfolio'),
 
+    # Quote routes
+    path('<str:symbol>/quote/', views.get_stock_today_api, name='stock-quote'),
+
     # 2. Then the routes for TRANSACTIONS
     path('transactions/deposit/', views_transactions.deposit_money, name='deposit-money'),
     path('transactions/withdraw/', views_transactions.withdraw_money, name='withdraw-money'),

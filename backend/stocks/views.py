@@ -6,7 +6,31 @@ from rest_framework.response import Response
 from stocks.services.finnhub_service import FinnhubService
 from stocks.models import UserPortfolio
 
-# PUBLIC ENDPOINTS - No authentication required
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def get_stock_today_api(request, symbol):
+    """
+    Devuelve el precio del día y datos en tiempo real de la acción usando Finnhub.
+    """
+    service = FinnhubService()
+    data = service.get_today_stock_price(symbol)
+
+    if not data:
+        return Response({
+            'symbol': symbol.upper(),
+            'error': 'No data available or invalid symbol'
+        }, status=404)
+
+    return Response({
+        'symbol': data['symbol'],
+        'open': data['open'],
+        'high': data['high'],
+        'low': data['low'],
+        'close': data['close'],
+        'current_price': data['current_price'],
+        'timestamp': data['timestamp']
+    })
+    
 @api_view(['GET'])
 @permission_classes([AllowAny])
 def search_stocks(request):

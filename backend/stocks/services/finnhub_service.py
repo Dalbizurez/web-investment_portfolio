@@ -239,3 +239,37 @@ class FinnhubService:
         except Exception as e:
             logger.error(f"Error checking market status: {e}")
             return {'is_open': True, 'reason': 'Assuming market is open due to error'}
+
+    def get_today_stock_price(self, symbol):
+        """
+        Retorna el precio del día usando candle diaria si existe,
+        si no, usa el precio actual del quote.
+        """
+        quote = self.get_stock_quote(symbol)
+        if not quote:
+            return None
+
+        candles = self.get_stock_candles(symbol, resolution='D', count=1)
+
+        if candles:
+            day_candle = candles[-1]
+            return {
+                'symbol': symbol.upper(),
+                'open': day_candle['open'],
+                'high': day_candle['high'],
+                'low': day_candle['low'],
+                'close': day_candle['close'],
+                'current_price': quote['current_price'],
+                'timestamp': day_candle['timestamp']
+            }
+
+        # Si no hay candle, usar solo el quote
+        return {
+            'symbol': symbol.upper(),
+            'open': quote['current_price'],
+            'high': quote['current_price'],
+            'low': quote['current_price'],
+            'close': quote['current_price'],
+            'current_price': quote['current_price'],
+            'timestamp': int(datetime.now().timestamp())
+        }

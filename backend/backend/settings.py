@@ -11,6 +11,11 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
+import os
+
+AUTH0_DOMAIN = os.getenv("AUTH0_DOMAIN")
+AUTH0_API_IDENTIFIER = os.getenv("AUTH0_API_IDENTIFIER")
+AUTH0_JWKS_URL = f"https://{AUTH0_DOMAIN}/.well-known/jwks.json"
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -89,8 +94,8 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'mydb',
-        'USER': 'root',
-        'PASSWORD': 'JmF120365+',  # USA TU PASSWORD LOCAL
+        'USER': 'django_user',
+        'PASSWORD': '12345',  # USA TU PASSWORD LOCAL
         'HOST': 'localhost',   
         'PORT': '3306',
     }
@@ -102,11 +107,11 @@ JWT_ALGORITHM = 'HS256'
 
 # REST Framework Configuration
 REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': [
-        'user_try.authentication.JWTAuthentication',
-    ],
-    'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticated',  # authenticated by default
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+            "django_auth0_auth.auth0backend.Auth0JSONWebTokenAuthentication",
+        ],
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework.permissions.IsAuthenticated",
     ],
 }
 
