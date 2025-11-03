@@ -167,14 +167,15 @@ def sell_stock(request):
             return Response({'error': 'Symbol and valid quantity required'}, 
                            status=status.HTTP_400_BAD_REQUEST)
         
-        is_market_open, market_message = validate_trading_hours()
-        if not is_market_open:
-            return Response({
-                'error': 'Trading not allowed at this time',
-                'message': market_message,
-                'market_open': False
-            }, status=status.HTTP_400_BAD_REQUEST)
-        
+        # COMENTADO PARA USAR VENTAS EN CUALQUIER MOMENTO
+        #is_market_open, market_message = validate_trading_hours()
+        #if not is_market_open:
+        #    return Response({
+        #        'error': 'Trading not allowed at this time',
+        #        'message': market_message,
+        #        'market_open': False
+        #    }, status=status.HTTP_400_BAD_REQUEST)
+
         service = FinnhubService()
         
         is_valid, validation_message = service.validate_stock_symbol(symbol)
