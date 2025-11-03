@@ -19,12 +19,6 @@ function Header() {
   const initials = isAuthenticated ? getUserInitials(user?.name) : "G"; 
   return (
     <header className="search-header">
-      <input
-        type="text"
-        className="search-input"
-        placeholder="Search a stock or ETF"
-      />
-
       <div className="acount-section">
         {isAuthenticated ? (
           <div

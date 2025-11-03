@@ -4,14 +4,15 @@ import axios from "axios";
 
 interface Stock {
   symbol: string;
-  stock_name: string;
+  name: string;
+  sector: string;
   quantity: number;
   average_price: number;
   current_price: number;
   profit_loss: number;
 }
 
-const API_URL = "http://localhost:8000/api/stocks/transactions/get_user_portfolio/";
+const API_URL = "http://localhost:8000/api/stocks/portfolio/";
 const SELL_URL = "http://localhost:8000/api/stocks/transactions/sell/";
 
 const SellActions = () => {
@@ -33,7 +34,12 @@ const SellActions = () => {
         const res = await axios.get(API_URL, {
           headers: { Authorization: `Bearer ${token}` },
         });
-        setStocks(res.data.portfolio);
+
+        if (res.data && res.data.portfolio) {
+          setStocks(res.data.portfolio);
+        } else {
+          setError("Portfolio data not found");
+        }
       } catch (err: any) {
         console.error(err);
         setError("Error loading portfolio");
@@ -47,7 +53,7 @@ const SellActions = () => {
 
   const openSellModal = (stock: Stock) => {
     setSelectedStock(stock);
-    setSellQuantity(1); // reset quantity
+    setSellQuantity(1);
     setModalOpen(true);
   };
 
@@ -63,7 +69,7 @@ const SellActions = () => {
     }
 
     const confirmed = window.confirm(
-      `Are you sure you want to sell ${sellQuantity} shares of ${selectedStock.stock_name}?`
+      `Are you sure you want to sell ${sellQuantity} shares of ${selectedStock.name}?`
     );
     if (!confirmed) return;
 
@@ -77,7 +83,6 @@ const SellActions = () => {
 
       alert(`Sale successful: ${res.data.message || "Success"}`);
 
-      // Update state
       setStocks((prev) =>
         prev
           .map((s) =>
@@ -106,16 +111,16 @@ const SellActions = () => {
   if (error) return <p style={{ color: "red", textAlign: "center" }}>{error}</p>;
 
   return (
-    <div className="sell-actions-container">
+    <div className={`sell-actions-container ${modalOpen ? "blurred" : ""}`}>
       {stocks.map((stock) => {
         const profitColor = stock.profit_loss >= 0 ? "green" : "red";
 
         return (
           <div key={stock.symbol} className="sell-action-row">
-            <span>{stock.stock_name}</span>
-            <span>Purchase Value: ${stock.average_price.toFixed(2)}</span>
-            <span>Current Value: ${stock.current_price.toFixed(2)}</span>
-            <span>Quantity: {stock.quantity}</span>
+            <span>{stock.name}</span>
+            <span>Purchase: ${stock.average_price.toFixed(2)}</span>
+            <span>Current: ${stock.current_price.toFixed(2)}</span>
+            <span>Qty: {stock.quantity}</span>
             <span className="profit" style={{ color: profitColor }}>
               {stock.profit_loss >= 0
                 ? `+${stock.profit_loss.toFixed(2)}`
@@ -127,40 +132,43 @@ const SellActions = () => {
       })}
 
       {modalOpen && selectedStock && (
-        <form
-          className="modal"
-          onSubmit={(e) => {
-            e.preventDefault();
-            handleConfirmSell();
-          }}
-        >
-          <h2>{selectedStock.stock_name}</h2>
-          <p>Purchase Value: ${selectedStock.average_price.toFixed(2)}</p>
-          <p>Current Value: ${selectedStock.current_price.toFixed(2)}</p>
-          <p>Available: {selectedStock.quantity}</p>
+        <>
+          <div className="modal-overlay" onClick={closeModal}></div>
+          <form
+            className="modal"
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleConfirmSell();
+            }}
+          >
+            <h2>{selectedStock.name}</h2>
+            <p>Purchase: ${selectedStock.average_price.toFixed(2)}</p>
+            <p>Current: ${selectedStock.current_price.toFixed(2)}</p>
+            <p>Available: {selectedStock.quantity}</p>
 
-          <div className="sell-section">
-            <input
-              type="number"
-              min={1}
-              max={selectedStock.quantity}
-              placeholder="Quantity to sell"
-              value={sellQuantity}
-              onChange={(e) => {
-                const value = Number(e.target.value);
-                setSellQuantity(isNaN(value) || value < 0 ? 1 : value);
-              }}
-              required
-            />
-            <button type="submit" disabled={sellLoading}>
-              {sellLoading ? "Selling..." : "Confirm Sale"}
+            <div className="sell-section">
+              <input
+                type="number"
+                min={1}
+                max={selectedStock.quantity}
+                placeholder="Quantity to sell"
+                value={sellQuantity}
+                onChange={(e) => {
+                  const value = Number(e.target.value);
+                  setSellQuantity(isNaN(value) || value < 0 ? 1 : value);
+                }}
+                required
+              />
+              <button type="submit" disabled={sellLoading}>
+                {sellLoading ? "Selling..." : "Confirm Sale"}
+              </button>
+            </div>
+
+            <button type="button" onClick={closeModal} className="close-modal">
+              Close
             </button>
-          </div>
-
-          <button type="button" onClick={closeModal} className="close-modal">
-            Close
-          </button>
-        </form>
+          </form>
+        </>
       )}
     </div>
   );

@@ -64,6 +64,8 @@ function ContentPortfolio() {
             headers: { Authorization: `Bearer ${token}` },
           }),
         ]);
+        console.log(balanceRes, "balance")
+        console.log(portfolioRes, " portfolio")
 
         setBalanceData(balanceRes.data);
         setPortfolioData(portfolioRes.data);
