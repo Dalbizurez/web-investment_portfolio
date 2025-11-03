@@ -10,82 +10,55 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-def get_client_ip(request):
-    """Get client IP address for no-repudiation"""
-    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
-    if x_forwarded_for:
-        ip = x_forwarded_for.split(',')[0]
-    else:
-        ip = request.META.get('REMOTE_ADDR')
-    return ip
-
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def buy_stock(request):
-    """Buy stock shares - Uses Auth0 authentication"""
+    """Buy stock shares - Stores transaction in DB"""
     try:
         symbol = request.data.get('symbol', '').upper().strip()
         quantity = int(request.data.get('quantity', 0))
         
-        # Basic validations
         if not symbol:
-            return Response({'error': 'Stock symbol is required'}, 
-                           status=status.HTTP_400_BAD_REQUEST)
-        
+            return Response({'error': 'Stock symbol is required'}, status=status.HTTP_400_BAD_REQUEST)
         if quantity <= 0:
-            return Response({'error': 'Quantity must be greater than 0'}, 
-                           status=status.HTTP_400_BAD_REQUEST)
-        
-        # Validate symbol format
-        if len(symbol) < 1 or len(symbol) > 10:
-            return Response({'error': 'Invalid stock symbol format'}, 
-                           status=status.HTTP_400_BAD_REQUEST)
+            return Response({'error': 'Quantity must be greater than 0'}, status=status.HTTP_400_BAD_REQUEST)
         
         service = FinnhubService()
-        
-        # CRITICAL: Validate that the symbol exists and is tradable
+
+        # Validar símbolo
         is_valid, validation_message = service.validate_stock_symbol(symbol)
         if not is_valid:
-            return Response({'error': f'Invalid stock symbol: {validation_message}'}, 
-                           status=status.HTTP_400_BAD_REQUEST)
-        
-        # Get current price
+            return Response({'error': f'Invalid stock symbol: {validation_message}'}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Obtener precio actual
         quote_data = service.get_stock_quote(symbol)
-        if not quote_data:
-            return Response({'error': 'Could not get valid stock price'}, 
-                           status=status.HTTP_400_BAD_REQUEST)
-        
+        if not quote_data or not quote_data.get('current_price'):
+            return Response({'error': 'Could not get valid stock price'}, status=status.HTTP_400_BAD_REQUEST)
+
         current_price = Decimal(str(quote_data['current_price']))
+        if current_price <= 0:
+            return Response({'error': 'Invalid stock price'}, status=status.HTTP_400_BAD_REQUEST)
+        
         total_cost = current_price * quantity
 
-        # Validate that the price is reasonable (not 0 or negative)
-        if current_price <= 0:
-            return Response({'error': 'Invalid stock price'}, 
-                           status=status.HTTP_400_BAD_REQUEST)
-        
-        # Check user balance
-        user_balance, created = UserBalance.objects.get_or_create(
-            user=request.user, 
-            defaults={'balance': Decimal('0')}
-        )
-        
+        # Verificar saldo
+        user_balance, _ = UserBalance.objects.get_or_create(user=request.user, defaults={'balance': Decimal('0')})
         if user_balance.balance < total_cost:
-            return Response({'error': 'Insufficient balance'}, 
-                           status=status.HTTP_400_BAD_REQUEST)
-        
+            return Response({'error': 'Insufficient balance'}, status=status.HTTP_400_BAD_REQUEST)
+
         with transaction.atomic():
-            # Get or create stock with REAL company data
+            # Obtener o crear stock
             stock, created = Stock.objects.get_or_create(
                 symbol=symbol,
                 defaults={
-                    'name': f"{symbol} Corporation",  # Placeholder
+                    'name': f"{symbol} Corporation",
                     'current_price': current_price,
                     'currency': 'USD',
                     'exchange': 'NASDAQ'
                 }
             )
 
-            # If created, get real company information
+            # Actualizar info si es nuevo
             if created:
                 profile_data = service.get_stock_profile(symbol)
                 if profile_data:
@@ -95,35 +68,29 @@ def buy_stock(request):
                     stock.sector = profile_data.get('finnhubIndustry', '')
                     stock.save()
 
-            # Update current price
+            # Actualizar precio
             stock.current_price = current_price
             stock.save()
-            
-            # Update user portfolio
+
+            # Actualizar portafolio
             portfolio_item, created = UserPortfolio.objects.get_or_create(
                 user=request.user,
                 stock=stock,
-                defaults={
-                    'quantity': quantity,
-                    'average_price': current_price
-                }
+                defaults={'quantity': quantity, 'average_price': current_price}
             )
-            
+
             if not created:
-                # Calculate new average price
                 total_quantity = portfolio_item.quantity + quantity
                 total_value = (portfolio_item.quantity * portfolio_item.average_price) + total_cost
-                new_avg_price = total_value / total_quantity
-                
+                portfolio_item.average_price = total_value / total_quantity
                 portfolio_item.quantity = total_quantity
-                portfolio_item.average_price = new_avg_price
                 portfolio_item.save()
-            
-            # Update user balance
+
+            # Restar del balance
             user_balance.balance -= total_cost
             user_balance.save()
-            
-            # Create transaction record
+
+            # Guardar transacción (compra)
             Transaction.objects.create(
                 user=request.user,
                 transaction_type='BUY',
@@ -133,72 +100,72 @@ def buy_stock(request):
                 amount=-total_cost,
                 ip_address=get_client_ip(request)
             )
-        
+
         return Response({
             'message': f'Successfully bought {quantity} shares of {symbol}',
             'total_cost': float(total_cost),
-            'new_balance': float(user_balance.balance),
-            'stock_name': stock.name
-        })
-        
+            'new_balance': float(user_balance.balance)
+        }, status=status.HTTP_201_CREATED)
+
     except Exception as e:
         logger.error(f"Error buying stock: {e}")
-        return Response({'error': 'Internal server error'}, 
-                       status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response({'error': 'Internal server error'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def sell_stock(request):
-    """Sell stock shares - Uses Auth0 authentication"""
+    """Sell stock shares - Verifies user has stock before selling"""
     try:
         symbol = request.data.get('symbol', '').upper().strip()
         quantity = int(request.data.get('quantity', 0))
         
         if not symbol or quantity <= 0:
-            return Response({'error': 'Symbol and valid quantity required'}, 
-                           status=status.HTTP_400_BAD_REQUEST)
+            return Response({'error': 'Symbol and valid quantity required'}, status=status.HTTP_400_BAD_REQUEST)
         
         service = FinnhubService()
         
-        # Validate that the symbol exists
+        # Validar símbolo
         is_valid, validation_message = service.validate_stock_symbol(symbol)
         if not is_valid:
-            return Response({'error': f'Invalid stock symbol: {validation_message}'}, 
-                           status=status.HTTP_400_BAD_REQUEST)
+            return Response({'error': f'Invalid stock symbol: {validation_message}'}, status=status.HTTP_400_BAD_REQUEST)
         
-        # Get current price
+        # Obtener precio actual
         quote_data = service.get_stock_quote(symbol)
-        if not quote_data:
-            return Response({'error': 'Could not get valid stock price'}, 
-                           status=status.HTTP_400_BAD_REQUEST)
+        if not quote_data or not quote_data.get('current_price'):
+            return Response({'error': 'Could not get valid stock price'}, status=status.HTTP_400_BAD_REQUEST)
         
         current_price = Decimal(str(quote_data['current_price']))
-        total_revenue = current_price * quantity
+        if current_price <= 0:
+            return Response({'error': 'Invalid stock price'}, status=status.HTTP_400_BAD_REQUEST)
         
-        # Check if user has enough shares
+        total_revenue = current_price * quantity
+
+        # Verificar si el usuario tiene ese stock
         try:
             portfolio_item = UserPortfolio.objects.get(user=request.user, stock__symbol=symbol)
-            if portfolio_item.quantity < quantity:
-                return Response({'error': 'Insufficient shares'}, 
-                               status=status.HTTP_400_BAD_REQUEST)
         except UserPortfolio.DoesNotExist:
-            return Response({'error': 'You do not own this stock'}, 
-                           status=status.HTTP_400_BAD_REQUEST)
+            return Response({'error': f'You do not own any shares of {symbol}'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        # Verificar cantidad suficiente
+        if portfolio_item.quantity < quantity:
+            return Response({'error': f'Insufficient stock: you own {portfolio_item.quantity} shares of {symbol}'},
+                            status=status.HTTP_400_BAD_REQUEST)
         
         with transaction.atomic():
-            # Update portfolio
+            # Restar del portafolio
             portfolio_item.quantity -= quantity
             if portfolio_item.quantity == 0:
                 portfolio_item.delete()
             else:
                 portfolio_item.save()
             
-            # Update user balance
-            user_balance = UserBalance.objects.get(user=request.user)
+            # Actualizar balance
+            user_balance, _ = UserBalance.objects.get_or_create(user=request.user, defaults={'balance': Decimal('0')})
             user_balance.balance += total_revenue
             user_balance.save()
             
-            # Create transaction record
+            # Guardar transacción (venta)
             Transaction.objects.create(
                 user=request.user,
                 transaction_type='SELL',
@@ -208,17 +175,16 @@ def sell_stock(request):
                 amount=total_revenue,
                 ip_address=get_client_ip(request)
             )
-        
+
         return Response({
             'message': f'Successfully sold {quantity} shares of {symbol}',
             'total_revenue': float(total_revenue),
             'new_balance': float(user_balance.balance)
-        })
-        
+        }, status=status.HTTP_201_CREATED)
+
     except Exception as e:
         logger.error(f"Error selling stock: {e}")
-        return Response({'error': 'Internal server error'}, 
-                       status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response({'error': 'Internal server error'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
