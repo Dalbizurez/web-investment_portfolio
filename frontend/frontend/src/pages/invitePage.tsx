@@ -1,6 +1,7 @@
 import InviteSection from "../components/inviteSection";
-import "../styles/invite_section.css";
 import "../styles/styles.css";
+import "../styles/invite_section.css";
+import "../styles/header.css"
 import SideBar from "../components/sidebar";
 import Header from "../components/header_search";
 

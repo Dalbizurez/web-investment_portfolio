@@ -17,48 +17,16 @@ function Header() {
   };
 
   const initials = isAuthenticated ? getUserInitials(user?.name) : "G"; 
+
   return (
     <header className="search-header">
-      <div className="acount-section">
-        {isAuthenticated ? (
-          <div
-            className="acount-services"
-            onClick={handleProfileClick} 
-            style={{
-              cursor: "pointer",
-              backgroundColor: "#4C58ED",
-              color: "white",
-              width: "40px",
-              height: "40px",
-              borderRadius: "50%",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              fontWeight: "bold",
-              fontSize: "16px",
-            }}
-          >
-            {initials} {/* Muestra las iniciales reales */}
-          </div>
-        ) : (
-          <div
-            className="acount-services"
-            style={{
-              backgroundColor: "#ccc",
-              color: "white",
-              width: "40px",
-              height: "40px",
-              borderRadius: "50%",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              fontWeight: "bold",
-              fontSize: "16px",
-            }}
-          >
-            G
-          </div>
-        )}
+      <div className="account-section">
+        <div
+          className="account-circle"
+          onClick={handleProfileClick}
+        >
+          {initials}
+        </div>
       </div>
     </header>
   );
