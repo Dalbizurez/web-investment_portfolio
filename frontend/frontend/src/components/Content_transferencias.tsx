@@ -37,21 +37,21 @@ function Content_transferencias() {
     {
       id: "toHapi",
       icon: FiSend,
-      titulo: "Transferir a Hapi",
-      descripcion: "Transfiere fondos desde tu cuenta bancaria a tu cuenta Hapi",
+      titulo: "Transfer to Hapi",
+      descripcion: "Transfer funds from your bank account to your Hapi account",
     },
     {
       id: "toBank",
       icon: FiArrowUpRight,
-      titulo: "Transfiere a tu banco",
-      descripcion: "Transfiere fondos desde tu cuenta Hapi a tu cuenta bancaria",
+      titulo: "Transfer to your bank",
+      descripcion: "Transfer funds from your Hapi account to your bank account",
     },
   ];
 
   if (isLoadingProfile)
     return (
       <div className="content-home">
-        <p style={{ textAlign: "center", padding: "20px" }}> Cargando...</p>
+        <p style={{ textAlign: "center", padding: "20px" }}> Loading...</p>
       </div>
     );
 
@@ -59,7 +59,7 @@ function Content_transferencias() {
     return (
       <div className="content-home">
         <p style={{ color: "red", textAlign: "center" }}>
-          No se encontró token de autenticación.
+          No authentication token found.
         </p>
       </div>
     );
@@ -72,7 +72,7 @@ function Content_transferencias() {
             {/* VISTA PRINCIPAL */}
             {currentView === "main" && (
               <>
-                <h2>Transferir dinero</h2>
+                <h2>Transfer money</h2>
                 <div className="transfer-options">
                   {opciones.map((opt) => (
                     <TransferOption
@@ -119,7 +119,7 @@ const FormTransferirHapi = ({ onBack, token }: FormProps) => {
 
   const handleSubmit = async () => {
     if (!amount || !reference) {
-      setMessage("Completa todos los campos.");
+      setMessage("Fill in all fields.");
       return;
     }
 
@@ -140,13 +140,13 @@ const FormTransferirHapi = ({ onBack, token }: FormProps) => {
       );
 
       if (res.status === 200 || res.status === 201) {
-        setMessage("Transferencia a Hapi realizada correctamente.");
+        setMessage("Transfer to Hapi completed successfully.");
         setAmount("");
         setReference("");
       }
     } catch (err: any) {
       console.error(err);
-      setMessage("Error al enviar la transferencia.");
+      setMessage("Error sending the transfer.");
     } finally {
       setLoading(false);
     }
@@ -155,19 +155,19 @@ const FormTransferirHapi = ({ onBack, token }: FormProps) => {
   return (
     <div className="transfer-form">
       <button onClick={onBack} className="back-button">
-        <FiChevronLeft /> Volver
+        <FiChevronLeft /> Back
       </button>
-      <h2>Transferir a Hapi</h2>
+      <h2>Transfer to Hapi</h2>
 
       <div className="form-group">
-        <label>Desde tu cuenta bancaria</label>
+        <label>From your bank account</label>
         <div className="account-display">
-          <span>Banco Patito 123123*****</span>
+          <span>User</span>
         </div>
       </div>
 
       <div className="form-group">
-        <label>Monto a transferir</label>
+        <label>Amount to transfer</label>
         <div className="amount-input-wrapper">
           <span>$</span>
           <input
@@ -182,10 +182,10 @@ const FormTransferirHapi = ({ onBack, token }: FormProps) => {
       </div>
 
       <div className="form-group">
-        <label>Referencia</label>
+        <label>Reference</label>
         <input
           type="text"
-          placeholder="Ej. Depósito mensual"
+          placeholder="Ex. Monthly deposit"
           className="reference-input"
           value={reference}
           onChange={(e) => setReference(e.target.value)}
@@ -197,7 +197,7 @@ const FormTransferirHapi = ({ onBack, token }: FormProps) => {
         onClick={handleSubmit}
         disabled={loading}
       >
-        {loading ? "Enviando..." : "Enviar Dinero"}
+        {loading ? "Sending..." : "Send Money"}
       </button>
 
       {message && <p className="message">{message}</p>}
@@ -213,7 +213,7 @@ const FormTransferirBanco = ({ onBack, token }: FormProps) => {
 
   const handleSubmit = async () => {
     if (!amount || !reference) {
-      setMessage(" Completa todos los campos.");
+      setMessage(" Fill in all fields.");
       return;
     }
 
@@ -234,13 +234,13 @@ const FormTransferirBanco = ({ onBack, token }: FormProps) => {
       );
 
       if (res.status === 200 || res.status === 201) {
-        setMessage(" Retiro realizado correctamente.");
+        setMessage(" Withdrawal completed successfully.");
         setAmount("");
         setReference("");
       }
     } catch (err: any) {
       console.error(err);
-      setMessage(" Error al procesar el retiro.");
+      setMessage(" Error processing withdrawal.");
     } finally {
       setLoading(false);
     }
@@ -249,27 +249,27 @@ const FormTransferirBanco = ({ onBack, token }: FormProps) => {
   return (
     <div className="transfer-form">
       <button onClick={onBack} className="back-button">
-        <FiChevronLeft /> Volver
+        <FiChevronLeft /> Back
       </button>
-      <h2>Transfiere a tu banco</h2>
+      <h2>Transfer to your bank</h2>
 
       <div className="form-group">
-        <label>Desde</label>
+        <label>From</label>
         <div className="account-display">
           <FiHome />
-          <span>Mi Cuenta Hapi (**** 5678)</span>
+          <span>My Hapi account</span>
         </div>
       </div>
 
       <div className="form-group">
-        <label>Hacia tu cuenta bancaria</label>
+        <label>To your bank account</label>
         <div className="account-display">
-          <span>Banco Patito 123123*****</span>
+          <span>Destination account</span>
         </div>
       </div>
 
       <div className="form-group">
-        <label>Monto a retirar</label>
+        <label>Amount to be withdrawn</label>
         <div className="amount-input-wrapper">
           <span>$</span>
           <input
@@ -284,10 +284,10 @@ const FormTransferirBanco = ({ onBack, token }: FormProps) => {
       </div>
 
       <div className="form-group">
-        <label>Referencia</label>
+        <label>References</label>
         <input
           type="text"
-          placeholder="Ej. Pago de servicios"
+          placeholder="Ex. Payment for services"
           className="reference-input"
           value={reference}
           onChange={(e) => setReference(e.target.value)}
@@ -299,7 +299,7 @@ const FormTransferirBanco = ({ onBack, token }: FormProps) => {
         onClick={handleSubmit}
         disabled={loading}
       >
-        {loading ? "Procesando..." : "Retirar Dinero"}
+        {loading ? "Proccesing..." : "withdraw money"}
       </button>
 
       {message && <p className="message">{message}</p>}
@@ -308,3 +308,4 @@ const FormTransferirBanco = ({ onBack, token }: FormProps) => {
 };
 
 export default Content_transferencias;
+
