@@ -19,7 +19,7 @@ export function useBuyStock() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `bro ${token}`,
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({ symbol, quantity }),
       });
