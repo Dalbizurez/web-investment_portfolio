@@ -2,8 +2,8 @@ import { useEffect, useState } from 'react';
 import { useAuth0 } from '@auth0/auth0-react';
 import axios from 'axios';
 
-const API_URL = 'http://localhost:8000/api';
-const REF_BASE = "http://localhost:8000/api/user_try";
+const API_URL = 'http://back.g4.atenea.lat/api';
+const REF_BASE = "http://back.g4.atenea.lat/api/user_try";
 
 interface UserProfile {
   id: string;

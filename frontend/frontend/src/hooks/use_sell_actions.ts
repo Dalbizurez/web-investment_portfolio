@@ -32,7 +32,7 @@ export function useSellStock() {
         throw new Error("No se encontró un token de autenticación. Inicia sesión nuevamente.");
       }
 
-      const response = await fetch("http://localhost:8000/api/stocks/transactions/sell/", {
+      const response = await fetch("http://back.g4.atenea.lat/api/stocks/transactions/sell/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

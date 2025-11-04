@@ -10,7 +10,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
-const API_URL = "http://localhost:8000/api";
+const API_URL = "http://back.g4.atenea.lat/api";
 
 interface BalanceData {
   balance: number;

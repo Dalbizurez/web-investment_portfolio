@@ -22,7 +22,7 @@ import { useAuth0 } from "@auth0/auth0-react";
         const fetchProfile = async () => {
         try {
             const token = await getAccessTokenSilently();
-            const res = await axios.get("http://127.0.0.1:8000/update-profile/", {
+            const res = await axios.get("http://back.g4.atenea.lat/update-profile/", {
             headers: { Authorization: `Bearer ${token}` },
             });
             setProfile(res.data);
@@ -37,7 +37,7 @@ import { useAuth0 } from "@auth0/auth0-react";
         try {
         const token = await getAccessTokenSilently();
         await axios.post(
-            "http://127.0.0.1:8000/update-profile/",
+            "http://back.g4.atenea.lat/update-profile/",
             { ...profile },
             { headers: { Authorization: `Bearer ${token}` } }
         );
@@ -53,7 +53,7 @@ import { useAuth0 } from "@auth0/auth0-react";
         try {
         const token = await getAccessTokenSilently();
         await axios.post(
-            "http://127.0.0.1:8000/change-password/",
+            "http://back.g4.atenea.lat/change-password/",
             { old_password: oldPassword, new_password: newPassword },
             { headers: { Authorization: `Bearer ${token}` } }
         );

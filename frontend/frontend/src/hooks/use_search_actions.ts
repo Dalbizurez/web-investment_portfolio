@@ -20,7 +20,7 @@ export const useSearchActions = () => {
     if (!query) return [];
 
     const response = await fetch(
-      `http://localhost:8000/api/stocks/search/?q=${encodeURIComponent(query)}`,
+      `http://back.g4.atenea.lat/api/stocks/search/?q=${encodeURIComponent(query)}`,
       { method: "GET", headers: { "Content-Type": "application/json" } }
     );
 

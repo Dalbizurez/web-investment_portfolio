@@ -12,8 +12,8 @@ interface Stock {
   profit_loss: number;
 }
 
-const API_URL = "http://localhost:8000/api/stocks/portfolio/";
-const SELL_URL = "http://localhost:8000/api/stocks/transactions/sell/";
+const API_URL = "http://back.g4.atenea.lat/api/stocks/portfolio/";
+const SELL_URL = "http://back.g4.atenea.lat/api/stocks/transactions/sell/";
 
 const SellActions = () => {
   const { token, isLoadingProfile } = useUser();

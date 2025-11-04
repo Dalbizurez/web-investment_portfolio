@@ -4,9 +4,9 @@ import Header from "../components/header_search";
 import axios from "axios";
 import { useUser } from "./UserContext";
 
-const API_URL = "http://localhost:8000/api/stocks/search/";
-const DETAIL_URL = "http://localhost:8000/api/stocks/";
-const BUY_URL = "http://localhost:8000/api/stocks/transactions/buy/";
+const API_URL = "http://back.g4.atenea.lat/api/stocks/search/";
+const DETAIL_URL = "http://back.g4.atenea.lat/api/stocks/";
+const BUY_URL = "http://back.g4.atenea.lat/api/stocks/transactions/buy/";
 
 interface SearchResult {
   description: string;

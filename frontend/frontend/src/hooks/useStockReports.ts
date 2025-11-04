@@ -2,7 +2,7 @@ import { useState, useCallback } from 'react';
 import { useUser } from "../components/UserContext";
 import axios from "axios";
 
-const API_URL = "http://localhost:8000/api/stocks/reports/request/";
+const API_URL = "http://back.g4.atenea.lat/api/stocks/reports/request/";
 interface StockReportRequest {
   date_from?: string | null;
   date_to?: string | null;

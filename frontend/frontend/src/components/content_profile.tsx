@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useUser } from "./UserContext";
 import axios from "axios";
 
-const API_URL = "http://localhost:8000/api/user_try";
+const API_URL = "http://back.g4.atenea.lat/api/user_try";
 
 interface UserData {
   username: string;
@@ -103,7 +103,7 @@ function ContentProfile() {
                   if (!code) return alert("Enter a code");
                   try {
                     await axios.post(
-                      "http://localhost:8000/api/user_try/use-referral-code/",
+                      "http://back.g4.atenea.lat/api/user_try/use-referral-code/",
                       { referral_code: code },
                       { headers: { Authorization: `Bearer ${token}` } }
                     );
