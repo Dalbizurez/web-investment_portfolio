@@ -5,7 +5,7 @@ import TransferOption from "./TransferOption";
 import { FiArrowDownCircle, FiArrowUpCircle, FiChevronLeft } from "react-icons/fi";
 import "../styles/transferencias.css";
 
-const API_URL = "http://localhost:8000/api";
+const API_URL = "http://back.g4.atenea.lat/api";
 
 type FormProps = {
   onBack: () => void;

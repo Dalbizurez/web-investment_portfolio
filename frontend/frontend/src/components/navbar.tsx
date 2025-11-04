@@ -7,7 +7,7 @@ import "../styles/navbar.css";
 import { useUser } from "./UserContext";
 import axios from "axios";
 
-const API_URL = "http://localhost:8000/api"; 
+const API_URL = "http://back.g4.atenea.lat/api"; 
 
 
 function Navbar() {

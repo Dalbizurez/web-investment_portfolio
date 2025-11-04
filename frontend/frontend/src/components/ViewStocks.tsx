@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import axios from "axios";
 
-const API_URL = "http://localhost:8000/api/stocks/search/";
-const DETAIL_URL = "http://localhost:8000/api/stocks/";
+const API_URL = "http://back.g4.atenea.lat/api/stocks/search/";
+const DETAIL_URL = "http://back.g4.atenea.lat/api/stocks/";
 
 interface SearchResult {
   description: string;

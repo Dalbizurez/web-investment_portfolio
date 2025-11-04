@@ -3,7 +3,7 @@ import { useUser } from "./UserContext";
 import axios from "axios";
 import "../styles/transferencias.css";
 
-const API_URL = "http://localhost:8000/api";
+const API_URL = "http://back.g4.atenea.lat/api";
 
 interface Transaction {
   id: number;

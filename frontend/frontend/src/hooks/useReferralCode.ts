@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useUser } from "../components/UserContext";
 import axios from "axios";
 
-const BASE = "http://localhost:8000/api/user_try";
+const BASE = "http://back.g4.atenea.lat/api/user_try";
 
 type Stats = {
   referral_code: string;
