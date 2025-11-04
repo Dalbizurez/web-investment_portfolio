@@ -1,152 +1,202 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useUser } from "./UserContext";
 import axios from "axios";
 import TransferOption from "./TransferOption";
-import RecentTransfers from "./RecentTransfers";
-import type { IconType } from "react-icons";
-import {
-  FiSend,
-  FiArrowUpRight,
-  FiChevronLeft,
-  FiHome,
-} from "react-icons/fi";
+import { FiArrowDownCircle, FiArrowUpCircle, FiChevronLeft } from "react-icons/fi";
 import "../styles/transferencias.css";
 
 const API_URL = "http://localhost:8000/api";
 
-// --- TIPOS ---
-type Opcion = {
-  id: "toHapi" | "toBank";
-  icon: IconType;
-  titulo: string;
-  descripcion: string;
-};
-
 type FormProps = {
   onBack: () => void;
   token: string;
+  refresh: () => void;
+};
+
+type Transaction = {
+  id: number;
+  type: string; 
+  amount: number;
+  transfer_reference: string;
+  timestamp: string;
 };
 
 function Content_transferencias() {
-  const [currentView, setCurrentView] = useState<"main" | "toHapi" | "toBank">(
-    "main"
-  );
+  const [currentView, setCurrentView] = useState<"main" | "toHapi" | "toBank">("main");
   const { token, isLoadingProfile } = useUser();
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const rowsPerPage = 8;
 
-  const opciones: Opcion[] = [
-    {
-      id: "toHapi",
-      icon: FiSend,
-      titulo: "Transferir a Hapi",
-      descripcion: "Transfiere fondos desde tu cuenta bancaria a tu cuenta Hapi",
-    },
-    {
-      id: "toBank",
-      icon: FiArrowUpRight,
-      titulo: "Transfiere a tu banco",
-      descripcion: "Transfiere fondos desde tu cuenta Hapi a tu cuenta bancaria",
-    },
-  ];
+  const fetchTransactions = () => {
+    if (!token) return;
+    axios
+      .get(`${API_URL}/stocks/transactions/history/`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      .then((res) => {
+        setTransactions(res.data.transactions);
+      })
+      .catch(() => {});
+  };
+
+  useEffect(() => {
+    fetchTransactions();
+  }, [token]);
 
   if (isLoadingProfile)
-    return (
-      <div className="content-home">
-        <p style={{ textAlign: "center", padding: "20px" }}> Cargando...</p>
-      </div>
-    );
+    return <div className="content-home"><p>Loading...</p></div>;
 
   if (!token)
-    return (
-      <div className="content-home">
-        <p style={{ color: "red", textAlign: "center" }}>
-          No se encontró token de autenticación.
-        </p>
-      </div>
-    );
+    return <div className="content-home"><p style={{ color: "red" }}>Auth error.</p></div>;
 
   return (
     <section className="content-home">
       <div className="sections">
+        
         <div className="transfer-container">
+
           <div className="transfer-dinero">
-            {/* VISTA PRINCIPAL */}
             {currentView === "main" && (
               <>
-                <h2>Transferir dinero</h2>
+                <h2>Transfers</h2>
+
                 <div className="transfer-options">
-                  {opciones.map((opt) => (
-                    <TransferOption
-                      key={opt.titulo}
-                      icon={opt.icon}
-                      titulo={opt.titulo}
-                      descripcion={opt.descripcion}
-                      onClick={() => setCurrentView(opt.id)}
-                    />
-                  ))}
+                  <TransferOption
+                    icon={FiArrowDownCircle}
+                    titulo="Deposit"
+                    descripcion="Add funds to your investment balance"
+                    onClick={() => setCurrentView("toHapi")}
+                  />
+
+                  <TransferOption
+                    icon={FiArrowUpCircle}
+                    titulo="Withdraw"
+                    descripcion="Send funds to your bank account"
+                    onClick={() => setCurrentView("toBank")}
+                  />
                 </div>
               </>
             )}
 
             {currentView === "toHapi" && (
-              <FormTransferirHapi
+              <FormDeposit
                 onBack={() => setCurrentView("main")}
                 token={token}
+                refresh={fetchTransactions}
               />
             )}
 
             {currentView === "toBank" && (
-              <FormTransferirBanco
+              <FormWithdraw
                 onBack={() => setCurrentView("main")}
                 token={token}
+                refresh={fetchTransactions}
               />
             )}
           </div>
+        </div>
 
-          <div className="transfer-recientes">
-            <RecentTransfers />
-          </div>
+        <h3 style={{ marginTop: "2rem" }}>Full Transfer History</h3>
+
+        <div className="history-table-wrapper">
+          <table className="history-table">
+            <thead>
+              <tr>
+                <th>Type</th>
+                <th>Amount</th>
+                <th>Reference</th>
+                <th>Date</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {transactions.length === 0 && (
+                <tr>
+                  <td colSpan={4} style={{ textAlign: "center", padding: "1rem" }}>
+                    No transactions yet.
+                  </td>
+                </tr>
+              )}
+
+              {transactions
+                .slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage)
+                .map((tx) => (
+                  <tr key={tx.id}>
+                    {/* ✅ Fix final: backend sends DEPOSIT / WITHDRAWAL */}
+                    <td style={{ fontWeight: 700 }}>
+                      {tx.type === "DEPOSIT" ? (
+                        <span style={{ color: "#4caf50" }}>⬆ Deposit</span>
+                      ) : tx.type === "WITHDRAWAL" ? (
+                        <span style={{ color: "#d32f2f" }}>⬇ Withdraw</span>
+                      ) : (
+                        tx.type
+                      )}
+                    </td>
+
+                    <td>${tx.amount}</td>
+
+                    {/* ✅ fix reference */}
+                    <td>{tx.transfer_reference && tx.transfer_reference.trim() !== "" ? tx.transfer_reference : "-"}</td>
+
+                    <td>{new Date(tx.timestamp).toLocaleString()}</td>
+                  </tr>
+                ))}
+            </tbody>
+          </table>
+
+          {transactions.length > rowsPerPage && (
+            <div className="pagination-controls">
+              <button
+                disabled={currentPage === 1}
+                onClick={() => setCurrentPage((prev) => prev - 1)}
+              >
+                Prev
+              </button>
+
+              <span>Page {currentPage}</span>
+
+              <button
+                disabled={currentPage * rowsPerPage >= transactions.length}
+                onClick={() => setCurrentPage((prev) => prev + 1)}
+              >
+                Next
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </section>
   );
 }
 
-const FormTransferirHapi = ({ onBack, token }: FormProps) => {
+/* ----------------------------- Deposit Form ----------------------------- */
+
+const FormDeposit = ({ onBack, token, refresh }: FormProps) => {
   const [amount, setAmount] = useState("");
   const [reference, setReference] = useState("");
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
 
   const handleSubmit = async () => {
-    if (!amount || !reference) {
-      setMessage("Completa todos los campos.");
-      return;
-    }
+    if (!amount || !reference) return setMessage("Fill all fields.");
 
     setLoading(true);
     setMessage("");
 
     try {
-      const res = await axios.post(
+      await axios.post(
         `${API_URL}/stocks/transactions/deposit/`,
-        {
-          amount: parseFloat(amount),
-          reference,
-          type: "toHapi",
-        },
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
+        { amount: parseFloat(amount), transfer_reference: reference },
+        { headers: { Authorization: `Bearer ${token}` } }
       );
 
-      if (res.status === 200 || res.status === 201) {
-        setMessage("Transferencia a Hapi realizada correctamente.");
-        setAmount("");
-        setReference("");
-      }
-    } catch (err: any) {
-      console.error(err);
-      setMessage("Error al enviar la transferencia.");
+      setMessage("Deposit successful.");
+      setAmount("");
+      setReference("");
+      refresh();
+    } catch {
+      setMessage("Error making deposit.");
     } finally {
       setLoading(false);
     }
@@ -154,50 +204,30 @@ const FormTransferirHapi = ({ onBack, token }: FormProps) => {
 
   return (
     <div className="transfer-form">
-      <button onClick={onBack} className="back-button">
-        <FiChevronLeft /> Volver
-      </button>
-      <h2>Transferir a Hapi</h2>
+      <button className="back-button" onClick={onBack}><FiChevronLeft /> Back</button>
+      <h2>Deposit funds</h2>
 
       <div className="form-group">
-        <label>Desde tu cuenta bancaria</label>
-        <div className="account-display">
-          <span>Banco Patito 123123*****</span>
-        </div>
-      </div>
-
-      <div className="form-group">
-        <label>Monto a transferir</label>
+        <label>Amount</label>
         <div className="amount-input-wrapper">
           <span>$</span>
-          <input
-            type="number"
-            placeholder="0.00"
-            className="amount-input"
-            value={amount}
-            onChange={(e) => setAmount(e.target.value)}
-          />
+          <input type="number" value={amount} onChange={(e) => setAmount(e.target.value)} />
           <span>USD</span>
         </div>
       </div>
 
       <div className="form-group">
-        <label>Referencia</label>
+        <label>Reference</label>
         <input
           type="text"
-          placeholder="Ej. Depósito mensual"
-          className="reference-input"
           value={reference}
           onChange={(e) => setReference(e.target.value)}
+          placeholder="Ex. Salary deposit"
         />
       </div>
 
-      <button
-        className="submit-button"
-        onClick={handleSubmit}
-        disabled={loading}
-      >
-        {loading ? "Enviando..." : "Enviar Dinero"}
+      <button onClick={handleSubmit} disabled={loading}>
+        {loading ? "Processing..." : "Deposit"}
       </button>
 
       {message && <p className="message">{message}</p>}
@@ -205,42 +235,33 @@ const FormTransferirHapi = ({ onBack, token }: FormProps) => {
   );
 };
 
-const FormTransferirBanco = ({ onBack, token }: FormProps) => {
+/* ----------------------------- Withdraw Form ----------------------------- */
+
+const FormWithdraw = ({ onBack, token, refresh }: FormProps) => {
   const [amount, setAmount] = useState("");
   const [reference, setReference] = useState("");
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
 
   const handleSubmit = async () => {
-    if (!amount || !reference) {
-      setMessage(" Completa todos los campos.");
-      return;
-    }
+    if (!amount || !reference) return setMessage("Fill all fields.");
 
     setLoading(true);
     setMessage("");
 
     try {
-      const res = await axios.post(
+      await axios.post(
         `${API_URL}/stocks/transactions/withdraw/`,
-        {
-          amount: parseFloat(amount),
-          reference,
-          type: "toBank",
-        },
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
+        { amount: parseFloat(amount), transfer_reference: reference },
+        { headers: { Authorization: `Bearer ${token}` } }
       );
 
-      if (res.status === 200 || res.status === 201) {
-        setMessage(" Retiro realizado correctamente.");
-        setAmount("");
-        setReference("");
-      }
-    } catch (err: any) {
-      console.error(err);
-      setMessage(" Error al procesar el retiro.");
+      setMessage("Withdrawal successful.");
+      setAmount("");
+      setReference("");
+      refresh();
+    } catch {
+      setMessage("Error processing withdrawal.");
     } finally {
       setLoading(false);
     }
@@ -248,58 +269,30 @@ const FormTransferirBanco = ({ onBack, token }: FormProps) => {
 
   return (
     <div className="transfer-form">
-      <button onClick={onBack} className="back-button">
-        <FiChevronLeft /> Volver
-      </button>
-      <h2>Transfiere a tu banco</h2>
+      <button className="back-button" onClick={onBack}><FiChevronLeft /> Back</button>
+      <h2>Withdraw funds</h2>
 
       <div className="form-group">
-        <label>Desde</label>
-        <div className="account-display">
-          <FiHome />
-          <span>Mi Cuenta Hapi (**** 5678)</span>
-        </div>
-      </div>
-
-      <div className="form-group">
-        <label>Hacia tu cuenta bancaria</label>
-        <div className="account-display">
-          <span>Banco Patito 123123*****</span>
-        </div>
-      </div>
-
-      <div className="form-group">
-        <label>Monto a retirar</label>
+        <label>Amount</label>
         <div className="amount-input-wrapper">
           <span>$</span>
-          <input
-            type="number"
-            placeholder="0.00"
-            className="amount-input"
-            value={amount}
-            onChange={(e) => setAmount(e.target.value)}
-          />
+          <input type="number" value={amount} onChange={(e) => setAmount(e.target.value)} />
           <span>USD</span>
         </div>
       </div>
 
       <div className="form-group">
-        <label>Referencia</label>
+        <label>Reference</label>
         <input
           type="text"
-          placeholder="Ej. Pago de servicios"
-          className="reference-input"
           value={reference}
           onChange={(e) => setReference(e.target.value)}
+          placeholder="Ex. Cash out"
         />
       </div>
 
-      <button
-        className="submit-button"
-        onClick={handleSubmit}
-        disabled={loading}
-      >
-        {loading ? "Procesando..." : "Retirar Dinero"}
+      <button onClick={handleSubmit} disabled={loading}>
+        {loading ? "Processing..." : "Withdraw"}
       </button>
 
       {message && <p className="message">{message}</p>}
