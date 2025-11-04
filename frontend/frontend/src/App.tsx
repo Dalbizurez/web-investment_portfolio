@@ -3,7 +3,7 @@ import HomePage from "./pages/home_page";
 import InvitePage from "./pages/invitePage";
 import HomeUser from "./pages/home_user";
 import Portafolio from "./pages/portafolio";
-import TransferPage from "./pages/transfers";
+//import TransferPage from "./pages/transfers";
 import ProtectedRoute from "./components/ProtectedRoute";
 import SearchPage from "./pages/search_page";
 import SellsPage from "./pages/sells_page";
@@ -14,6 +14,7 @@ import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminUsers from "./pages/admin/AdminUsers";
 import AdminStocks from "./pages/admin/AdminStocks";
 import AdminTransactions from "./pages/admin/AdminTransactions";
+import TransfersRouter from "./pages/TransfersRouter";
 
 
 
@@ -62,7 +63,7 @@ function App() {
         path="/transfers"
         element={
           <ProtectedRoute>
-            <TransferPage />
+            <TransfersRouter />
           </ProtectedRoute>
         }
       />
