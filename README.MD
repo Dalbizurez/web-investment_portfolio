@@ -6,6 +6,16 @@ It includes an **administrative panel**, a **secure authentication system**, and
 
 The system was developed as part of an academic project, following international software development conventions and best practices.
 
+#  Project Domain
+
+## Main URLs
+- Backend: [`http://back.g4.atenea.lat/`](http://back.g4.atenea.lat/)
+- Frontend: [`http://front.g4.atenea.lat/`](http://front.g4.atenea.lat/)
+
+## Information
+These are the official domains provided by our professor for the development and deployment of our project.
+
+
 ---
 
 ## Architecture
@@ -95,6 +105,8 @@ HTTPS enforced on deployment
 Input validation and sanitization on all endpoints
 
 Role-based access control (Admin / Standard User)
+
+
 
 
 ### Deployment
