@@ -1,4 +1,4 @@
-import AccountSettings from "../components/AccountSettings";
+import AccountSettings from "../components/ContentProfile";
 import Sidebar from "../components/inviteSideBar";
 import TopBar from "../components/inviteTopBar";
 
