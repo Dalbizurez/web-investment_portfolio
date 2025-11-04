@@ -30,7 +30,15 @@ def buy_stock(request):
     try:
         symbol = request.data.get('symbol', '').upper().strip()
         quantity = int(request.data.get('quantity', 0))
-        
+
+        is_market_open, market_message = validate_trading_hours()
+        if not is_market_open:
+            return Response({
+                'error': 'Trading not allowed at this time',
+                'message': market_message,
+                'market_open': False
+            }, status=status.HTTP_400_BAD_REQUEST)
+
         if not symbol:
             return Response({'error': 'Stock symbol is required'}, 
                            status=status.HTTP_400_BAD_REQUEST)
