@@ -15,11 +15,11 @@ export function useBuyStock() {
     try {
       const token = await getAccessTokenSilently();
 
-      const response = await fetch("http://localhost:8000/api/stocks/transactions/buy/", {
+      const response = await fetch("http://back.g4.atenea.lat/api/stocks/transactions/buy/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+          Authorization: `bro ${token}`,
         },
         body: JSON.stringify({ symbol, quantity }),
       });
