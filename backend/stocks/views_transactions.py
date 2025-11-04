@@ -10,6 +10,7 @@ from .services.finnhub_service import FinnhubService
 from .utils import validate_trading_hours
 from .emails.services import TransactionEmailService
 import logging
+from django.db import IntegrityError
 
 logger = logging.getLogger(__name__)
 
@@ -42,15 +43,6 @@ def buy_stock(request):
             return Response({'error': 'Invalid stock symbol format'}, 
                            status=status.HTTP_400_BAD_REQUEST)
         
-        # --- COMENTADO para ignorar horario de mercado ---
-        # is_market_open, market_message = validate_trading_hours()
-        # if not is_market_open:
-        #     return Response({
-        #         'error': 'Trading not allowed at this time',
-        #         'message': market_message,
-        #         'market_open': False
-        #     }, status=status.HTTP_400_BAD_REQUEST)
-        
         service = FinnhubService()
         
         is_valid, validation_message = service.validate_stock_symbol(symbol)
@@ -80,6 +72,7 @@ def buy_stock(request):
                            status=status.HTTP_400_BAD_REQUEST)
         
         with transaction.atomic():
+
             stock, created = Stock.objects.get_or_create(
                 symbol=symbol,
                 defaults={
@@ -102,27 +95,38 @@ def buy_stock(request):
 
             stock.current_price = current_price
             stock.save()
-            
-            portfolio_item, created = UserPortfolio.objects.get_or_create(
-                user=request.user,
-                stock=stock,
-                defaults={
-                    'quantity': quantity,
-                    'average_price': current_price
-                }
-            )
-            
-            if not created:
+
+            try:
+                portfolio_item = UserPortfolio.objects.select_for_update().get(user=request.user, stock=stock)
                 total_quantity = portfolio_item.quantity + quantity
                 total_value = (portfolio_item.quantity * portfolio_item.average_price) + total_cost
-                new_avg_price = total_value / total_quantity
-                
                 portfolio_item.quantity = total_quantity
-                portfolio_item.average_price = new_avg_price
+                portfolio_item.average_price = total_value / total_quantity
                 portfolio_item.save()
-            
+
+            except UserPortfolio.DoesNotExist:
+                try:
+                    portfolio_item = UserPortfolio.objects.create(
+                        user=request.user,
+                        stock=stock,
+                        quantity=quantity,
+                        average_price=current_price
+                    )
+                #    
+                except IntegrityError:
+                    portfolio_item, _ = UserPortfolio.objects.get_or_create(
+                        user=request.user,
+                        stock=stock,
+                        defaults={
+                            'quantity': quantity,
+                            'average_price': current_price
+                        }
+                    )
+
+
             user_balance.balance -= total_cost
             user_balance.save()
+
             
             transaction_record = Transaction.objects.create(
                 user=request.user,
@@ -151,9 +155,9 @@ def buy_stock(request):
         
     except Exception as e:
         logger.error(f"Error buying stock: {e}")
+        logger.error(f"Request data: {request.data}")
         return Response({'error': 'Internal server error'}, 
                        status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
@@ -203,7 +207,8 @@ def sell_stock(request):
         with transaction.atomic():
             portfolio_item.quantity -= quantity
             if portfolio_item.quantity == 0:
-                portfolio_item.delete()
+                portfolio_item.quantity = 0
+                portfolio_item.save()
             else:
                 portfolio_item.save()
             
