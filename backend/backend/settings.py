@@ -15,10 +15,12 @@ SECRET_KEY = config('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG', default=False, cast=bool)
 
+#cambiar por la url de back.g4.atenea.lat cuando este en produccion
 SITE_URL = "http://localhost:8000"
 
 
-ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost,127.0.0.1', cast=Csv())
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost,127.0.0.1,back.g4.atenea.lat', cast=Csv())
+
 
 # Application definition
 INSTALLED_APPS = [
@@ -147,12 +149,14 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # CORS Configuration
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
+    "https://front.g4.atenea.lat",
     "http://localhost:3000",
 ]
 CORS_ALLOW_CREDENTIALS = True
 
 CSRF_TRUSTED_ORIGINS = [
     "http://localhost:5173",
+    "https://front.g4.atenea.lat",
 ]
 
 CORS_ALLOW_METHODS = [
